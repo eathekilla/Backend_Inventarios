@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'Proveedor.apps.ProveedorConfig',
     'Fincas.apps.FincasConfig',
     'Insumo.apps.InsumoConfig',
+    'simple_history',
 
 ]
 
