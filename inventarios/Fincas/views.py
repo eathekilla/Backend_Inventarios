@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,UserSerializerLogout,FincaSerializer
@@ -39,7 +39,7 @@ class UserLogout(APIView):
     
 class UserView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
-	authentication_classes = (SessionAuthentication,)
+	authentication_classes = (SessionAuthentication,BasicAuthentication, TokenAuthentication)
 	##
 	def get(self, request):
 		serializer = UserSerializer(request.user)
