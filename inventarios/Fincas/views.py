@@ -32,14 +32,13 @@ class UserLogin(APIView):
 
 class UserLogout(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserSerializerLogout
     def post(self, request, *args, **kwargs):
         logout(request)
         return Response({'message': 'User logged out'}, status=status.HTTP_200_OK)
     
 class UserView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
-	#authentication_classes = (BasicAuthentication)
+
 	##
 	def get(self, request):
 		serializer = UserSerializer(request.user)
@@ -47,7 +46,7 @@ class UserView(APIView):
 
 class FincaView(APIView):
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
+
     def get(self, request):
         fincas = Finca.objects.all()
         serializer = FincaSerializer(fincas, many=True)
