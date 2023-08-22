@@ -2,8 +2,9 @@ from django.db import models
 from Fincas.models import Finca
 from Insumo.models import Insumo
 from Entrada.models import Entrada
+from datetime import datetime
 class Salida(models.Model):
-    semana = models.IntegerField(default=0)
+    fecha_ingreso = models.DateTimeField(default=datetime.now())
     de_finca = models.ForeignKey(Finca,related_name='salidas_de_finca', on_delete=models.CASCADE,null=True)
     a_finca = models.ForeignKey(Finca,related_name='salidas_a_finca', on_delete=models.CASCADE,null=True)
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE)
@@ -19,7 +20,7 @@ class Salida(models.Model):
         cantidad_salida = self.cantidad
         total_entradas = Entrada.objects.all()
 
-        entradas = Entrada.objects.filter(insumo=insumo_filter).order_by('fecha_creacion')
+        entradas = Entrada.objects.filter(insumo=insumo_filter).order_by('fecha_ingreso')
 
         cantidad_disponible_total = sum(entrada.cantidad for entrada in entradas)
 
@@ -33,7 +34,7 @@ class Salida(models.Model):
                 entrada_copy = entrada  # Hacer una copia de la entrada antes de modificarla
                 entrada_copy.id = None  # Crear una nueva entrada con la copia
                 entrada_copy.cantidad = 0  # Establecer la cantidad en cero en la copia
-                entrada_copy.fecha_creacion = entrada.fecha_creacion
+                entrada_copy.fecha_ingreso = entrada.fecha_ingreso
                 entrada_copy.save()
             else:
                 entrada.cantidad = cantidad_disponible - cantidad_salida
