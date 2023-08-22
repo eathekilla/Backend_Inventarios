@@ -6,8 +6,7 @@ import uuid
 
 class Entrada(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    desde = models.DateField()
-    hasta = models.DateField()
+    fecha_ingreso = models.DateField()
     de_finca = models.ForeignKey(Finca,related_name='entradas_de_finca', on_delete=models.CASCADE)
     a_finca = models.ForeignKey(Finca,related_name='entradas_a_finca', on_delete=models.CASCADE)
     insumo = models.ForeignKey(Insumo,related_name='entrada_insumo', on_delete=models.CASCADE, null=True)
