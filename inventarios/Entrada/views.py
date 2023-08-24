@@ -71,7 +71,7 @@ class InventarioExistenciaView(APIView):
                 },
                 'cantidad_disponible': cantidad_disponible,
                 'valor': entrada.valor_unitario_entrada_a,
-                'fecha': entrada.desde,
+                'fecha': entrada.fecha_ingreso,
             }
             entradas_con_existencia.append(entrada_data)
 

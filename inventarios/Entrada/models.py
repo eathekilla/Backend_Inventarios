@@ -19,4 +19,4 @@ class Entrada(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return f"Entrada - desde {self.desde}"
+        return f"{self.fecha_ingreso} - {self.insumo}"

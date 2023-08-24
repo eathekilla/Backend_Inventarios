@@ -32,7 +32,7 @@ class SalidaCreateView(generics.CreateAPIView):
             return Response({'error': 'El insumo especificado no existe.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Obtener las entradas ordenadas por fecha ascendente
-        entradas = Entrada.objects.filter(insumo=insumo).order_by('desde')
+        entradas = Entrada.objects.filter(insumo=insumo).order_by('fecha_ingreso')
         cantidad_disponible_total = sum(entrada.cantidad for entrada in entradas)
 
         if cantidad_salida > cantidad_disponible_total:

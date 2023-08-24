@@ -12,7 +12,7 @@ class SalidaSerializer(serializers.ModelSerializer):
         insumo = data['insumo']
         cantidad_salida = data['cantidad']
 
-        entradas = Entrada.objects.filter(insumo=insumo).order_by('desde')
+        entradas = Entrada.objects.filter(insumo=insumo).order_by('fecha_ingreso')
         cantidad_disponible_total = sum(entrada.cantidad for entrada in entradas)
 
         if cantidad_salida > cantidad_disponible_total:
