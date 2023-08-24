@@ -14,7 +14,7 @@ class SalidaListCreateView(generics.ListCreateAPIView):
     def get(self, request):
         salidas = Salida.objects.all()
         serializer = SalidaSerializer(salidas, many=True)
-        return Response({'fincas': serializer.data}, status=status.HTTP_200_OK)
+        return Response({'salidas': serializer.data}, status=status.HTTP_200_OK)
     
 class SalidaCreateView(generics.CreateAPIView):
     serializer_class = SalidaSerializer
