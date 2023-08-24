@@ -2,9 +2,11 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,UserSerializerLogout,FincaSerializer
+from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,UserSerializerLogout,FincaSerializer,FincaBodegaLoteSerializer
 from .models import Finca
-from rest_framework import status,permissions
+from rest_framework import status,permissions,generics
+from rest_framework import serializers
+
 
 
 UserModel = get_user_model()
@@ -51,3 +53,12 @@ class FincaView(APIView):
         fincas = Finca.objects.all()
         serializer = FincaSerializer(fincas, many=True)
         return Response({'fincas': serializer.data}, status=status.HTTP_200_OK)
+
+class FincaList(generics.ListCreateAPIView):
+    serializer_class = FincaBodegaLoteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Filtrar las fincas por el usuario autenticado
+        user = self.request.user
+        return Finca.objects.filter(usuario=user)
