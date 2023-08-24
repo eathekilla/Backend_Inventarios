@@ -15,5 +15,5 @@ urlpatterns = [
 	path('logout/', views.UserLogout.as_view(), name='logout'),
 	path('user/', views.UserView.as_view(), name='user'),
     path('fincas/', views.FincaView.as_view(), name='fincas'),
-	path('fincasasos/',views.FincaList.as_view(),name='fincaslist')
+	path('fincauser/',views.FincaList.as_view(),name='fincaslist')
 ]
