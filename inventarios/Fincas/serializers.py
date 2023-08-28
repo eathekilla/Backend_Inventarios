@@ -71,3 +71,19 @@ class FincaBodegaLoteSerializer(serializers.ModelSerializer):
         # Filtra las bodegas asociadas a la finca y al usuario actual
         user = self.context['request'].user
         return BodegasSerializer(obj.bodegas.filter(usuario=user), many=True).data
+
+
+class LotesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lotes
+        fields = '__all__'
+
+class BodegasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bodegas
+        fields = '__all__'
+
+class FincaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Finca
+        fields = '__all__'

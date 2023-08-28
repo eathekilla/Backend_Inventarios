@@ -3,9 +3,12 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,UserSerializerLogout,FincaSerializer,FincaBodegaLoteSerializer
+from .serializers import LotesSerializer, BodegasSerializer, FincaSerializer
 from .models import Finca
 from rest_framework import status,permissions,generics
 from rest_framework import serializers
+from .models import Lotes, Bodegas, Finca
+
 
 
 
@@ -62,3 +65,29 @@ class FincaList(generics.ListCreateAPIView):
         # Filtrar las fincas por el usuario autenticado
         user = self.request.user
         return Finca.objects.filter(usuario=user)
+    
+
+
+class LotesListCreateView(generics.ListCreateAPIView):
+    queryset = Lotes.objects.all()
+    serializer_class = LotesSerializer
+
+class LotesRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Lotes.objects.all()
+    serializer_class = LotesSerializer
+
+class BodegasListCreateView(generics.ListCreateAPIView):
+    queryset = Bodegas.objects.all()
+    serializer_class = BodegasSerializer
+
+class BodegasRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Bodegas.objects.all()
+    serializer_class = BodegasSerializer
+
+class FincaListCreateView(generics.ListCreateAPIView):
+    queryset = Finca.objects.all()
+    serializer_class = FincaSerializer
+
+class FincaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Finca.objects.all()
+    serializer_class = FincaSerializer
