@@ -14,7 +14,6 @@ class Entrada(models.Model):
     cantidad = models.FloatField()
     valor_unitario_entrada_a = models.FloatField()
     total_entra_a_la_finca = models.FloatField()
-    identificador = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = True, unique=True)
 
     history = HistoricalRecords()
 
