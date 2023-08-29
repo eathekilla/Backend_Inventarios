@@ -4,7 +4,7 @@ from Insumo.models import Insumo
 from Insumo.serializers import InsumoSerializer
 
 class EntradaSerializer(serializers.ModelSerializer):
-    insumo_id = serializers.PrimaryKeyRelatedField(source='insumo', queryset=Insumo.objects.all(), write_only=True)
+    insumo = serializers.PrimaryKeyRelatedField(source='insumo', queryset=Insumo.objects.all(), write_only=True)
 
     class Meta:
         model = Entrada
