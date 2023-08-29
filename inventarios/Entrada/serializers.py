@@ -8,7 +8,7 @@ class EntradaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Entrada
-        fields = ['id', 'fecha_creacion', 'fecha_ingreso', 'de_finca', 'a_finca', 'cantidad', 'valor_unitario_entrada_a', 'total_entra_a_la_finca', 'identificador', 'insumo_id']
+        fields = ['fecha_creacion', 'fecha_ingreso', 'de_finca', 'a_finca', 'cantidad', 'valor_unitario_entrada_a', 'total_entra_a_la_finca', 'identificador', 'insumo_id']
 
     def create(self, validated_data):
         insumo_id = validated_data.pop('insumo_id')
