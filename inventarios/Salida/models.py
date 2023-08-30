@@ -1,16 +1,17 @@
 from django.db import models
 from Fincas.models import Finca
-from Insumo.models import Insumo
+from Insumo.models import Insumo, Grupo
 from Entrada.models import Entrada
 from datetime import datetime
 class Salida(models.Model):
     fecha_ingreso = models.DateTimeField(default=datetime.now())
-    de_finca = models.ForeignKey(Finca,related_name='salidas_de_finca', on_delete=models.CASCADE,null=True)
-    a_finca = models.ForeignKey(Finca,related_name='salidas_a_finca', on_delete=models.CASCADE,null=True)
+    de_bodega = models.ForeignKey(Finca,related_name='salidas_de_bodega', on_delete=models.CASCADE,null=True)
+    a_bodega = models.ForeignKey(Finca,related_name='entrada_a_bodega', on_delete=models.CASCADE,null=True)
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE)
     cantidad = models.FloatField(default=0)
     valor_unitario_salida = models.FloatField(default=0)
-    total_entra_a_la_finca = models.FloatField(default=0)
+    valor_unitario_entrada = models.FloatField(default=0)
+    grupo = models.ForeignKey(Grupo,related_name='grupo_insumo_salida', on_delete=models.CASCADE,null=True )
 
     def __str__(self):
         return f"Salida - Semana {self.semana}"
