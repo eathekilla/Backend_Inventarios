@@ -18,6 +18,7 @@ class SalidaListCreateView(generics.ListCreateAPIView):
     
 class SalidaCreateView(generics.CreateAPIView):
     serializer_class = SalidaSerializer
+    permission_classes = (permissions.AllowAny,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -32,7 +33,7 @@ class SalidaCreateView(generics.CreateAPIView):
             return Response({'error': 'El insumo especificado no existe.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Obtener las entradas ordenadas por fecha ascendente
-        entradas = Entrada.objects.filter(insumo=insumo).order_by('fecha_ingreso')
+        entradas = Entrada.objects.filter(insumo=insumo).order_by('fecha_creacion')
         cantidad_disponible_total = sum(entrada.cantidad for entrada in entradas)
 
         if cantidad_salida > cantidad_disponible_total:

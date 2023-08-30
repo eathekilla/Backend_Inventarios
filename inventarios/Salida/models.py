@@ -14,14 +14,14 @@ class Salida(models.Model):
     grupo = models.ForeignKey(Grupo,related_name='grupo_insumo_salida', on_delete=models.CASCADE,null=True )
 
     def __str__(self):
-        return f"Salida - Semana {self.semana}"
+        return f"Salida - {self.fecha_ingreso} - {self.insumo.nombre}"
     
     def save(self, *args, **kwargs):
         insumo_filter = self.insumo
         cantidad_salida = self.cantidad
         total_entradas = Entrada.objects.all()
 
-        entradas = Entrada.objects.filter(insumo=insumo_filter).order_by('fecha_ingreso')
+        entradas = Entrada.objects.filter(insumo=insumo_filter).order_by('fecha_creacion')
 
         cantidad_disponible_total = sum(entrada.cantidad for entrada in entradas)
 

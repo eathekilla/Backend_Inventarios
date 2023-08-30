@@ -16,8 +16,9 @@ class Entrada(models.Model):
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, null=True)
     numero_factura = models.CharField(max_length=150, null=True)
     factura = models.FileField(upload_to='comprobantes/',null=True,blank=True)
+    identificador = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = True, unique=True)
 
     history = HistoricalRecords()
 
     def __str__(self):
-        return f"{self.fecha_ingreso} - {self.insumo}"
+        return f"{self.fecha_creacion} - {self.insumo}"
