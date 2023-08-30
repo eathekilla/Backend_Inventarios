@@ -1,19 +1,21 @@
 from django.db import models
-from Fincas.models import Finca
+from Fincas.models import Bodegas
 from Insumo.models import Insumo
+from Proveedor.models import Proveedor
 from simple_history.models import HistoricalRecords
 from datetime import datetime
 import uuid
 
 class Entrada(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_ingreso = models.DateTimeField(default=datetime.now())
-    de_finca = models.ForeignKey(Finca,related_name='entradas_de_finca', on_delete=models.CASCADE)
-    a_finca = models.ForeignKey(Finca,related_name='entradas_a_finca', on_delete=models.CASCADE)
-    insumo = models.ForeignKey(Insumo,related_name='entrada_insumo', on_delete=models.CASCADE, null=True)
+    fecha_vencimiento = models.DateTimeField(default=datetime.now())
+    bodega = models.ForeignKey(Bodegas,related_name='entradas_de_finca', on_delete=models.CASCADE, null=True)
+    insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE, null=True)
     cantidad = models.FloatField()
     valor_unitario_entrada_a = models.FloatField()
-    total_entra_a_la_finca = models.FloatField()
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, null=True)
+    numero_factura = models.CharField(max_length=150, null=True)
+    factura = models.FileField(upload_to='comprobantes/',null=True,blank=True)
 
     history = HistoricalRecords()
 
