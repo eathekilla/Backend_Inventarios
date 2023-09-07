@@ -87,3 +87,24 @@ class FincaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Finca
         fields = '__all__'
+        
+
+
+class BodegaSerializerRel(serializers.ModelSerializer):
+    class Meta:
+        model = Bodegas
+        fields = '__all__'
+
+class LoteSerializerRel(serializers.ModelSerializer):
+    bodegas = BodegaSerializerRel(many=True, read_only=True)
+
+    class Meta:
+        model = Lotes
+        fields = '__all__'
+
+class FincaSerializerRel(serializers.ModelSerializer):
+    lotes = LoteSerializerRel(many=True, read_only=True)
+
+    class Meta:
+        model = Finca
+        fields = '__all__'

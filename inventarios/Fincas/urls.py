@@ -21,5 +21,6 @@ urlpatterns = [
     path('bodegas/list-create/',views.BodegasListCreateView.as_view(),name='bodegas-list-create'),
     path('bodegas/retrieve/<int:pk>/',views.BodegasRetrieveUpdateDeleteView.as_view(), name='bodegas-retretive'),
     path('finca/list-create/',views.FincaListCreateView.as_view(),name='fincas-list-create'),
+    path('finca/list-tree/',views.FincaRelListCreateView.as_view(),name='fincas-list-create'),
 	path('finca/retrieve/<int:pk>/',views.FincaRetrieveUpdateDeleteView.as_view(), name='fincas-retretive'),
 ]

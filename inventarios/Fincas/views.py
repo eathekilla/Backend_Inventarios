@@ -3,7 +3,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,UserSerializerLogout,FincaSerializer,FincaBodegaLoteSerializer
-from .serializers import LotesSerializer, BodegasSerializer, FincaSerializer
+from .serializers import LotesSerializer, BodegasSerializer, FincaSerializer,FincaSerializerRel
 from .models import Finca
 from rest_framework import status,permissions,generics
 from rest_framework import serializers
@@ -91,3 +91,8 @@ class FincaListCreateView(generics.ListCreateAPIView):
 class FincaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Finca.objects.all()
     serializer_class = FincaSerializer
+
+
+class FincaRelListCreateView(generics.ListCreateAPIView):
+    queryset = Finca.objects.all()
+    serializer_class = FincaSerializerRel 
