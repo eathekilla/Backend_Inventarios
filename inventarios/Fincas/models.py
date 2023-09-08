@@ -24,3 +24,13 @@ class Finca(models.Model):
     def __str__(self):
         return f"{self.nombre_finca}"
 
+class InfoUser(models.Model):
+    telefono = models.CharField(max_length=12)
+    direccion = models.CharField(max_length=150)
+    tipo_documento = models.CharField(max_length=20)
+    numero_documento = models.CharField(max_length=20)
+    usuario = models.ForeignKey(User,related_name="info_user",on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.usuario}"
+

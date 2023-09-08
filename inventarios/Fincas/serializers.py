@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
 from Fincas.models import Finca, Lotes, Bodegas
+from django.contrib.auth.models import User
 
 UserModel = get_user_model()
 
@@ -108,3 +109,55 @@ class FincaSerializerRel(serializers.ModelSerializer):
     class Meta:
         model = Finca
         fields = '__all__'
+
+
+from .models import InfoUser
+
+class InfoUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfoUser
+        fields = ('telefono', 'direccion', 'tipo_documento', 'numero_documento')
+
+
+class EditInfoUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfoUser
+        fields = ('telefono', 'direccion', 'tipo_documento', 'numero_documento')
+
+class CreateUserWithInfoUserSerializer(serializers.ModelSerializer):
+    info_user = InfoUserSerializer()  # Serializador de InfoUser
+    
+    class Meta:
+        model = User
+        fields = ('email','password','groups','info_user')
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
+
+        
+
+    def create(self, validated_data):
+        # Extrae los datos de info_user del validated_data
+        info_user_data = validated_data.pop('info_user')
+        user_obj = UserModel.objects.create_user(email=validated_data['email'], password=validated_data['password'],username = validated_data['email'])
+        user_obj.groups.set(validated_data['groups'])
+        user_obj.save()
+        
+        info_usuario = self.data['info_user']
+        # Crea un InfoUser relacionado con el usuario
+        InfoUser.objects.create(usuario=user_obj, telefono=info_usuario['telefono'],direccion=info_usuario['direccion'],tipo_documento=info_usuario['tipo_documento'],numero_documento=info_usuario['numero_documento'])
+        
+        return user_obj
+    
+
+class InfoUserSerializerDetail(serializers.ModelSerializer):
+    class Meta:
+        model = InfoUser
+        fields = ('telefono', 'direccion', 'tipo_documento', 'numero_documento')
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    info_user = InfoUserSerializerDetail()  # Serializador de InfoUser
+    
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'info_user', 'groups')

@@ -3,12 +3,15 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,UserSerializerLogout,FincaSerializer,FincaBodegaLoteSerializer
-from .serializers import LotesSerializer, BodegasSerializer, FincaSerializer,FincaSerializerRel
+from .serializers import LotesSerializer, BodegasSerializer, FincaSerializer,FincaSerializerRel,UserDetailSerializer,EditInfoUserSerializer
 from .models import Finca
 from rest_framework import status,permissions,generics
+from .models import Lotes, Bodegas, Finca,InfoUser
+from rest_framework.decorators import api_view
+from .serializers import CreateUserWithInfoUserSerializer
+from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Lotes, Bodegas, Finca
-
+from django.contrib.auth.models import Group
 
 
 
@@ -96,3 +99,61 @@ class FincaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 class FincaRelListCreateView(generics.ListCreateAPIView):
     queryset = Finca.objects.all()
     serializer_class = FincaSerializerRel 
+
+
+@api_view(['POST'])
+def create_user_with_info_user(request):
+    if request.method == 'POST':
+        serializer = CreateUserWithInfoUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()  # Esto debería manejar la creación del usuario y la información adicional (InfoUser) automáticamente
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+def edit_info_user(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+        info_user = InfoUser.objects.get(usuario=user)
+    except User.DoesNotExist:
+        return Response({"message": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    except InfoUser.DoesNotExist:
+        return Response({"message": "InfoUser no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        serializer = EditInfoUserSerializer(info_user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_all_info_users(request):
+    if request.method == 'GET':
+        # Obtén todos los objetos InfoUser
+        info_users = InfoUser.objects.all()
+
+        # Serializa los objetos InfoUser en formato JSON
+        info_users_data = []
+        for info_user in info_users:
+            user = info_user.usuario  # Obtén el objeto User relacionado
+            groups = Group.objects.filter(user=user)  # Obtén los grupos a los que pertenece el usuario
+
+            user_data = {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'groups': [group.name for group in groups]  # Lista de nombres de grupos
+            }
+
+            info_users_data.append({
+                'telefono': info_user.telefono,
+                'direccion': info_user.direccion,
+                'tipo_documento': info_user.tipo_documento,
+                'numero_documento': info_user.numero_documento,
+                'usuario': user_data,
+            })
+
+        return Response(info_users_data, content_type='application/json', status=status.HTTP_200_OK)
