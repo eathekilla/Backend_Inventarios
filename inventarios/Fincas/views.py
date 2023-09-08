@@ -104,9 +104,13 @@ class FincaRelListCreateView(generics.ListCreateAPIView):
 @api_view(['POST'])
 def create_user_with_info_user(request):
     if request.method == 'POST':
+        username = request.data.get('username')
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "USER_EXIST", "message": "El nombre de usuario ya existe"}, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = CreateUserWithInfoUserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()  # Esto debería manejar la creación del usuario y la información adicional (InfoUser) automáticamente
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
