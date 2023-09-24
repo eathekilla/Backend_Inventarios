@@ -115,7 +115,7 @@ def create_user_with_info_user(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['PUT'])
+#@api_view(['PUT'])
 def edit_info_user(request, user_id):
     try:
         user = User.objects.get(pk=user_id)
@@ -138,6 +138,7 @@ def get_all_info_users(request):
     if request.method == 'GET':
         # Obtén todos los objetos InfoUser
         info_users = InfoUser.objects.all()
+        first= InfoUser.objects.first()
 
         # Serializa los objetos InfoUser en formato JSON
         info_users_data = []
@@ -146,6 +147,8 @@ def get_all_info_users(request):
             groups = Group.objects.filter(user=user)  # Obtén los grupos a los que pertenece el usuario
 
             user_data = {
+                'nombre':user.first_name,
+                'apellido':user.last_name,
                 'id': user.id,
                 'username': user.username,
                 'email': user.email,
@@ -161,3 +164,5 @@ def get_all_info_users(request):
             })
 
         return Response(info_users_data, content_type='application/json', status=status.HTTP_200_OK)
+
+

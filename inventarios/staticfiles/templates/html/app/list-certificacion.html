@@ -1,0 +1,51 @@
+{% extends "./todo.html" %}
+{% load static %}
+{% block body %}
+
+
+<div class="col-lg-12">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-3">Listado de Certificaciones</h4>
+            <p class="mb-0">  </p>
+        </div>
+        <a href="{% url 'add_certificacion' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Certificación</a>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="table-responsive rounded mb-3">
+    <table class="data-table table mb-0 tbl-server-info">
+        <thead class="bg-white text-uppercase">
+            <tr class="ligth ligth-data">
+                <th>Registro ICA</th>
+                <th>Fecha de Carencia</th>
+                <th>Fecha de Ingreso</th>
+                <th>Ingrediente Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="ligth-body">
+            <tr>
+                <td>Cert. 645ASD-ICA</td>
+                <td>19/09/2024</td>
+                <td>19/06/2023</td>
+                <td>Info. Ingrediente Activo</td>
+                <td>
+                    <div class="d-flex align-items-center list-action">
+                        <a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"
+                            href="#"><i class="ri-eye-line mr-0"></i></a>
+                        <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"
+                            href="#"><i class="ri-pencil-line mr-0"></i></a>
+                        <a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"
+                            href="#"><i class="ri-delete-bin-line mr-0"></i></a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+
+
+
+{% endblock %}

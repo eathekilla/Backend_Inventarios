@@ -1,0 +1,68 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                <h4 class="card-title">Añadir Insumos</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="page-list-users.html" data-toggle="validator">
+                <div class="row"> 
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Nombre *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese el Nombre del Insumo" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Codigo Contable *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese Apellidos" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Unidad de Medida * </label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0">
+                                <option>Kg</option>
+                                <!--Acá va un script con base de datos de unidades de medida, standard-->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Certificación * </label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0">
+                                <option>Info de Certificación 1</option>
+                                <option>Info de Certificación 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Grupo de Insumos * </label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0">
+                                <option>Agroquimicos</option>
+                                <option>Corrosivos</option>
+                            </select>
+                        </div>
+                    </div>              
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">Crear Insumo</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
