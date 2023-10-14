@@ -165,7 +165,7 @@ sup {
   top: -.5em; }
 
 a {
-  color: #32BDEA;
+  color: #ffffff;
   text-decoration: none;
   background-color: transparent; }
   a:hover {
@@ -7077,7 +7077,7 @@ a.text-light-gray:hover, a.text-light-gray:focus {
   top: 0;
   width: 260px;
   height: 100%;
-  background: #ffffff;
+  background: #0c1e23;
   -webkit-transition: all 0.6s ease-in-out;
   -moz-transition: all 0.6s ease-in-out;
   -ms-transition: all 0.6s ease-in-out;
@@ -7126,7 +7126,7 @@ a.text-light-gray:hover, a.text-light-gray:focus {
         font-size: 16px;
         white-space: nowrap;
         display: block;
-        color: #676E8A;
+        color: #ffffff;
         position: relative;
         padding: 15px 20px 15px 20px;
         margin-bottom: 5px;
@@ -7186,7 +7186,7 @@ a.text-light-gray:hover, a.text-light-gray:focus {
             height: 8px;
             width: 8px;
             border-radius: 50%;
-            background: #676E8A;
+            background: #fff;
             position: absolute;
             top: 6px;
             left: 0; }
@@ -7214,23 +7214,23 @@ a.text-light-gray:hover, a.text-light-gray:focus {
   border-radius: unset; }
 
 .sidebar-default .iq-sidebar-menu .iq-menu li a:hover {
-  color: #01041b; }
+  color: #959595; }
   .sidebar-default .iq-sidebar-menu .iq-menu li a:hover svg {
-    color: #FF7E41; }
+    color: #959595; }
 
 .sidebar-default .iq-sidebar-menu .iq-menu li a[aria-expanded="true"] {
-  color: #FF7E41;
+  color: #959595;
   text-decoration: none;
   transition: none; }
   .sidebar-default .iq-sidebar-menu .iq-menu li a[aria-expanded="true"] i.iq-arrow-left {
-    color: #FF7E41; }
+    color: #959595; }
 
 .sidebar-default .iq-sidebar-menu .iq-menu li .iq-submenu li a:hover {
   background: transparent;
-  color: #01041b; }
+  color: #959595; }
 
 .sidebar-default .iq-sidebar-menu .iq-menu li ul a:hover {
-  color: #32BDEA;
+  color: #959595;
   text-decoration: none;
   background: transparent; }
 
@@ -7596,7 +7596,8 @@ a.text-light-gray:hover, a.text-light-gray:focus {
     opacity: 1; } }
 
 .iq-top-navbar {
-  background: #fff;
+  border-color: rgb(51, 153, 102);
+  background-color: rgb(51, 153, 102);
   padding: 0 30px 0 30px;
   min-height: 73px;
   position: fixed;
@@ -9067,8 +9068,8 @@ fieldset:disabled a.btn {
 
 .btn-primary {
   color: #fff;
-  background-color: #32BDEA;
-  border-color: #32BDEA;
+  background-color: #0c1e23;
+  border-color: #0c1e23;
   box-shadow: unset; }
   .btn-primary:hover {
     color: #fff;
@@ -9081,8 +9082,8 @@ fieldset:disabled a.btn {
     box-shadow: unset, 0 0 0 0.2rem rgba(81, 199, 237, 0.5); }
   .btn-primary.disabled, .btn-primary:disabled {
     color: #fff;
-    background-color: #32BDEA;
-    border-color: #32BDEA; }
+    background-color: #0c1e23;
+    border-color: #0c1e23; }
   .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
   .show > .btn-primary.dropdown-toggle {
     color: #fff;
@@ -9202,8 +9203,8 @@ fieldset:disabled a.btn {
 
 .btn-danger {
   color: #fff;
-  background-color: #E08DB4;
-  border-color: #E08DB4;
+  background-color: rgb(51, 153, 102);
+  border-color: rgb(51, 153, 102);
   box-shadow: unset; }
   .btn-danger:hover {
     color: #fff;
@@ -15620,7 +15621,7 @@ fieldset[disabled] .btn {
   z-index: 999999; }
 
 #loading-center {
-  background: url(../images/loader.gif) no-repeat scroll center center;
+  background: url(../images/logoanimadoottsa.gif) no-repeat scroll center center;
   background-size: 20%;
   width: 100%;
   height: 100%;
@@ -16892,7 +16893,7 @@ fieldset[disabled] .btn {
   z-index: 999999; }
 
 #loading-center {
-  background: url(../images/loader.gif) no-repeat scroll center center;
+  background: url(../images/logoanimadoottsa.gif) no-repeat scroll center center;
   background-size: 20%;
   width: 100%;
   height: 100%;

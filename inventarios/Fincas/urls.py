@@ -25,6 +25,7 @@ urlpatterns = [
 	path('finca/retrieve/<int:pk>/',views.FincaRetrieveUpdateDeleteView.as_view(), name='fincas-retretive'),
     path('info/create/', views.create_user_with_info_user, name='userinfo'),
     path('info/edit/<int:pk>/', views.edit_info_user, name='edit-info-user'),
+    path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
     path('info/all/', views.get_all_info_users, name='userinfo'),
     
 ]

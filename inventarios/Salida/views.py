@@ -48,3 +48,13 @@ class SalidaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = (SessionAuthentication,)
     queryset = Salida.objects.all()
     serializer_class = SalidaSerializer
+
+
+class SalidaCreateAPIView(generics.CreateAPIView):
+    queryset = Salida.objects.all()
+    serializer_class = SalidaSerializer
+
+class SalidaListAPIView(generics.ListAPIView):
+    queryset = Salida.objects.all()
+    serializer_class = SalidaSerializer
+

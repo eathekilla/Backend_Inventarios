@@ -3,43 +3,65 @@ from Fincas.models import Finca
 from Insumo.models import Insumo, Grupo
 from Entrada.models import Entrada
 from datetime import datetime
+from django.core.exceptions import ValidationError
+from django.db.models import Sum
+
 class Salida(models.Model):
-    fecha_ingreso = models.DateTimeField(default=datetime.now())
-    de_bodega = models.ForeignKey(Finca,related_name='salidas_de_bodega', on_delete=models.CASCADE,null=True)
-    a_bodega = models.ForeignKey(Finca,related_name='entrada_a_bodega', on_delete=models.CASCADE,null=True)
+    fecha_salida = models.DateTimeField(default=datetime.now())
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE)
     cantidad = models.FloatField(default=0)
-    valor_unitario_salida = models.FloatField(default=0)
-    valor_unitario_entrada = models.FloatField(default=0)
-    grupo = models.ForeignKey(Grupo,related_name='grupo_insumo_salida', on_delete=models.CASCADE,null=True )
+    valor_total_salida = models.FloatField(default=0)
+    #grupo = models.ForeignKey(Grupo,related_name='grupo_insumo_salida', on_delete=models.CASCADE,null=True )
 
     def __str__(self):
-        return f"Salida - {self.fecha_ingreso} - {self.insumo.nombre}"
+        return f"Salida - {self.fecha_salida} - {self.insumo.nombre}"
     
     def save(self, *args, **kwargs):
-        insumo_filter = self.insumo
-        cantidad_salida = self.cantidad
-        total_entradas = Entrada.objects.all()
+        # Creamos una variable para determinar si es una nueva instancia
+        es_nueva_instancia = not self.pk
 
-        entradas = Entrada.objects.filter(insumo=insumo_filter).order_by('fecha_creacion')
+        # Guardar primero la instancia para tener un ID (si es una nueva instancia)
+        super(Salida, self).save(*args, **kwargs)
 
-        cantidad_disponible_total = sum(entrada.cantidad for entrada in entradas)
+        if es_nueva_instancia:  # Estamos creando una nueva salida
+            cantidad_pendiente = self.cantidad
 
-        if cantidad_salida > cantidad_disponible_total:
-            raise ValueError("La cantidad de salida es mayor a la cantidad disponible.")
+            # Consulta las entradas más antiguas de este insumo
+            entradas = Entrada.objects.filter(insumo=self.insumo).order_by('fecha_creacion')
+            suma_total = entradas.aggregate(total_unidades=Sum('cantidad'))
+            total_unidades = suma_total['total_unidades'] 
+            # Si aún queda cantidad pendiente después de considerar todas las entradas
+            if cantidad_pendiente > total_unidades:
+                raise ValidationError(f"No hay suficiente stock para el insumo {self.insumo}. Falta: {cantidad_pendiente} unidades.")
+            
+            valor_total = 0
+            for entrada in entradas:
+                if entrada.cantidad >= cantidad_pendiente:  # La entrada cubre la cantidad pendiente
+                    valor_total += cantidad_pendiente * entrada.valor_unitario_entrada_a
+                    relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=cantidad_pendiente, precio_unitario=entrada.valor_unitario_entrada_a)
+                    relacion.save()
+                    entrada.cantidad -= cantidad_pendiente
+                    entrada.save()
+                    break  # Hemos cubierto la cantidad necesaria con las entradas
+                else:  # La entrada no cubre toda la cantidad pendiente
+                    valor_total += entrada.cantidad * entrada.valor_unitario_entrada_a
+                    relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=entrada.cantidad, precio_unitario=entrada.valor_unitario_entrada_a)
+                    relacion.save()
+                    cantidad_pendiente -= entrada.cantidad
+                    entrada.cantidad = 0
+                    entrada.save()
 
-        for entrada in entradas:
-            cantidad_disponible = entrada.cantidad
-            if cantidad_salida >= cantidad_disponible:
-                cantidad_salida -= cantidad_disponible
-                entrada_copy = entrada  # Hacer una copia de la entrada antes de modificarla
-                entrada_copy.id = None  # Crear una nueva entrada con la copia
-                entrada_copy.cantidad = 0  # Establecer la cantidad en cero en la copia
-                entrada_copy.fecha_ingreso = entrada.fecha_ingreso
-                entrada_copy.save()
-            else:
-                entrada.cantidad = cantidad_disponible - cantidad_salida
-                entrada.save()
-                break
+           
 
-        super().save(*args, **kwargs)
+            self.valor_total_salida = valor_total
+            super(Salida, self).save(update_fields=['valor_total_salida'])  # Actualizar solo el campo valor_total_salida
+
+
+class SalidaEntradaRelacion(models.Model):
+    salida = models.ForeignKey(Salida, on_delete=models.CASCADE)
+    entrada = models.ForeignKey(Entrada, on_delete=models.CASCADE)
+    cantidad_usada = models.FloatField()
+    precio_unitario = models.FloatField()
+
+    def __str__(self):
+        return f"Salida {self.salida.id} - Entrada {self.entrada.id}"

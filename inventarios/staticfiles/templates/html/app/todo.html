@@ -5,13 +5,13 @@
   <head>
     <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>POS Dash | Responsive Bootstrap 4 Admin Dashboard Template</title>
+      <title>Ottsa | Inventarios</title>
       
       <!-- Favicon  -->
       <!--<link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">-->
       <link rel="shortcut icon" href="{% static '/assets/images/logo_ottsa.svg' %}" />
       <link rel="stylesheet" href="{% static '/assets/css/backend-plugin.min.css' %}">
-      <link rel="stylesheet" href="{% static '/assets/css/backend.css?v=1.0.0' %}">
+      <link rel="stylesheet" href="{% static '/assets/css/backend.css' %}">
       <link rel="stylesheet" href="{% static '/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}">
       <link rel="stylesheet" href="{% static '/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
       <link rel="stylesheet" href="{% static '/assets/vendor/remixicon/fonts/remixicon.css' %}">  </head>
@@ -69,7 +69,7 @@
                         </ul>
                     </li>
                       <li class=" ">
-                          <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                          <a href="#proveedores" class="collapsed" data-toggle="collapse" aria-expanded="false">
                               <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                               </svg>
@@ -78,7 +78,7 @@
                                   <polyline points="10 15 15 20 20 15"></polyline><path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                               </svg>
                           </a>
-                          <ul id="category" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                          <ul id="proveedores" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                                   <li class="">
                                           <a href="{% url 'list_proveedor' %}">
                                               <i class="las la-minus"></i><span>Listado de Proveedores</span>
@@ -92,7 +92,7 @@
                           </ul>
                       </li>
                       <li class=" ">
-                          <a href="#sale" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                          <a href="#insumos" class="collapsed" data-toggle="collapse" aria-expanded="false">
                               <svg class="svg-icon" id="p-dash4" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                   <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                               </svg>
@@ -101,7 +101,7 @@
                                   <polyline points="10 15 15 20 20 15"></polyline><path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                               </svg>
                           </a>
-                        <ul id="sale" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        <ul id="insumos" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                             <li class="">
                                 <a href="{% url 'add_insumo' %}">
                                     <i class="las la-minus"></i><span>Añadir Insumo</span>
@@ -127,8 +127,98 @@
                                     <i class="las la-minus"></i><span>Grupos de Insumos</span>
                                 </a>
                             </li>
+                            <li class="">
+                                <a href="{% url 'list_unidad' %}">
+                                    <i class="las la-minus"></i><span>Unidades de Medida</span>
+                                </a>
+                            </li>
                         </ul>
                       </li>
+                      <li class=" ">
+                        <a href="#entradas" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                            <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="ml-4">Entradas</span>
+                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="10 15 15 20 20 15"></polyline><path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
+                            </svg>
+                        </a>
+                        <ul id="entradas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                <li class="">
+                                        <a href="{% url 'list_entradas' %}">
+                                            <i class="las la-minus"></i><span>Listado de Entradas</span>
+                                        </a>
+                                </li>
+                                <li class="">
+                                        <a href="{% url 'add_entradas' %}">
+                                            <i class="las la-minus"></i><span>Añadir Entradas</span>
+                                        </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url 'inicialentrada' %}">
+                                        <i class="las la-minus"></i><span>Listado Estado Inicial de EntradasEntradas</span>
+                                    </a>
+                            </li>
+                            <li class="">
+                                <a href="{% url 'list_entradas' %}">
+                                    <i class="las la-minus"></i><span>Listado de Entradas por Insumo</span>
+                                </a>
+                        </li>
+                        </ul>
+                    </li>
+
+                    <li class=" ">
+                        <a href="#fincas" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                            <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="ml-4">Fincas</span>
+                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="10 15 15 20 20 15"></polyline><path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
+                            </svg>
+                        </a>
+                        <ul id="fincas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                <li class="">
+                                        <a href="{% url 'list_fincas' %}">
+                                            <i class="las la-minus"></i><span>Listado de Fincas</span>
+                                        </a>
+                                </li>
+                                <li class="">
+                                        <a href="{% url 'list_lotes' %}">
+                                            <i class="las la-minus"></i><span>Listado Lotes</span>
+                                        </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url 'list_bodegas' %}">
+                                        <i class="las la-minus"></i><span>Listado Bodegas</span>
+                                    </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class=" ">
+                        <a href="#salidas" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                            <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="ml-4">Salidas</span>
+                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="10 15 15 20 20 15"></polyline><path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
+                            </svg>
+                        </a>
+                        <ul id="salidas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                <li class="">
+                                        <a href="{% url 'list_salidas' %}">
+                                            <i class="las la-minus"></i><span>Listado de Salidas</span>
+                                        </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url 'add_salidas' %}">
+                                        <i class="las la-minus"></i><span>Añadir Salidas</span>
+                                    </a>
+                            </li>
+                        </ul>
+                    </li>
                       <!-- <li class=" ">
                           <a href="#purchase" class="collapsed" data-toggle="collapse" aria-expanded="false">
                               <svg class="svg-icon" id="p-dash5" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
@@ -595,16 +685,16 @@
                   <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                       <i class="ri-menu-line wrapper-menu"></i>
                       <a href="../backend/index.html" class="header-logo">
-                          <img src="{% static '/assets/images/logo.png' %}" class="img-fluid rounded-normal" alt="logo">
-                          <h5 class="logo-title ml-3">POSDash</h5>
+                          <img src="{% static '/assets/images/logo_ottsa.svg' %}" class="img-fluid rounded-normal" alt="logo">
+                          <h5 class="logo-title ml-3">Invetarios Ottsa</h5>
       
                       </a>
                   </div>
                   <div class="iq-search-bar device-search">
-                      <form action="#" class="searchbox">
+                      <!-- <form action="#" class="searchbox">
                           <a class="search-link" href="#"><i class="ri-search-line"></i></a>
                           <input type="text" class="text search-input" placeholder="Search here...">
-                      </form>
+                      </form> -->
                   </div>
                   <div class="d-flex align-items-center">
                       <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -614,7 +704,7 @@
                       </button>
                       <div class="collapse navbar-collapse" id="navbarSupportedContent">
                           <ul class="navbar-nav ml-auto navbar-list align-items-center">
-                              <li class="nav-item nav-icon dropdown">
+                              <!-- <li class="nav-item nav-icon dropdown">
                                   <a href="#" class="search-toggle dropdown-toggle btn border add-btn"
                                       id="dropdownMenuButton02" data-toggle="dropdown" aria-haspopup="true"
                                       aria-expanded="false">
@@ -642,11 +732,10 @@
                                           </div>
                                       </div>
                                   </div>
-                              </li>
+                              </li> -->
                               <li>
                                   <a href="#" class="btn border add-btn shadow-none mx-2 d-none d-md-block"
-                                      data-toggle="modal" data-target="#new-order"><i class="las la-plus mr-2"></i>New
-                                      Order</a>
+                                      data-toggle="modal" data-target="#new-order"><i class="las la-plus mr-2"></i>Nueva Salida</a>
                               </li>
                               <li class="nav-item nav-icon search-content">
                                   <a href="#" class="search-toggle rounded" id="dropdownSearch" data-toggle="dropdown"

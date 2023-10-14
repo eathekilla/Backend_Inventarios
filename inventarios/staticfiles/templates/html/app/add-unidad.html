@@ -1,0 +1,112 @@
+{% extends "./todo.html" %}
+{%load static%}
+
+{% block body %}
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+
+                <h4 class="card-title">Añadir Unidad de Medida</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="page-list-users.html" data-toggle="validator" id ="ingredienteform" name="ingredienteform">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nombre de la unidad de medida*</label>
+                            <input type="text" id="nombreUnidad" name="nombreUnidad" class="form-control"
+                                placeholder="Ingrese el Nombre de la unidad de medida" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">
+                    {% if ingrediente_id %}
+                    Actualizar
+                    {% else %}
+                    Crear
+                    {% endif %} Unidad de Medida</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        let unidad_id;
+        {% if unidad_id %}
+        unidad_id = parseInt("{{unidad_id}}");
+        {% else %}
+        unidad_id = null;
+        {%endif%}
+
+        if (unidad_id) {
+            // Si existe un user_id en la URL, estamos en modo de edición
+            fetch(`/insumos/editar/unidad/${unidad_id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    // Suponiendo que la respuesta contenga la información del ingrediente
+                    document.getElementById('nombreUnidad').value = data.nombre;
+                    // Puedes continuar con otros campos si existen...
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    });
+</script>
+
+<script>
+    document.getElementById('ingredienteform').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            nombre: document.getElementById('nombreUnidad').value,
+            // ... otros campos si los tienes
+        };
+
+        let unidad_id;
+        {% if unidad_id %}
+            unidad_id = parseInt("{{unidad_id}}");
+        {% else %}
+            unidad_id = null;
+        {% endif %}
+
+        const method = unidad_id ? 'PUT' : 'POST';
+        const url = unidad_id ? `/insumos/unidades-medida/retrieve/${unidad_id}/` : `/insumos/unidades-medida/list-create/`;
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La petición falló');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Operación exitosa!');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ha ocurrido un error. Por favor intente de nuevo.');
+        });
+    });
+</script>
+
+
+{% endblock %}

@@ -3,7 +3,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer,UserSerializerLogout,FincaSerializer,FincaBodegaLoteSerializer
-from .serializers import LotesSerializer, BodegasSerializer, FincaSerializer,FincaSerializerRel,UserDetailSerializer,EditInfoUserSerializer
+from .serializers import LotesSerializer, BodegasSerializer, FincaSerializer,FincaSerializerRel,UserDetailSerializer,EditInfoUserSerializer,EditeUserWithInfoUserSerializer
 from .models import Finca
 from rest_framework import status,permissions,generics
 from .models import Lotes, Bodegas, Finca,InfoUser
@@ -12,6 +12,8 @@ from .serializers import CreateUserWithInfoUserSerializer
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.contrib.auth.models import Group
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 
 
 
@@ -115,22 +117,54 @@ def create_user_with_info_user(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-#@api_view(['PUT'])
-def edit_info_user(request, user_id):
+@api_view(['GET','PUT'])
+def edit_info_user(request, pk):
     try:
-        user = User.objects.get(pk=user_id)
+        user = User.objects.get(pk=pk)
         info_user = InfoUser.objects.get(usuario=user)
     except User.DoesNotExist:
         return Response({"message": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
     except InfoUser.DoesNotExist:
         return Response({"message": "InfoUser no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
+    
     if request.method == 'PUT':
-        serializer = EditInfoUserSerializer(info_user, data=request.data)
+        serializer = EditeUserWithInfoUserSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.update()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'GET':
+        user = info_user.usuario  # Obtén el objeto User relacionado
+        groups = Group.objects.filter(user=user)  # Obtén los grupos a los que pertenece el usuario
+
+        user_data = {
+            'nombre':user.first_name,
+            'apellido':user.last_name,
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'groups': [group.name for group in groups]  # Lista de nombres de grupos
+        }
+
+        info_users_data ={
+            'telefono': info_user.telefono,
+            'direccion': info_user.direccion,
+            'tipo_documento': info_user.tipo_documento,
+            'numero_documento': info_user.numero_documento,
+            'usuario': user_data,
+        }
+        return Response(info_users_data, content_type='application/json', status=status.HTTP_200_OK)
+    return Response({"message": "InfoUser no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['DELETE'])
+def delete_user(request, user_id):
+    if request.method == 'DELETE':
+        user = get_object_or_404(User, pk=user_id)
+        user.delete()
+        return JsonResponse({'success': True, 'message': 'User and associated InfoUser deleted successfully.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 
 @api_view(['GET'])

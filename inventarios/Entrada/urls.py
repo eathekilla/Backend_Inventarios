@@ -4,6 +4,7 @@ from .views import EntradaListCreateView, EntradaRetrieveUpdateDeleteView, Inven
 urlpatterns = [
     path('list-create/', EntradaListCreateView.as_view(), name='entrada-list-create'),
     path('retrieve/<int:pk>/', EntradaRetrieveUpdateDeleteView.as_view(), name='entrada-retrieve-update-delete'),
+    path('retrieve/delete/<str:pk>/', EntradaRetrieveUpdateDeleteView.as_view(), name='entrada-retrieve-update-delete-ID'),
     path('inventario/historico/<int:insumo_id>/', InventarioHistoricoView.as_view(), name='inventario-historico'),
     path('inventario/estado-actual/', InventarioEstadoActualView.as_view(), name='inventario-estado-actual'),
     path('inventario/historico/', EntradaHistoricoView.as_view(), name='entrada-historico'),

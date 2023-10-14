@@ -10,19 +10,19 @@
             </div>
         </div>
         <div class="card-body">
-            <form action="page-list-users.html" data-toggle="validator">
+            <form action="page-list-users.html" data-toggle="validator" id="userform" name="userform">
                 <div class="row"> 
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label>Nombres *</label>
-                            <input id="nombres" type="text" class="form-control" placeholder="Ingrese Nombres" required>
+                            <input id="nombres" name="nombres" type="text" class="form-control" placeholder="Ingrese Nombres" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label>Apellidos *</label>
-                            <input id="apellidos" type="text" class="form-control" placeholder="Ingrese Apellidos" required>
+                            <input id="apellidos" name="apellidos" type="text" class="form-control" placeholder="Ingrese Apellidos" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
@@ -30,29 +30,30 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Email *</label>
-                            <input id="email" type="text" class="form-control" placeholder="Ingrese Email" required>
+                            <input id="email" name="email" type="text" class="form-control" placeholder="Ingrese Email" required>
+                            <input id="username" name="username" type="hidden" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Numero de Teléfono *</label>
-                            <input id="telefono" type="text" class="form-control" placeholder="Ingrese Numero de Teléfono" required>
+                            <input id="telefono" name="telefono" type="text" class="form-control" placeholder="Ingrese Numero de Teléfono" maxlength="12" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Direccion *</label>
-                            <input id="direccion" type="text" class="form-control" placeholder="Ingrese Direccion" required>
+                            <input id="direccion" name="direccion" type="text" class="form-control" placeholder="Ingrese Direccion" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div> 
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Tipo de Documento</label>
-                            <select id="tipodoc" name="type" class="selectpicker form-control" data-style="py-0">
-                                <option value="CC">Cédula de Ciudadanía</option>
+                            <select id="tipodoc" name="tipodoc" class="selectpicker form-control" data-style="py-0">
+                                <option value="CC" selected >Cédula de Ciudadanía</option>
                                 <option value="CE">Cédula de Extanjería</option>
                                 <option value="pasaporte">Pasaporte</option>
                             </select>
@@ -61,43 +62,47 @@
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label>Documento *</label>
-                            <input id=documento type="text" class="form-control" placeholder="Ingrese Documento" required>
+                            <input id=documento name=documento type="text" class="form-control" placeholder="Ingrese Documento" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
+                    {% if userId %}
+
+                    {% else%}
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label>Contraseña *</label>
-                            <input id=contraseña type="text" class="form-control" placeholder="Ingrese Contraseña" required>
+                            <input id=password name=password type="password" class="form-control" placeholder="Ingrese Contraseña" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>  
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label>Confirm Password *</label>
-                            <input id=contraseña type="text" class="form-control" placeholder="Ingrese Contraseña" required>
+                            <input type="password" class="form-control" placeholder="Ingrese Contraseña" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div> 
+                    {% endif %}
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Permisos de Usuario *</label>
                             <br>
                             <div class="checkbox d-inline-block mr-3">
-                                <input type="checkbox" class="checkbox-input" id="checkbox1" checked="" disabled="">
+                                <input type="checkbox" class="checkbox-input" data-value="1" id="checkbox1" checked="" disabled="">
                                 <label for="checkbox1">Consulta</label>
                             </div>
                             <div class="checkbox d-inline-block mr-3">
-                                <input type="checkbox" class="checkbox-input" id="checkbox2" checked="">
+                                <input type="checkbox" class="checkbox-input" data-value="2" id="checkbox2" checked="">
                                 <label for="checkbox2">Creación</label>
                             </div>
                             <div class="checkbox d-inline-block mr-3">
-                                <input type="checkbox" class="checkbox-input" id="checkbox3">
+                                <input type="checkbox" class="checkbox-input" data-value="3" id="checkbox3">
                                 <label for="checkbox3">Edición</label>
                             </div>
                             <div class="checkbox d-inline-block mr-3">
-                                <input type="checkbox" class="checkbox-input" id="checkbox4">
-                                <label for="checkbox4">Adminitracion</label>
+                                <input type="checkbox" class="checkbox-input" data-value="4" id="checkbox4">
+                                <label for="checkbox4">Administración</label>
                             </div>
                         </div>
                     </div>                              
@@ -107,28 +112,60 @@
             </form>
         </div>
     </div>
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body-aviso" style="text-align: center;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     {% if userId %}
     const userId = parseInt("{{userId}}");
+    {% else %}const userId = null;
     {% endif %}
 
     if (userId) {
         // Si existe un user_id en la URL, estamos en modo de edición
-        fetch(`/info/edit/${userId}/`, {
+        fetch(`/user/info/edit/${userId}/`, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
             }
         })
         .then(response => response.json())
         .then(data => {
+            console.log(data)
             // Aquí llenas el formulario con los datos del usuario
             document.getElementById('nombres').value = data.usuario.nombre;
             document.getElementById('apellidos').value = data.usuario.apellido;
+            document.getElementById('username').value = data.usuario.email;
             document.getElementById('email').value = data.usuario.email;
             document.getElementById('telefono').value = data.telefono;
             document.getElementById('direccion').value = data.direccion;
@@ -138,9 +175,83 @@
         })
         .catch(error => {
             console.error('Error:', error);
+            showAlertInModal('Hubo un error al intentar cargar los datos del usuario');
         });
     }
 });
+
+</script>
+
+<script>
+    document.getElementById('userform').addEventListener('submit', function (event) {
+        event.preventDefault();
+        document.getElementById('username').value = document.getElementById('email').value;
+
+        const groups = [];
+        const checkboxes = document.querySelectorAll('.checkbox-input');
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                groups.push(parseInt(checkbox.getAttribute('data-value')));
+            }
+        });
+
+        const selectElement = document.getElementById('tipodoc');
+        const selectedValue = selectElement.value;
+
+        const formData = {
+        username: document.getElementById('username').value,
+        {% if userId %}
+        {% else %}password: document.getElementById('password').value,
+        {% endif %}
+        email: document.getElementById('email').value,
+        groups: groups,
+        
+        info_user: {
+            telefono: document.getElementById('telefono').value,
+            direccion: document.getElementById('direccion').value,
+            tipo_documento: selectElement.value,
+            numero_documento: document.getElementById('documento').value,
+        }};
+
+        console.log(formData)
+
+
+        {% if userId %}
+        const userId = parseInt("{{userId}}");
+        {% else %}const userId = null;
+        {% endif %}
+
+        let method, url;
+        if (userId) {
+            // Edición
+            method = 'PUT';  // o 'PATCH', según tu API
+            url = `/user/info/edit/${userId}/`;
+            message = "Usuario Editado Correctamente";
+        } else {
+            // Creación
+            method = 'POST';
+            url = `/user/info/create/`;
+            message = "Usuario Creado Correctamente";
+        }
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                showAlertInModal(message);
+                document.getElementById('userform').reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlertInModal('Hubo un error al intentar cargar los datos del usuario');
+            });
+    });
 
 </script>
 

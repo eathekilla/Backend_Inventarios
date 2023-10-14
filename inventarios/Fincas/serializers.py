@@ -148,7 +148,26 @@ class CreateUserWithInfoUserSerializer(serializers.ModelSerializer):
         InfoUser.objects.create(usuario=user_obj, telefono=info_usuario['telefono'],direccion=info_usuario['direccion'],tipo_documento=info_usuario['tipo_documento'],numero_documento=info_usuario['numero_documento'])
         
         return user_obj
+
+class EditeUserWithInfoUserSerializer(serializers.ModelSerializer):
+    info_user = InfoUserSerializer()  # Serializador de InfoUser
     
+    class Meta:
+        model = User
+        fields = ('email','groups','info_user')
+    
+    def update(self, validated_data):
+        # Extrae los datos de info_user del validated_data
+        info_user_data = validated_data.pop('info_user')
+        user_obj = UserModel.objects.update_user(email=validated_data['email'], password=validated_data['password'],username = validated_data['email'])
+        user_obj.groups.set(validated_data['groups'])
+        user_obj.save()
+        
+        info_usuario = self.data['info_user']
+        # Crea un InfoUser relacionado con el usuario
+        InfoUser.objects.update(usuario=user_obj, telefono=info_usuario['telefono'],direccion=info_usuario['direccion'],tipo_documento=info_usuario['tipo_documento'],numero_documento=info_usuario['numero_documento'])
+        
+        return user_obj
 
 class InfoUserSerializerDetail(serializers.ModelSerializer):
     class Meta:
