@@ -20,9 +20,6 @@ class Salida(models.Model):
         # Creamos una variable para determinar si es una nueva instancia
         es_nueva_instancia = not self.pk
 
-        # Guardar primero la instancia para tener un ID (si es una nueva instancia)
-        super(Salida, self).save(*args, **kwargs)
-
         if es_nueva_instancia:  # Estamos creando una nueva salida
             cantidad_pendiente = self.cantidad
 
@@ -30,7 +27,7 @@ class Salida(models.Model):
             entradas = Entrada.objects.filter(insumo=self.insumo).order_by('fecha_creacion')
             suma_total = entradas.aggregate(total_unidades=Sum('cantidad'))
             total_unidades = suma_total['total_unidades'] 
-            if entradas.count()==0:
+            if entradas.count() == 0:
                 total_unidades = 0
             # Si aún queda cantidad pendiente después de considerar todas las entradas
             if cantidad_pendiente > total_unidades:
@@ -53,10 +50,11 @@ class Salida(models.Model):
                     entrada.cantidad = 0
                     entrada.save()
 
-           
-
             self.valor_total_salida = valor_total
-            super(Salida, self).save(update_fields=['valor_total_salida'])  # Actualizar solo el campo valor_total_salida
+
+        # Ahora, después de todas las verificaciones, guardamos la instancia.
+        super(Salida, self).save(*args, **kwargs)
+
 
 
 class SalidaEntradaRelacion(models.Model):

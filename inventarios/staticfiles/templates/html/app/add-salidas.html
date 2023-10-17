@@ -142,12 +142,18 @@
                 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
             }
         })
-        .then(response => response.json())
+            .then(response => response.json())
             .then(data => {
-                console.log(data)
+                if (data.error) {
+                    showAlertInModal(data.error);
+                } else {
+                    const actionMsg = salidas_id ? 'editada' : 'creada';
+                    showAlertInModal(`Salida ${actionMsg} exitosamente!`)
+                }
             })
-
-            .catch(error => {showAlertInModal('Error:'+ error)});
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+            });
     });
 
 </script>

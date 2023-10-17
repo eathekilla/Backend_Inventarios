@@ -9,6 +9,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db import models
 from itertools import groupby
+from django.utils import timezone
+from datetime import timedelta
+from django.http import JsonResponse
 
 class EntradaListCreateView(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -139,3 +142,13 @@ class EntradaPrimerHistoricoView(generics.ListAPIView):
         historial_ordenado = sorted(primeros_registros.values(), key=lambda entrada: entrada.history_date)
 
         return historial_ordenado
+    
+def entradas_proximas_a_vencer(request):
+    hoy = timezone.now()
+    limite = hoy + timedelta(days=10)
+    entradas = Entrada.objects.filter(fecha_vencimiento__range=(hoy, limite))
+    data = [{"fecha_creacion": e.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S'),
+             "fecha_vencimiento": e.fecha_vencimiento.strftime('%Y-%m-%d %H:%M:%S'),
+             "insumo": e.insumo.nombre,  # Asumiendo que el modelo Insumo tiene un campo llamado 'nombre'
+             "identificador": e.identificador} for e in entradas]
+    return JsonResponse(data, safe=False)
