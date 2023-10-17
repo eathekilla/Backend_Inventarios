@@ -35,7 +35,7 @@
                             
                             <label>Unidad de Medida * </label>
                             <select name="type" class="selectpicker form-control" data-style="py-0" id="unidad" name="unidad">
-                                {% for unidad in unidades_medida %}
+                                {%for unidad in unidades_medida%}
                                 <option value="{{ unidad.id }}" >{{ unidad.nombre }}</option>
                                 {% endfor%}
                                 <!--Acá va un script con base de datos de unidades de medida, standard-->
@@ -70,25 +70,6 @@
     </div>
 </div>
 
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body-aviso" style="text-align: center;">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -116,16 +97,6 @@
 
 </script>
 <script>
-    function showAlertInModal(message) {
-    // Establecer el mensaje en el cuerpo del modal
-    document.querySelector(".modal-body-aviso").textContent = message;
-    
-    // Mostrar el modal
-    $("#avisomodal").modal('show');
-}
-
-</script>
-<script>
     document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     {% if insumoId %}
@@ -142,7 +113,6 @@
         .then(data => {
             console.log(data);
             // Aquí llenas el formulario con los datos del proveedor
-            
             document.getElementById('nombre').value = data.nombre;
             document.getElementById('codigo').value = data.codigo_contable;
             document.getElementById('unidad').value = data.unidad_medida;
@@ -167,19 +137,14 @@
 <script>
     document.getElementById('insumoform').addEventListener('submit', function (event) {
         event.preventDefault();
-        var unidad_medida_select = document.getElementById('unidad');
-        var unidad_medida= unidad_medida_select.options[unidad_medida_select.selectedIndex].value;
-
-        var certificacion_select = document.getElementById('certificacion');
-        var certificacion= certificacion_select.options[certificacion_select.selectedIndex].value;
-
-
+        console.log(document.getElementById('unidad').value)
+        console.log(document.getElementById('certificacion').value)
 
         const formData = {
             nombre: document.getElementById('nombre').value,
             codigo_contable: document.getElementById('codigo').value,
-            unidad_medida:parseInt(unidad_medida),
-            certificacion: parseInt(certificacion)
+            unidad_medida:parseInt(document.getElementById('unidad').value),
+            certificacion: parseInt(document.getElementById('certificacion').value)
         };
         
     
@@ -208,25 +173,51 @@
             },
             body: JSON.stringify(formData)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-                showAlertInModal('Network response was not ok');
-            }
-            showAlertInModal('Insumo creado exitosamente');
-            document.getElementById("insumoform").reset();
-        })
+        .then(response => response.json())
         .then(data => {
+            // Aquí manejas la respuesta, como mostrar un mensaje de éxito o redirigir a otra página
         })
         .catch(error => {
             console.error('Error:', error);
-            showAlertInModal('Error al enviar la información');
         });
     });
     
 </script>
 
+<script>
+    $(document).ready(function () {
+    var $selectUnidad = $('#unidad'); // Obtiene el select por su ID
 
+    // Realizar una solicitud usando fetch a tu API
+    fetch('/insumos/unidades-medida/list-create/', {
+        headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        }
+    })
+    .then(response => {
+        // Comprobar si la respuesta es correcta
+        if (!response.ok) {
+            throw new Error('Error al obtener datos de la API');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Limpiar las opciones actuales, si las hay
+        $selectUnidad.empty();
+
+        data.forEach(unidad => {
+            let option = document.createElement('option');
+            option.value = unidad.nombre; 
+            option.text = unidad.nombre; 
+            $selectUnidad.append(option);
+        });
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+
+</script>
 
 
 

@@ -60,7 +60,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="selectUser">Usuarios *</label>
-                            <select id="selectUser" class="form-control" multiple>
+                            <select class="select selectpicker form-control" placeholder="Selecciona al menos un usuario" data-style="py-0"  multiple id="selectUser" name="selectUser">
                                 <option value="" disabled>Seleccione un User</option>
                                 {% for usuario in usuarios %}
                                     <option value="{{ usuario.id }}" 
@@ -71,9 +71,7 @@
                             </select>
                             
                         </div>
-                    </div>
-
-                    
+                    </div>                   
                     
                 </div>                            
                 <button type="submit" class="btn btn-primary mr-2">Crear Bodega</button>
@@ -82,6 +80,36 @@
         </div>
     </div>
 </div>
+
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
 
 
 <script>
@@ -196,12 +224,19 @@
         },
         body: JSON.stringify(payload)
     })
-    .then(response => response.json())
+    .then(response => {if (!response.ok) {
+        showAlertInModal('Error al guardar la Bodega.');
+    }
+    const actionMsg = bodegas_id ? 'editada' : 'creada';
+    showAlertInModal(`Bodega ${actionMsg} exitosamente!`);
+    document.getElementById("formularioBodega").reset()
+})
     .then(data => {
         console.log(data);
     })
     .catch(error => {
         console.error('Error:', error);
+        showAlertInModal('Error:'+ error)
     });
 }
 

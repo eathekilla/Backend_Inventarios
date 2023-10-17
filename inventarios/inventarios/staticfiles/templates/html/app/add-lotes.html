@@ -70,16 +70,44 @@
     </div>
 </div>
 
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
+
 
 <script>
     var estructura = {{ estructura | safe }};
 
 
     function precargarSelects() {
-        console.log("{{lotes_id}}")
         {% if lotes_id != Null %}
         const lotes_id = parseInt("{{lotes_id}}");
-        console.log("Si hay proveedor")
         var finca_preseleccionada = {{ finca_preseleccionada }};
         {% else %}
         const lotes_id = null;
@@ -93,7 +121,6 @@
     window.onload = function() {
             document.getElementById('formularioLotes').removeAttribute('novalidate');
             precargarSelects();
-            console.log(document.getElementById('formularioLotes').getAttribute('novalidate')); // Debería ser null si se eliminó correctamente
         }
     
 
@@ -101,14 +128,12 @@
 
 <script>
     document.getElementById('formularioLotes').addEventListener('submit', function (e) {
-        console.log("Evento submit capturado");
         e.preventDefault();
         enviarDatos();
     });
 
 
     function enviarDatos() {
-        console.log("Función enviarDatos llamada");
         var nombre_lote = document.getElementById('nombre_lotes').value;
         var ubicacion = document.getElementById('ubicacion').value;
         var hectareas = document.getElementById('hectareas').value;
@@ -139,12 +164,19 @@
         },
         body: JSON.stringify(payload)
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                showAlertInModal('Error al guardar el lote.');
+            }
+            const actionMsg = lotes_id ? 'editado' : 'creado';
+            showAlertInModal(`Lote ${actionMsg} exitosamente!`);
+            document.getElementById("formularioLotes").reset();
+        })
         .then(data => {
-            console.log(data);
         })
         .catch(error => {
             console.error('Error:', error);
+            showAlertInModal('Error:'+ error);
         });
 }
 

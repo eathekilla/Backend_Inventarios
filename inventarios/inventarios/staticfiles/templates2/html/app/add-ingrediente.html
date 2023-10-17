@@ -7,7 +7,7 @@
         <div class="card-header d-flex justify-content-between">
             <div class="header-title">
 
-                <h4 class="card-title">Añadir Unidad de Medida</h4>
+                <h4 class="card-title">Añadir Ingrediente Activo</h4>
             </div>
         </div>
         <div class="card-body">
@@ -15,9 +15,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Nombre de la unidad de medida*</label>
-                            <input type="text" id="nombreUnidad" name="nombreUnidad" class="form-control"
-                                placeholder="Ingrese el Nombre de la unidad de medida" required>
+                            <label>Nombre *</label>
+                            <input type="text" id="nombreIngrediente" name="nombreIngrediente" class="form-control"
+                                placeholder="Ingrese el Nombre del Ingrediente Activo" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
@@ -27,56 +27,26 @@
                     Actualizar
                     {% else %}
                     Crear
-                    {% endif %} Unidad de Medida</button>
+                    {% endif %} Ingrediente Activo</button>
                 <button type="reset" class="btn btn-danger">Limpiar</button>
             </form>
         </div>
     </div>
 </div>
 
-<!--Modal de Avisos-->
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body-aviso" style="text-align: center;">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function showAlertInModal(message) {
-        // Establecer el mensaje en el cuerpo del modal
-        document.querySelector(".modal-body-aviso").textContent = message;
-
-        // Mostrar el modal
-        $("#avisomodal").modal('show');
-    }
-</script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
-        let unidad_id;
-        {% if unidad_id %}
-        unidad_id = parseInt("{{unidad_id}}");
+        let ingrediente_id;
+        {% if ingrediente_id %}
+        ingrediente_id = parseInt("{{ingrediente_id}}");
         {% else %}
-        unidad_id = null;
+        ingrediente_id = null;
         {%endif%}
 
-        if (unidad_id) {
+        if (ingrediente_id) {
             // Si existe un user_id en la URL, estamos en modo de edición
-            fetch(`/insumos/editar/unidad/${unidad_id}/`, {
+            fetch(`/insumos/editar/ingrediente/${ingrediente_id}/`, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
                 }
@@ -85,7 +55,7 @@
                 .then(data => {
                     console.log(data)
                     // Suponiendo que la respuesta contenga la información del ingrediente
-                    document.getElementById('nombreUnidad').value = data.nombre;
+                    document.getElementById('nombreIngrediente').value = data.nombre;
                     // Puedes continuar con otros campos si existen...
                 })
                 .catch(error => {
@@ -100,19 +70,19 @@
         event.preventDefault();
 
         const formData = {
-            nombre: document.getElementById('nombreUnidad').value,
+            nombre: document.getElementById('nombreIngrediente').value,
             // ... otros campos si los tienes
         };
 
-        let unidad_id;
-        {% if unidad_id %}
-            unidad_id = parseInt("{{unidad_id}}");
+        let ingrediente_id;
+        {% if ingrediente_id %}
+            ingrediente_id = parseInt("{{ingrediente_id}}");
         {% else %}
-            unidad_id = null;
+            ingrediente_id = null;
         {% endif %}
 
-        const method = unidad_id ? 'PUT' : 'POST';
-        const url = unidad_id ? `/insumos/unidades-medida/retrieve/${unidad_id}/` : `/insumos/unidades-medida/list-create/`;
+        const method = ingrediente_id ? 'PUT' : 'POST';
+        const url = ingrediente_id ? `/insumos/ingredientes-activos/retrieve/${ingrediente_id}/` : `/insumos/ingredientes-activos/list-create/`;
 
         fetch(url, {
             method: method,
@@ -124,16 +94,16 @@
         })
         .then(response => {
             if (!response.ok) {
-                showAlertInModal('Error al guardar el Grupo.');
+                throw new Error('La petición falló');
             }
-            const actionMsg = unidad_id ? 'editado' : 'creado';
-            showAlertInModal(`Grupo ${actionMsg} exitosamente!`);
+            return response.json();
         })
         .then(data => {
+            alert('Operación exitosa!');
         })
         .catch(error => {
             console.error('Error:', error);
-            showAlertInModal('Ha ocurrido un error. Por favor intente de nuevo.');
+            alert('Ha ocurrido un error. Por favor intente de nuevo.');
         });
     });
 </script>

@@ -34,6 +34,25 @@
     </div>
 </div>
 
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
@@ -63,6 +82,18 @@
                 });
         }
     });
+</script>
+
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
 </script>
 
 <script>
@@ -99,11 +130,11 @@
             return response.json();
         })
         .then(data => {
-            alert('Operación exitosa!');
+            showAlertInModal('Ingrediente Activo Creado Exitosamente');
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Ha ocurrido un error. Por favor intente de nuevo.');
+            showAlertInModal('Ha ocurrido un error. Por favor intente de nuevo.');
         });
     });
 </script>

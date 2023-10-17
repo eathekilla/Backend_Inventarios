@@ -44,7 +44,10 @@
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label for="unidad_medida">Unidades de Medida *</label>
-                            <input id="unidad_medida" name="unidad_medida" class="form-control" Disabled>
+                            <select id="unidad_medida" name="unidad_medida" class="selectpicker form-control" data-style="py-0">
+                                {%for unidad in unidades_medida%}
+                                <option value="{{unidad.pk}}" selected >{{unidad.nombre}}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
@@ -183,22 +186,6 @@
         </div>
     </div>
 </div>
-
-
-<script>
-    document.getElementById('insumo').addEventListener('change', function() {
-    var insumoSeleccionado = this.value;
-
-    fetch(`/insumos/cantidad-total/${insumoSeleccionado}/`)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.unidad_medida)
-        document.getElementById('unidad_medida').value = data.unidad_medida;
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-</script>
 
 <script>
     {% if entradas_id %}

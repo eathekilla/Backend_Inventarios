@@ -78,35 +78,7 @@
         </div>
     </div>
 </div>
-<!--Modal de Avisos-->
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body-aviso" style="text-align: center;">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    function showAlertInModal(message) {
-        // Establecer el mensaje en el cuerpo del modal
-        document.querySelector(".modal-body-aviso").textContent = message;
-
-        // Mostrar el modal
-        $("#avisomodal").modal('show');
-    }
-</script>
     
 
 <script>
@@ -125,36 +97,28 @@
 </script>
 
 <script>
-    document.getElementById('insumoform').addEventListener('submit', function (e) {
-        e.preventDefault();
+    document.getElementById('insumoform').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-        {% if salidas_id %}
-        var salidas_id = "{{salidas_id}}"
-        {% else %}
-        var salidas_id = null
-        {% endif %}
-
-        var formData = new FormData(document.getElementById('insumoform'));
-        fetch('/salidas/crearsalida/', {
-            method: 'POST',
-            body: formData,
-            headers: {
+    var formData = new FormData(document.getElementById('insumoform'));
+    fetch('/salidas/crearsalida/', {
+        method: 'POST',
+        body: formData,
+        headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
             }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showAlertInModal(data.error);
-                } else {
-                    const actionMsg = salidas_id ? 'editada' : 'creada';
-                    showAlertInModal(`Salida ${actionMsg} exitosamente!`)
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-            });
-    });
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Salida creada con éxito');
+            location.reload(); // O redirige a otra página
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
 
 </script>
 
