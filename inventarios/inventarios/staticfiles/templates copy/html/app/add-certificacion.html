@@ -1,0 +1,212 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                {% if cert_id %}
+                <h4 class="card-title">Editar Certificación</h4>
+                {% else %}
+                <h4 class="card-title">Añadir Certificación</h4>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="page-list-users.html" data-toggle="validator" id="certform" name="certform">
+                <div class="row"> 
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Registro ICA *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese Registro ICA" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Periodo de Carencia *</label>
+                            <input type="date" class="form-control" placeholder="Ingrese Fecha de Carencia" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Fecha de Ingreso</label>
+                            <input type="date" class="form-control" placeholder="Ingrese Fecha de Ingreso" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Ingrediente Activo</label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0" id="ingrediente" name="ingrediente">
+                                {% for ingrediente in ingredientes %}
+                                <option value="{{ ingrediente.id }}" >{{ ingrediente.nombre }}</option>
+                                {% endfor%}
+                                <!--Acá va un script con base de datos de unidades de medida, standard-->
+                            </select>
+                        </div>
+                    </div>              
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">
+                    {% if cert_id %}
+                    Editar
+                    {% else %}
+                    Crear
+                    {% endif %}
+                </button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        let cert_id;
+        {% if cert_id %}
+        cert_id = parseInt("{{cert_id}}");
+        {% else %}
+        cert_id = null;
+        {%endif%}
+
+        // Función para llenar el dropdown de ingredientes activos
+        function fillIngredientesDropdown(selectedId) {
+            fetch('/insumos/ingredientes-activos/list-create/', {
+                headers: { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('ingrediente');
+                    select.innerHTML = '';  // Limpiar el dropdown.
+                    
+                    data.forEach(ingrediente => {
+                        const option = document.createElement('option');
+                        option.value = ingrediente.id;
+                        option.innerText = ingrediente.nombre;
+                        select.appendChild(option);
+                    });
+
+                    if (selectedId) {
+                        select.value = selectedId;  // Si hay un ID seleccionado, establecer en el dropdown
+                    }
+                });
+        }
+
+        // Si hay un cert_id, estamos en modo de edición
+        if (cert_id) {
+            fetch(`/insumos/editar/certificacion/${cert_id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Rellenar el formulario con los datos de la certificación
+                    document.querySelector('input[placeholder="Ingrese Registro ICA"]').value = data.registro_ica;
+                    document.querySelector('input[placeholder="Ingrese Fecha de Carencia"]').value = data.periodo_carencia.split('T')[0];
+                    document.querySelector('input[placeholder="Ingrese Fecha de Ingreso"]').value = data.fecha_registro.split('T')[0];
+
+                    // Llenar el dropdown de ingredientes y seleccionar el ingrediente activo de la certificación
+                    fillIngredientesDropdown(data.ingrediente_activo);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            // Estamos en modo de creación, solo llenamos el dropdown de ingredientes
+            fillIngredientesDropdown();
+        }
+
+        // Evento de envío del formulario
+        const form = document.querySelector('form[data-toggle="validator"]');
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();  // Prevenir el envío tradicional del formulario.
+
+            const registroICA = form.querySelector('input[placeholder="Ingrese Registro ICA"]').value;
+            const periodoCarencia = form.querySelector('input[placeholder="Ingrese Fecha de Carencia"]').value;
+            const fechaIngreso = form.querySelector('input[placeholder="Ingrese Fecha de Ingreso"]').value;
+            var ingredientes_select = document.getElementById('ingrediente');
+            var ingrediente= ingredientes_select.options[ingredientes_select.selectedIndex].value;
+            const ingredienteActivo = ingrediente;
+
+            const dataToSend = {
+                registro_ica: registroICA,
+                periodo_carencia: periodoCarencia + "T00:00:00Z",
+                periodo_reingreso: fechaIngreso + "T00:00:00Z",
+                fecha_registro: fechaIngreso.split('T')[0],  // Asumiendo que el formato es YYYY-MM-DD, solo toma la fecha.
+                ingrediente_activo: parseInt(ingredienteActivo, 10)  // Convertir a número.
+            };
+
+            // Si estamos en modo de edición, agregar el ID al objeto
+            if (cert_id) {
+                dataToSend.id = parseInt(cert_id, 10);
+            }
+
+            const apiEndpoint = cert_id
+                ? `/insumos/certificaciones/retrieve/${cert_id}/`  // Endpoint para edición
+                : '/insumos/certificaciones/list-create/';  // Endpoint para creación
+
+            const httpMethod = cert_id ? 'PUT' : 'POST';  // Método PUT para edición, POST para creación
+
+            fetch(apiEndpoint, {
+                method: httpMethod,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                },
+                body: JSON.stringify(dataToSend)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        showAlertInModal('Error al guardar la certificación.');
+                    }
+                    const actionMsg = cert_id ? 'editada' : 'creada';
+                        showAlertInModal(`Certificación ${actionMsg} exitosamente!`);
+                        document.getElementById("certform").reset();
+                })
+                .catch(error => {
+                    showAlertInModal('Hubo un error al enviar el formulario. Intenta nuevamente.');
+                });
+        });
+    });
+
+</script>
+
+
+
+
+
+{% endblock %}

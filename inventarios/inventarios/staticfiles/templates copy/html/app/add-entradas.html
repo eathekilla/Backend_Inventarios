@@ -1,0 +1,387 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                {% if entradas_id %}
+                <h4 class="card-title">Editar Entrada</h4>
+                {% else %}
+                <h4 class="card-title">Añadir Entrada</h4>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <form data-toggle="validator" id="insumoform" name="insumoform">
+                <div class="row"> 
+
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label for="fecha_vencimiento">Fecha de Vencimiento *</label>
+                            {% if entradas_id %}
+                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento" value="{{ entradas.fecha_vencimiento|date:'j \d\e F \d\e Y' }}">
+                            {% else %}
+                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento">
+                            {% endif %}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label for="insumo">Insumo *</label>
+                            <select id="insumo" name="insumo" class="selectpicker form-control" data-style="py-0">
+                                {%for insumo in insumos%}
+                                <option value="{{insumo.pk}}" selected >{{insumo.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label for="unidad_medida">Unidades de Medida *</label>
+                            <input id="unidad_medida" name="unidad_medida" class="form-control" Disabled>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad * </label>
+                            {% if entradas_id %}
+                            <input type="number" class="form-control" placeholder="Ingrese cantidad" required id="cantidad" name="cantidad">
+                            <script>
+                                var vlrcantidad = parseInt("{{ entradas.cantidad }}");
+                                document.getElementById('cantidad').value = vlrcantidad;
+                            </script>
+                            {% else %}
+                            <input type="number" class="form-control" placeholder="Ingrese cantidad" required id="cantidad" name="cantidad">
+                            {% endif %}
+                           
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="valor_unitario_entrada_a">Valor Unitario *</label>
+                            
+                            {% if entradas_id %}
+                            <input type="number" class="form-control" placeholder="Ingrese valor unitario" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a">
+                            {% else %}
+                            <input type="number" class="form-control" placeholder="Ingrese valor unitario" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a">
+                            {% endif %}
+                            <script>
+                                var vlrunitario = parseInt("{{ entradas.valor_unitario_entrada_a }}");
+                                document.getElementById('valor_unitario_entrada_a').value = vlrunitario;
+                            </script>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="total">Valor Total *</label>
+                            {% if entradas_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese valor total" required id="total" name="total" value="{{ entradas.total }}" disabled>
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese valor total" required id="total" name="total" disabled>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectFinca">Finca *</label>
+                            <select id="selectFinca" class="form-control">
+                                <option value="" disabled>Seleccione una Finca</option>
+                                {% for finca in estructura %}
+                                <option value="{{ finca.id }}" {% if forloop.counter0 == finca_preseleccionada %}selected{% endif %}>{{ finca.nombre_finca }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectLote">Lote *</label>
+                            <select id="selectLote" class="form-control">
+                                <option value="" disabled>Seleccione un Lote</option>
+                                <!-- Las opciones serán generadas por JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectBodega">Bodega *</label>
+                            <select id="selectBodega" class="form-control">
+                                <option value="" disabled>Seleccione una Bodega</option>
+                                <!-- Las opciones serán generadas por JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="numero_factura">Número de Factura *</label>
+                            {% if entradas_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Número de Factura" required id="numero_factura" name="numero_factura" value="{{ entradas.numero_factura }}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Número de Factura" required id="numero_factura" name="numero_factura">
+                            {% endif %}
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="proveedor">Proveedor *</label>
+                            <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0">
+                                {%for proveedor in proveedores%}
+                                <option value="{{proveedor.id}}" selected >{{proveedor.razon_social}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                
+                </div>
+                
+                
+                
+                <button type="submit" class="btn btn-primary mr-2">
+                    {% if entradas_id %}
+                    Editar Entrada
+                    {% else %}
+                    Añadir Entrada
+                    {% endif %}
+                </button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body-aviso" style="text-align: center;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('insumo').addEventListener('change', function() {
+    var insumoSeleccionado = this.value;
+
+    fetch(`/insumos/cantidad-total/${insumoSeleccionado}/`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.unidad_medida)
+        document.getElementById('unidad_medida').value = data.unidad_medida;
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+</script>
+
+<script>
+    {% if entradas_id %}
+    document.getElementById('unidad_medida').value = "{{entradas.unidad_id}}";
+    document.getElementById('proveedor').value = "{{entradas.proveedor_id}}";
+    
+    {% endif %}
+</script>
+
+<script>
+    {% if entradas_id %}
+    function recalculateTotal() {
+        var valunit = parseFloat(document.getElementById('valor_unitario_entrada_a').value) || 0; // Utilizo parseFloat en lugar de parseInt para permitir decimales
+        var cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
+        var total = valunit * cantidad;
+        document.getElementById('total').value = total;
+    }
+
+    // Añade event listeners a los campos que, cuando cambien, recalcularán el total
+    document.getElementById('valor_unitario_entrada_a').addEventListener('input', recalculateTotal);
+    document.getElementById('cantidad').addEventListener('input', recalculateTotal);
+
+    // También podrías añadir event listeners a otros campos si es necesario.
+    {% endif %}
+</script>
+
+
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
+
+
+<script>
+    var estructura = {{ estructura | safe }};
+
+    // Cálculo del valor total en función de la cantidad y el valor unitario.
+    function recalculateTotal() {
+        var valunit = parseFloat(document.getElementById('valor_unitario_entrada_a').value) || 0;
+        var cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
+        var total = valunit * cantidad;
+        document.getElementById('total').value = total;
+    }
+
+    function llenarLotesYBodegas() {
+        var fincaSeleccionada = estructura.find(f => f.id == document.getElementById('selectFinca').value);
+        var selectLote = document.getElementById('selectLote');
+        selectLote.innerHTML = '<option value="" disabled selected>Seleccione un Lote</option>';
+        fincaSeleccionada.lotes.forEach((lote) => {
+            selectLote.innerHTML += `<option value="${lote.id}">${lote.nombre_lote}</option>`;
+        });
+        selectLote.disabled = false;
+
+        //llenarBodegas();
+    }
+
+    function llenarBodegas() {
+        var fincaSeleccionada = estructura.find(f => f.id == document.getElementById('selectFinca').value);
+        console.log(document.getElementById('selectLote').value)
+        var loteSeleccionado = fincaSeleccionada.lotes.find(l => l.id == document.getElementById('selectLote').value);
+        var selectBodega = document.getElementById('selectBodega');
+        selectBodega.innerHTML = '<option value="" disabled selected>Seleccione una Bodega</option>';
+        loteSeleccionado.bodegas.forEach(bodega => {selectBodega.innerHTML += `<option value="${bodega.id}">${bodega.nombre_bodega}</option>`;});
+        selectBodega.disabled = false;
+    }
+
+    function precargarSelects() {
+
+        {% if entradas_id != Null %}
+            var finca_preseleccionada = "{{ finca_preseleccionada }}";
+            var lote_preseleccionado = "{{ lote_preseleccionado }}";
+            var bodega_preseleccionada = "{{ bodega_preseleccionada }}";
+            var insumo_preseleccionado = "{{insumo_preseleccionado}}"
+
+            document.getElementById('insumo').value = insumo_preseleccionado
+            document.getElementById('selectFinca').value = finca_preseleccionada;
+            llenarLotesYBodegas();
+            document.getElementById('selectLote').value = lote_preseleccionado;
+            llenarBodegas();
+            document.getElementById('selectBodega').value = bodega_preseleccionada;
+        {% else %}
+        const entradas_id = null;
+        {% endif %}
+
+    }
+
+    document.getElementById('selectFinca').addEventListener('change', llenarLotesYBodegas);
+    document.getElementById('selectLote').addEventListener('change', llenarBodegas);
+    document.getElementById('valor_unitario_entrada_a').addEventListener('input', recalculateTotal);
+    document.getElementById('cantidad').addEventListener('input', recalculateTotal);
+    
+    window.onload = function() {
+        precargarSelects();
+        document.getElementById('insumoform').removeAttribute('novalidate');
+        }
+
+</script>
+
+
+
+
+<script>
+    {% if entradas_id %}
+    function recalculateTotal2() {
+        var valunit = parseFloat(document.getElementById('valor_unitario_entrada_a').value) || 0; // Utilizo parseFloat en lugar de parseInt para permitir decimales
+        var cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
+        var total = valunit * cantidad;
+        document.getElementById('total').value = total;
+    }
+    recalculateTotal2()
+    {% endif %}
+</script>
+
+
+<script>
+    document.getElementById('insumoform').addEventListener('submit', function (e) {
+        e.preventDefault();
+        enviarDatos();
+    });
+    
+    function enviarDatos() {
+        var fecha_vencimiento = document.getElementById('fecha_vencimiento').value;
+        var cantidad = parseFloat(document.getElementById('cantidad').value);
+        var valor_unitario_entrada_a = parseFloat(document.getElementById('valor_unitario_entrada_a').value);
+        var numero_factura = document.getElementById('numero_factura').value;
+        var finca = parseInt(document.getElementById('selectFinca').value);
+        var insumo = parseInt(document.getElementById('insumo').value);
+        var proveedor = parseInt(document.getElementById('proveedor').value);
+    
+        var payload = {
+            fecha_vencimiento: fecha_vencimiento,
+            cantidad: cantidad,
+            valor_unitario_entrada_a: valor_unitario_entrada_a,
+            numero_factura: numero_factura,
+            factura: null, // si tienes un campo para este valor, debes agregarlo
+            finca: finca,
+            insumo: insumo,
+            proveedor: proveedor
+        };
+    
+        // Determinar si estamos en modo edición o creación
+        console.log("LISTO")
+        var isEditMode = {{ entradas_id|yesno:"true,false" }};
+        {% if entradas_id %}
+        var entradas_id = "{{ entradas.pk}}";
+        {% else %}
+        var entradas_id = null;
+        {% endif %}
+        
+        var url = isEditMode ? `/entradas/retrieve/${entradas_id}/` : '/entradas/list-create/';
+        var httpMethod = isEditMode ? 'PUT' : 'POST';
+    
+        fetch(url, {
+            method: httpMethod,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+                showAlertInModal('Network response was not ok');
+            }
+            showAlertInModal('Entrada creada exitosamente');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlertInModal('Error al enviar el formulario');
+        });
+    }
+    </script>
+    
+    
+
+
+
+
+{% endblock %}

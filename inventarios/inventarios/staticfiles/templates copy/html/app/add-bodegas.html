@@ -1,0 +1,251 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                <h4 class="card-title">Añadir Bodegas</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="formularioBodega" name="formularioBodega" data-toggle="validator" onsubmit="return manejarEnvio()">
+                <div class="row"> 
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="nombre_finca">Nombre de Finca *</label>
+                            {% if bodegas_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Número de la Bodega" required id="nombre_bodega" name="nombre_bodega" value="{{bodega_edit.nombre_bodega}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Nombre de la Bodega" required id="nombre_bodega" name="nombre_bodega">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ubicacion">Ubicación *</label>
+                            {% if bodegas_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Ubicación" required id="ubicacion" name="ubicacion" value="{{bodega_edit.ubicacion}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Ubicación" required id="ubicacion" name="ubicacion">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectFinca">Finca *</label>
+                            <select id="selectFinca" class="form-control">
+                                <option value="" disabled>Seleccione una Finca</option>
+                                {% for finca in estructura %}
+                                <option value="{{ finca.id }}" {% if forloop.counter0 == finca_preseleccionada %}selected{% endif %}>{{ finca.nombre_finca }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectLote">Lote *</label>
+                            <select id="selectLote" class="form-control">
+                                <option value="" disabled>Seleccione un Lote</option>
+                                <!-- Las opciones serán generadas por JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectUser">Usuarios *</label>
+                            <select class="select selectpicker form-control" placeholder="Selecciona al menos un usuario" data-style="py-0"  multiple id="selectUser" name="selectUser">
+                                <option value="" disabled>Seleccione un User</option>
+                                {% for usuario in usuarios %}
+                                    <option value="{{ usuario.id }}" 
+                                            {% if usuario.id in usuarios_preseleccionados %}selected{% endif %}>
+                                            {{ usuario.email }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+                    </div>                   
+                    
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">Crear Bodega</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
+
+
+<script>
+        var estructura = {{ estructura | safe }};
+
+        
+
+
+        function llenarLotesYBodegas() {
+            var fincaSeleccionada = estructura.find(f => f.id == document.getElementById('selectFinca').value);
+            var selectLote = document.getElementById('selectLote');
+            selectLote.innerHTML = '<option value="" disabled selected>Seleccione un Lote</option>'; // Resetear el select
+
+            fincaSeleccionada.lotes.forEach((lote) => {
+                const option = document.createElement('option');
+                option.value = lote.id;
+                option.textContent = lote.nombre_lote;
+                selectLote.appendChild(option);
+            });
+            selectLote.disabled = false; // Habilitar el select (en caso de que estuviera deshabilitado)
+        }
+
+
+    function llenarBodegas() {
+        var fincaSeleccionada = estructura.find(f => f.id == document.getElementById('selectFinca').value);
+        var loteSeleccionado = fincaSeleccionada.lotes.find(l => l.id == document.getElementById('selectLote').value);
+        var selectBodega = document.getElementById('selectBodega');
+        selectBodega.innerHTML = '<option value="" disabled selected>Seleccione una Bodega</option>';
+        loteSeleccionado.bodegas.forEach(bodega => {
+            selectBodega.innerHTML += `<option value="${bodega.id}">${bodega.nombre_bodega}</option>`;
+        });
+        selectBodega.disabled = false;
+    }
+
+    
+
+
+
+    function precargarSelects() {
+        console.log("{{bodegas_id}}")
+        {% if bodegas_id != Null %}
+        const bodegas_id = parseInt("{{bodegas_id}}");
+        console.log("Si hay proveedor")
+        if (bodegas_id >= 0) {
+            var finca_preseleccionada = {{ finca_preseleccionada }};
+            var lote_preseleccionado = {{ lote_preseleccionado }};
+            var usuariosPreseleccionados = {{ usuarios_preseleccionados }};
+
+            document.getElementById('selectFinca').value = finca_preseleccionada;
+            llenarLotesYBodegas();
+            document.getElementById('selectLote').value = lote_preseleccionado;
+
+            const selectUser = document.getElementById('selectUser');
+                for (let option of selectUser.options) {
+                    if (usuariosPreseleccionados.includes(parseInt(option.value))) {
+                        option.selected = true;
+                    }
+                }
+        }
+        {% else %}
+        const bodegas_id = -1;
+        {% endif %}
+        
+    }
+
+    document.getElementById('selectFinca').addEventListener('change', llenarLotesYBodegas);
+    llenarLotesYBodegas();
+    window.onload = precargarSelects;
+
+</script>
+
+<script>
+    document.getElementById('formularioBodega').addEventListener('submit', function (e) {
+        e.preventDefault();
+        enviarDatos();
+    });
+
+    function manejarEnvio() {
+        enviarDatos();
+        return false;
+    }
+
+
+    function enviarDatos() {
+    var nombre_bodega = document.getElementById('nombre_bodega').value;
+    var ubicacion = document.getElementById('ubicacion').value;
+    var lote = document.getElementById('selectLote').value;
+    var usuario = Array.from(document.getElementById('selectUser').selectedOptions).map(option => option.value);
+
+    var payload = {
+        nombre_bodega: nombre_bodega,
+        ubicacion: ubicacion,
+        lote: parseInt(lote),
+        usuario: usuario.map(Number)
+    };
+
+    // Determinar si estamos en modo edición o creación
+    var isEditMode = {{ bodegas_id|yesno:"true,false" }};
+    {% if bodegas_id %}
+    var bodegas_id = "{{bodegas_id}}"
+    {% else %}
+    var bodegas_id = null
+    {% endif %}
+    var url = isEditMode ? `/user/bodegas/retrieve/${bodegas_id}/` : '/user/bodegas/list-create/';
+    var httpMethod = isEditMode ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: httpMethod,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {if (!response.ok) {
+        showAlertInModal('Error al guardar la Bodega.');
+    }
+    const actionMsg = bodegas_id ? 'editada' : 'creada';
+    showAlertInModal(`Bodega ${actionMsg} exitosamente!`);
+    document.getElementById("formularioBodega").reset()
+})
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlertInModal('Error:'+ error)
+    });
+}
+
+
+
+
+</script>
+
+
+
+
+{% endblock %}

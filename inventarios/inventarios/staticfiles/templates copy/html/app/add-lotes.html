@@ -1,0 +1,192 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                <h4 class="card-title">Añadir Lote</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="formularioLotes" data-toggle="validator">
+                <div class="row"> 
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="nombre_finca">Nombre del Lote *</label>
+                            {% if lotes_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Número del Lote" required id="nombre_lotes" name="nombre_lotes" value="{{lote_edit.nombre_lote}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Nombre del Lote" required id="nombre_lotes" name="nombre_lotes">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ubicacion">Ubicación *</label>
+                            {% if lotes_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Ubicación" required id="ubicacion" name="ubicacion" value="{{lote_edit.ubicacion}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Ubicación" required id="ubicacion" name="ubicacion">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="hectareas">Hectareas *</label>
+                            {% if lotes_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese las Hectareas" required id="hectareas" name="hectareas" value="{{lote_edit.hectareas}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese las Hectareas" required id="hectareas" name="hectareas">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="selectFinca">Finca *</label>
+                            <select id="selectFinca" class="form-control">
+                                <option value="" disabled>Seleccione una Finca</option>
+                                {% for finca in fincas %}
+                                <option value="{{ finca.id }}">{{ finca.nombre_finca }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+                    </div>
+
+
+                    
+
+                    
+                    
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">Crear Lote</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
+
+
+<script>
+    var estructura = {{ estructura | safe }};
+
+
+    function precargarSelects() {
+        {% if lotes_id != Null %}
+        const lotes_id = parseInt("{{lotes_id}}");
+        var finca_preseleccionada = {{ finca_preseleccionada }};
+        {% else %}
+        const lotes_id = null;
+        var finca_preseleccionada = null;
+        {% endif %}
+        if (lotes_id !== null) {
+            document.getElementById('selectFinca').value = finca_preseleccionada;
+        }
+    }
+
+    window.onload = function() {
+            document.getElementById('formularioLotes').removeAttribute('novalidate');
+            precargarSelects();
+        }
+    
+
+</script>
+
+<script>
+    document.getElementById('formularioLotes').addEventListener('submit', function (e) {
+        e.preventDefault();
+        enviarDatos();
+    });
+
+
+    function enviarDatos() {
+        var nombre_lote = document.getElementById('nombre_lotes').value;
+        var ubicacion = document.getElementById('ubicacion').value;
+        var hectareas = document.getElementById('hectareas').value;
+        var finca = document.getElementById('selectFinca').value;
+
+        var payload = {
+            nombre_lote: nombre_lote,
+            ubicacion: ubicacion,
+            hectareas: parseFloat(hectareas),
+            finca: parseInt(finca)
+        };
+
+        // Determinar si estamos en modo edición o creación
+        var isEditMode = {{ lotes_id|yesno:"true,false" }};
+    {%if lotes_id %}
+    var lotes_id = {{ lotes_id }};
+    {% else %}
+    var lotes_id = null;
+    {% endif %}
+    var url = isEditMode ? `/user/lotes/retrieve/${lotes_id}/` : '/user/lotes/list-create/';
+    var httpMethod = isEditMode ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: httpMethod,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify(payload)
+    })
+        .then(response => {
+            if (!response.ok) {
+                showAlertInModal('Error al guardar el lote.');
+            }
+            const actionMsg = lotes_id ? 'editado' : 'creado';
+            showAlertInModal(`Lote ${actionMsg} exitosamente!`);
+            document.getElementById("formularioLotes").reset();
+        })
+        .then(data => {
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlertInModal('Error:'+ error);
+        });
+}
+
+
+
+
+
+</script>
+
+
+
+
+{% endblock %}

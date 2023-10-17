@@ -1,0 +1,192 @@
+{% extends "./todo.html" %}
+{% load static %}
+{% block body %}
+
+
+<div class="col-lg-12">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-3">Listado de Unidad de Medida</h4>
+        </div>
+        <a href="{% url 'add_unidad' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Unidad de Medida</a>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="table-responsive rounded mb-3">
+        <table class="data-table table mb-0 tbl-server-info">
+            <thead class="bg-white text-uppercase">
+                <tr class="ligth ligth-data">
+                    <th>Nombre de la unidad de medida</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="ligth-body">
+            <!-- El cuerpo de la tabla será llenado dinámicamente desde el JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% for unidad in unidades %}
+<div id="exampleModalCenteredScrollable{{ unidad.id }}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Unidad de Medida</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <b>Nombre del Unidad de Medida:</b> {{ unidad.nombre }}<br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/insumos/unidades-medida/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector(".ligth-body");
+                console.log(data)
+                data.forEach(unidad => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${unidad.nombre}</td>
+                <td>
+                    <div class="d-flex align-items-center list-action">
+                        <a class="badge badge-info mr-2" data-toggle="modal" data-placement="top" title="Información del unidad" href="#" data-target="#exampleModalCenteredScrollable${unidad.id}><i class="ri-eye-line mr-0"></i></a>
+                        <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="${unidad.id}"><i class="ri-pencil-line mr-0"></i></a>
+                        <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="${unidad.id}"><i class="ri-delete-bin-line mr-0"></i></a>
+                    </div>
+                </td>
+            `;
+                    tbody.appendChild(row);
+                });
+                $('[data-toggle="popover"]').popover();
+
+                $('[data-toggle="popover"]').on('show.bs.popover', function () {
+                    $('[data-toggle="popover"]').not(this).popover('hide');
+                });
+
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Event listener para editar Ingrediente Activo
+        document.body.addEventListener('click', function (event) {
+            if (event.target.closest('.edit-button')) {
+                const ingredientId = event.target.closest('.edit-button').getAttribute('data-id');
+                window.location.href = `/unidad/edit/${ingredientId}/`;
+            }
+        });
+
+        // Event listener para eliminar Ingrediente Activo
+        document.body.addEventListener('click', function (event) {
+            if (event.target.closest('.delete-button')) {
+                event.preventDefault();
+                const ingredientId = event.target.getAttribute('data-id');
+                const row = event.target.closest('tr');
+                deleteIngrediente(ingredientId, row);
+            }
+        });
+
+        // Event listener para ver Ingrediente Activo (Supongo que lo quieres)
+        document.body.addEventListener('click', function (event) {
+            if (event.target.closest('.view-button')) {
+                const ingredientId = event.target.closest('.view-button').getAttribute('data-id');
+                window.location.href = `/insumos/unidades-medida/retrieve/${ingredientId}/`;
+            }
+        });
+
+        // Función para eliminar Ingrediente Activo
+        function deleteIngrediente(ingredientId, row) {
+            fetch(`/insumos/unidades-medida/retrieve/${ingredientId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                }
+            })
+                .then(data => {
+                    if (data.status == 204) {
+                        row.remove();
+                        showAlertInModal('Ingrediente eliminado exitosamente.');
+                    } else {
+                        showAlertInModal('Hubo un error al eliminar el ingrediente.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Funciones de popover con jQuery
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover({
+                html: true,
+                trigger: 'click',
+                placement: 'top'
+            });
+
+            $('body').on('click', function (e) {
+                $('[data-toggle="popover"]').each(function () {
+                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                        $(this).popover('hide');
+                    }
+                });
+            });
+        });
+
+    });
+
+</script>
+
+{% endblock %}
