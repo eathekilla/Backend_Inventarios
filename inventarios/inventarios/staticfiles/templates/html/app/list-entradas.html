@@ -1,0 +1,234 @@
+{% extends "./todo.html" %}
+{% load static %}
+{% block body %}
+
+
+<div class="col-lg-12">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-3">Listado de Entradas</h4>
+            <p class="mb-0"> Listado de Entradas registrados en plataforma </p>
+        </div>
+        <a href="{% url 'add_entradas' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir</a>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="table-responsive rounded mb-3">
+        <table class="data-table table mb-0 tbl-server-info" id="suppliersTable">
+            <thead class="bg-white text-uppercase">
+                <tr class="ligth ligth-data">
+                    <th>Fecha de Ingreso</th>
+                    <th>Insumo</th>
+                    <th>Unidad de Medida</th>
+                    <th>Cantidad</th>
+                    <th>V/unitario</th>
+                    <th>Valor Total</th>
+                    <th>Vencimiento</th>   
+                    <th>Finca/Bodega</th>                                   
+                    <th>Numero Factura</th>
+                    <th>Proveedor</th>
+                    <th>Acciones</th>
+
+                </tr>
+            </thead>
+            <tbody class="ligth-body">
+                {% for entrada in entradas %}
+                <tr>
+                    <td>{{entrada.fecha_creacion|date:"j \d\e F \d\e Y" }}</td>
+                    <td>{{entrada.insumo}}</td>
+                    <td>{{entrada.unidad_medida}}</td>
+                    <td>{{entrada.cantidad}}</td>
+                    <td>{{entrada.valor_unitario_entrada_a}}</td>
+                    <td>{{entrada.total}}</td>
+                    <td>{{entrada.fecha_vencimiento|date:"j \d\e F \d\e Y" }}</td>
+                    <td>{{entrada.bodega}}</td>
+                    <td>{{entrada.numero_factura}}</td>
+                    <td>{{entrada.proveedor}}</td>
+
+                
+                    <td>
+                        <div class="d-flex align-items-center list-action">
+                            <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable"
+                                data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
+                            <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="{{entrada.pk}}"><i class="ri-pencil-line mr-0"></i></a>
+                            <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#"
+                                data-id="{{entrada.pk}}"><i class="ri-delete-bin-line mr-0"></i></a>
+                        </div>
+                    </td>
+                    <!--MOODAL-->
+                    <div id="exampleModalCenteredScrollable" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Entrada</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <b>Fecha de Ingreso: </b>{{entrada.fecha_creacion|date:"j \d\e F \d\e Y" }}<br>
+                                <b>Insumo: </b>{{entrada.insumo}}<br>
+                                <b>Unidad de Medida: </b> {{entrada.unidad_medida}}<br>
+                                <b>Cantidad: </b> {{entrada.cantidad}}<br>
+                                <b>V/unitario: </b> {{entrada.valor_unitario_entrada_a}}<br>
+                                <b>Valor Total: </b>{{entrada.total}}<br>
+                                <b>Vencimiento: </b>{{entrada.fecha_vencimiento|date:"j \d\e F \d\e Y" }}<br>  
+                                <b>Finca/Bodega: </b>{{entrada.bodega}}<br>                                  
+                                <b>Numero Factura: </b>{{entrada.numero_factura}}<br>
+                                <b>Proveedor: </b>{{entrada.proveedor}}<br>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+<!--                                 <button type="button" class="btn btn-primary">Save changes</button> -->
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+    </table>
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body-aviso" style="text-align: center;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+</div>
+
+
+
+<!--<script>
+    const accessToken = sessionStorage.getItem('accessToken');
+ 
+    fetch('/entradas/list-create/', {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('suppliersTable').querySelector('tbody');
+
+            // Limpiar el tbody por si hay datos previos
+            tableBody.innerHTML = '';
+            console.log(data)
+
+            data.entradas.forEach(entrada => {
+                const row = document.createElement('tr');
+
+
+               // Crear y agregar cada columna (td) al row
+                row.innerHTML = `
+                <td>${entrada.fecha_creacion}</td>
+                <td>${entrada.insumo}</td>
+                <td>Unidad de medida</td>
+                <td>${entrada.cantidad}</td>
+                <td>${entrada.valor_unitario_entrada_a}</td>
+                <td>Valor Total</td>
+                <td>${entrada.fecha_vencimiento}</td>
+                <td>${entrada.bodega}</td>
+                <td>${entrada.numero_factura}</td>  
+                <td>${entrada.proveedor}</td>
+
+                
+                <td>
+                    <div class="d-flex align-items-center list-action">
+                <a class="badge badge-info mr-2" data-toggle="popover" data-title="Información del Usuario" data-content="Representante Legal: ${entrada.representante_legal}<br>Razón Social: ${entrada.razon_social} <br>NIT: ${entrada.nit_cedula}<br>Departamento: ${entrada.departamento}<br>Municipio: ${entrada.municipio}" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
+                <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${entrada.id}"><i class="ri-pencil-line mr-0"></i></a>
+                <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${entrada.id}"><i class="ri-delete-bin-line mr-0"></i></a>
+            </div>
+                </td>`;
+
+                // Agregar el row al tbody
+                tableBody.appendChild(row);
+            });
+            $('[data-toggle="popover"]').popover();
+
+            $('[data-toggle="popover"]').on('show.bs.popover', function () {
+                $('[data-toggle="popover"]').not(this).popover('hide');
+            });
+
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>-->
+
+
+<!--Script de Edición-->
+<script>
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
+            const userId = event.target.closest(".edit-button").getAttribute("data-id");
+            window.location.href = `/add-entradas/edit/${userId}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
+        }
+    });
+</script>
+
+<!--Funciones para eliminar la información -->
+<script>
+    document.body.addEventListener('click', function(event) {
+    if (event.target.closest('.delete-button')) {
+        event.preventDefault();
+
+        // Identifica la fila que contiene el botón
+        const row = event.target.closest('tr');
+
+        // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
+        const userId = event.target.closest(".delete-button").getAttribute("data-id");
+        
+        console.log("Botón activo")
+        deleteUser(userId, row);
+    }
+});
+
+</script>
+
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
+
+<script>
+    function deleteUser(userId, row) {
+        fetch(`/entradas/retrieve/delete/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`}})
+            .then(data => {
+                if (data.status==204) {
+                    row.remove();
+                    showAlertInModal('Entrada eliminada exitosamente');
+                } else {
+                    showAlertInModal('Hubo un error al eliminar la entrada');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+
+</script>
+
+
+{% endblock %}

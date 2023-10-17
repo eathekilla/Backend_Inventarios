@@ -30,6 +30,8 @@ class Salida(models.Model):
             entradas = Entrada.objects.filter(insumo=self.insumo).order_by('fecha_creacion')
             suma_total = entradas.aggregate(total_unidades=Sum('cantidad'))
             total_unidades = suma_total['total_unidades'] 
+            if entradas.count()==0:
+                total_unidades = 0
             # Si aún queda cantidad pendiente después de considerar todas las entradas
             if cantidad_pendiente > total_unidades:
                 raise ValidationError(f"No hay suficiente stock para el insumo {self.insumo}. Falta: {cantidad_pendiente} unidades.")

@@ -51,6 +51,17 @@ class GrupoRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Grupo.objects.all()
     serializer_class = GrupoSerializer
 
+@api_view(['GET'])
+def consultar_insumos_grupo(request, grupo_id):
+    try:
+        grupo = Grupo.objects.get(pk=grupo_id)
+        insumos = grupo.insumos.all()
+        
+        insumos_data = [{"id": insumo.id, "nombre": insumo.nombre} for insumo in insumos]
+        
+        return JsonResponse({"success": True, "insumos": insumos_data})
+    except Grupo.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Grupo no encontrado"})
 
 @api_view(['GET','PUT'])
 def edit_info_proveedor(request, pk):

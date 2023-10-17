@@ -1,0 +1,36 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                <h4 class="card-title">Añadir Grupos de Insumos</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="page-list-users.html" data-toggle="validator">
+                <div class="row"> 
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Seleccione los insumos para añadir al grupo</label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0">
+                                <option>Info de Insumo 1</option>
+                                <option>Info de Insumo 2</option>
+                            </select>
+                        </div>
+                    </div> 
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">Crear Grupo de Insumo</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}

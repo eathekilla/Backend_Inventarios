@@ -6,6 +6,7 @@ from rest_framework import status,permissions
 from rest_framework.response import Response
 from Insumo.models import Insumo
 from Entrada.models import Entrada
+from django.core.exceptions import ValidationError
 
 class SalidaListCreateView(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -53,6 +54,13 @@ class SalidaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 class SalidaCreateAPIView(generics.CreateAPIView):
     queryset = Salida.objects.all()
     serializer_class = SalidaSerializer
+
+    def create(self, request, *args, **kwargs):
+        try:
+            return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)
+        except ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SalidaListAPIView(generics.ListAPIView):
     queryset = Salida.objects.all()

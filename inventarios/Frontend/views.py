@@ -62,30 +62,51 @@ def list_insumo(request):
     return render(request,"html/app/list-insumos.html",{"insumos":insumo_instance})
 
 def add_certificacion(request,cert_id=None):
+    ingredientes = IngredienteActivo.objects.all()
+    context = {"ingredientes":ingredientes}
+
     if cert_id:
         cert_instance = get_object_or_404(Certificacion,pk=cert_id)
-        return render(request,"html/app/add-certificacion.html",{'cert_id': cert_instance.pk})
+        context['cert_id'] = cert_instance.pk
+        return render(request,"html/app/add-certificacion.html",context)
     else:
-        return render(request,"html/app/add-certificacion.html")
+        return render(request,"html/app/add-certificacion.html",context)
     
 def list_certificacion(request):
-    return render(request,"html/app/list-certificacion.html")
+    certificaciones = Certificacion.objects.all()
+    
+    return render(request,"html/app/list-certificacion.html",{'certificaciones':certificaciones})
 
 def add_ingrediente(request,ingrediente_id=None):
-    
+    ingredientes = IngredienteActivo.objects.all()
+    context = {'ingredientes': ingredientes}
     if ingrediente_id:
         insumo_instance = get_object_or_404(IngredienteActivo,pk=ingrediente_id)
-        return render(request,"html/app/add-ingrediente.html",{'ingrediente_id': insumo_instance.pk})
+        context['insumo_instance'] = insumo_instance.pk
+        return render(request,"html/app/add-ingrediente.html",context)
     else:
-        return render(request,"html/app/add-ingrediente.html")
+        return render(request,"html/app/add-ingrediente.html",context)
     
 def list_ingrediente(request):
-    return render(request,"html/app/list-ingrediente.html")
+    ingredientes = IngredienteActivo.objects.all()
+    context = {'ingredientes': ingredientes}
+    return render(request,"html/app/list-ingrediente.html",context)
 
-def add_grupo(request):
-    return render(request,"html/app/add-grupos.html")
+def add_grupo(request,grupo_id=None):
+    insumos = Insumo.objects.all()
+    context = {"insumos":insumos}
+    if grupo_id:
+        grupo_instance = get_object_or_404(Grupo,pk=grupo_id)
+        context['grupo_id'] = grupo_instance.pk
+        context['grupo_instance'] = grupo_instance
+        context['insumos_grupo'] = list(grupo_instance.insumos.values_list("id",flat=True))
+        return render(request,"html/app/add-grupos.html",context)
+    return render(request,"html/app/add-grupos.html",context)
+
 def list_grupo(request):
-    return render(request,"html/app/list-grupos.html")
+    grupos = Grupo.objects.all()
+    context = {"grupos":grupos}
+    return render(request,"html/app/list-grupos.html",context)
 
 
 def add_unidad(request,unidad_id=None):
@@ -96,7 +117,9 @@ def add_unidad(request,unidad_id=None):
         return render(request,"html/app/add-unidad.html")
     
 def list_unidad(request):
-    return render(request,"html/app/list-unidad.html")
+    unidades = UnidadMedida.objects.all()
+    context = {"unidades":unidades}
+    return render(request,"html/app/list-unidad.html",context)
 
 
 def add_entradas(request,entradas_id=None):

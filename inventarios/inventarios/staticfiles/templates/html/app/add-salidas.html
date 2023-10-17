@@ -1,0 +1,126 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                {% if salidas_id %}
+                <h4 class="card-title">Editar Salida</h4>
+                {% else %}
+                <h4 class="card-title">Añadir Salida</h4>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <form data-toggle="validator" id="insumoform" name="insumoform">
+                <div class="row"> 
+
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label for="fecha_vencimiento">Fecha de Salida *</label>
+                            {% if salidas_id %}
+                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_salida" name="fecha_salida" value="{{ fecha_salida.fecha_ingreso|date:'j \d\e F \d\e Y' }}">
+                            {% else %}
+                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_salida" name="fecha_salida">
+                            {% endif %}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label for="insumo">Insumo *</label>
+                            <select id="insumo" name="insumo" class="selectpicker form-control" data-style="py-0">
+                                {%for insumo in insumos%}
+                                <option value="{{insumo.pk}}" selected >{{insumo.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label for="unidad_medida">Unidades de Medida *</label>
+                            <input id="unidad_medida" name="unidad_medida" class="form-control" Disabled>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad * </label>
+                            {% if salidas_id %}
+                            <input type="number" class="form-control" placeholder="Ingrese cantidad" required id="cantidad" name="cantidad">
+                            <script>
+                                var vlrcantidad = parseInt("{{ entradas.cantidad }}");
+                                document.getElementById('cantidad').value = vlrcantidad;
+                            </script>
+                            {% else %}
+                            <input type="number" class="form-control" placeholder="Ingrese cantidad" required id="cantidad" name="cantidad">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+                <button type="submit" class="btn btn-primary mr-2">
+                    {% if salidas_id %}
+                    Editar Salidas
+                    {% else %}
+                    Añadir Salidas
+                    {% endif %}
+                </button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+    
+
+<script>
+    document.getElementById('insumo').addEventListener('change', function() {
+    var insumoSeleccionado = this.value;
+
+    fetch(`/insumos/cantidad-total/${insumoSeleccionado}/`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.unidad_medida)
+        document.getElementById('unidad_medida').value = data.unidad_medida;
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+</script>
+
+<script>
+    document.getElementById('insumoform').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var formData = new FormData(document.getElementById('insumoform'));
+    fetch('/salidas/crearsalida/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Salida creada con éxito');
+            location.reload(); // O redirige a otra página
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+</script>
+
+
+{% endblock %}

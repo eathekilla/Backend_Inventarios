@@ -1,0 +1,226 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                {% if insumoId %}
+                <h4 class="card-title">Editar Insumo</h4>
+                {% else %}
+                <h4 class="card-title">Añadir Insumos</h4>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <form data-toggle="validator" id="insumoform" name="insumoform">
+                <div class="row"> 
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Nombre *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese el Nombre del Insumo" required id="nombre" name="nombre">
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Codigo Contable *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese Codigo Contable" required id="codigo" name="codigo">
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            
+                            <label>Unidad de Medida * </label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0" id="unidad" name="unidad">
+                                {%for unidad in unidades_medida%}
+                                <option value="{{ unidad.id }}" >{{ unidad.nombre }}</option>
+                                {% endfor%}
+                                <!--Acá va un script con base de datos de unidades de medida, standard-->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Certificación * </label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0" id="certificacion" name="certificacion">
+                                {%for certificacion in certificaciones%}
+                                <option value="{{ certificacion.id }}" >{{ certificacion.registro_ica }}</option>
+                                {% endfor%}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Grupo de Insumos * </label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0">
+                                
+                                <option>Agroquimicos</option>
+                                <option>Corrosivos</option>
+                            </select>
+                        </div>
+                    </div>              
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">Añadir Insumo</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/insumos/certificaciones/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('certificacion')
+                select.innerHTML = ''; 
+                data.forEach(item => {
+                    console.log(item.id)
+                    console.log(item.registro_ica)
+                    let option = document.createElement('option');
+                    option.value = item.id; // Asegúrate de cambiar 'id' por el campo correcto de tu data
+                    option.text = item.registro_ica; // Asegúrate de cambiar 'name' por el campo correcto de tu data
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    {% if insumoId %}
+    const insumoId = parseInt("{{insumoId}}");
+
+    if (insumoId) {
+        // Si existe un providerId, estamos en modo de edición
+        fetch(`/insumos/editar/${insumoId}/`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Aquí llenas el formulario con los datos del proveedor
+            document.getElementById('nombre').value = data.nombre;
+            document.getElementById('codigo').value = data.codigo_contable;
+            document.getElementById('unidad').value = data.unidad_medida;
+            document.getElementById('certificacion').value = data.certificacion;
+            
+            // ... Continua llenando los demás campos ...
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    {% else %}
+    const insumoId = null;
+    {% endif %}
+
+
+    
+});
+
+</script>
+
+<script>
+    document.getElementById('insumoform').addEventListener('submit', function (event) {
+        event.preventDefault();
+        console.log(document.getElementById('unidad').value)
+        console.log(document.getElementById('certificacion').value)
+
+        const formData = {
+            nombre: document.getElementById('nombre').value,
+            codigo_contable: document.getElementById('codigo').value,
+            unidad_medida:parseInt(document.getElementById('unidad').value),
+            certificacion: parseInt(document.getElementById('certificacion').value)
+        };
+        
+    
+        {% if insumoId %}
+        const insumoId = parseInt("{{insumoId}}");
+        {% else %}
+        const insumoId = null;
+        {% endif %}
+    
+        let method, url;
+        if (insumoId) {
+            // Edición
+            method = 'PUT';
+            url = `/api/provider/edit/${insumoId}/`;
+        } else {
+            // Creación
+            method = 'POST';
+            url = `/insumos/list-create/`;
+        }
+    
+        fetch(url, {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Aquí manejas la respuesta, como mostrar un mensaje de éxito o redirigir a otra página
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+    
+</script>
+
+<script>
+    $(document).ready(function () {
+    var $selectUnidad = $('#unidad'); // Obtiene el select por su ID
+
+    // Realizar una solicitud usando fetch a tu API
+    fetch('/insumos/unidades-medida/list-create/', {
+        headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        }
+    })
+    .then(response => {
+        // Comprobar si la respuesta es correcta
+        if (!response.ok) {
+            throw new Error('Error al obtener datos de la API');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Limpiar las opciones actuales, si las hay
+        $selectUnidad.empty();
+
+        data.forEach(unidad => {
+            let option = document.createElement('option');
+            option.value = unidad.nombre; 
+            option.text = unidad.nombre; 
+            $selectUnidad.append(option);
+        });
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+
+</script>
+
+
+
+
+
+{% endblock %}

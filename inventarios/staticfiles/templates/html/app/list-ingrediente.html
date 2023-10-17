@@ -27,6 +27,48 @@
     </div>
 </div>
 
+<!-- Modal -->
+{% for ingrediente in ingredientes %}
+<div id="exampleModalCenteredScrollable{{ ingrediente.id }}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Ingrediente Activo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <b>Nombre del Ingrediente Activo:</b> {{ ingrediente.nombre }}<br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         fetch('/insumos/ingredientes-activos/list-create/', {
@@ -45,7 +87,7 @@
                 <td>${ingrediente.nombre}</td>
                 <td>
                     <div class="d-flex align-items-center list-action">
-                        <a class="badge badge-info mr-2" data-toggle="popover" data-placement="top" title="Información del Ingrediente" href="#" data-content="Nombres del Ingrediente:${ingrediente.name}"><i class="ri-eye-line mr-0"></i></a>
+                        <a class="badge badge-info mr-2" data-toggle="modal" data-placement="top" title="Información del Ingrediente" href="#" data-content="Nombres del Ingrediente:${ingrediente.name}" data-target="#exampleModalCenteredScrollable${ingrediente.id}"><i class="ri-eye-line mr-0"></i></a>
                         <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="${ingrediente.id}"><i class="ri-pencil-line mr-0"></i></a>
                         <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="${ingrediente.id}"><i class="ri-delete-bin-line mr-0"></i></a>
                     </div>
@@ -65,6 +107,16 @@
                 console.error('Error:', error);
             });
     });
+</script>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
 </script>
 
 <script>
@@ -104,14 +156,12 @@
                     'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
                 }
             })
-                .then(response => response.json())
                 .then(data => {
-                    console.log(data)
-                    if (data.success) {
+                    if (data.status == 204) {
                         row.remove();
-                        alert('Ingrediente eliminado exitosamente.');
+                        showAlertInModal('Ingrediente Activo eliminado exitosamente');
                     } else {
-                        alert('Hubo un error al eliminar el ingrediente.');
+                        showAlertInModal('Hubo un error al eliminar el ingrediente activo');
                     }
                 })
                 .catch(error => {

@@ -1,0 +1,170 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                <h4 class="card-title">Añadir Certificación</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="page-list-users.html" data-toggle="validator">
+                <div class="row"> 
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Registro ICA *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese Registro ICA" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Periodo de Carencia *</label>
+                            <input type="date" class="form-control" placeholder="Ingrese Fecha de Carencia" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Fecha de Ingreso</label>
+                            <input type="date" class="form-control" placeholder="Ingrese Fecha de Ingreso" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Ingrediente Activo</label>
+                            <select name="nombreIngrediente" id="nombreIngrediente" class="selectpicker form-control" data-style="py-0">
+                            </select>
+                        </div>
+                    </div>              
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">Crear Certificación</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        let cert_id;
+        {% if cert_id %}
+        cert_id = parseInt("{{cert_id}}");
+        {% else %}
+        cert_id = null;
+        {%endif%}
+
+        // Función para llenar el dropdown de ingredientes activos
+        function fillIngredientesDropdown(selectedId) {
+            fetch('/insumos/ingredientes-activos/list-create/', {
+                headers: { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.querySelector('select[name="nombreIngrediente"]');
+                    select.innerHTML = '';  // Limpiar el dropdown.
+                    
+                    data.forEach(ingrediente => {
+                        const option = document.createElement('option');
+                        console.log(ingrediente.id)
+                        console.log(ingrediente.nombre)
+                        option.value = ingrediente.id;
+                        option.innerText = ingrediente.nombre;
+                        select.appendChild(option);
+                    });
+
+                    if (selectedId) {
+                        select.value = selectedId;  // Si hay un ID seleccionado, establecer en el dropdown
+                    }
+                });
+        }
+
+        // Si hay un cert_id, estamos en modo de edición
+        if (cert_id) {
+            fetch(`/insumos/editar/certificacion/${cert_id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Rellenar el formulario con los datos de la certificación
+                    document.querySelector('input[placeholder="Ingrese Registro ICA"]').value = data.registro_ica;
+                    document.querySelector('input[placeholder="Ingrese Fecha de Carencia"]').value = data.periodo_carencia.split('T')[0];
+                    document.querySelector('input[placeholder="Ingrese Fecha de Ingreso"]').value = data.fecha_registro.split('T')[0];
+
+                    // Llenar el dropdown de ingredientes y seleccionar el ingrediente activo de la certificación
+                    fillIngredientesDropdown(data.ingrediente_activo);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            // Estamos en modo de creación, solo llenamos el dropdown de ingredientes
+            fillIngredientesDropdown();
+        }
+
+        // Evento de envío del formulario
+        const form = document.querySelector('form[data-toggle="validator"]');
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();  // Prevenir el envío tradicional del formulario.
+
+            const registroICA = form.querySelector('input[placeholder="Ingrese Registro ICA"]').value;
+            const periodoCarencia = form.querySelector('input[placeholder="Ingrese Fecha de Carencia"]').value;
+            const fechaIngreso = form.querySelector('input[placeholder="Ingrese Fecha de Ingreso"]').value;
+            const ingredienteActivo = form.querySelector('select[name="nombreIngrediente"]').value;
+
+            const dataToSend = {
+                registro_ica: registroICA,
+                periodo_carencia: periodoCarencia + "T00:00:00Z",
+                periodo_reingreso: fechaIngreso + "T00:00:00Z",
+                fecha_registro: fechaIngreso.split('T')[0],  // Asumiendo que el formato es YYYY-MM-DD, solo toma la fecha.
+                ingrediente_activo: parseInt(ingredienteActivo, 10)  // Convertir a número.
+            };
+
+            // Si estamos en modo de edición, agregar el ID al objeto
+            if (cert_id) {
+                dataToSend.id = parseInt(cert_id, 10);
+            }
+
+            const apiEndpoint = cert_id
+                ? `/insumos/certificaciones/retrieve/${cert_id}/`  // Endpoint para edición
+                : '/insumos/certificaciones/list-create/';  // Endpoint para creación
+
+            const httpMethod = cert_id ? 'PUT' : 'POST';  // Método PUT para edición, POST para creación
+
+            fetch(apiEndpoint, {
+                method: httpMethod,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                },
+                body: JSON.stringify(dataToSend)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const actionMsg = cert_id ? 'editada' : 'creada';
+                        alert(`Certificación ${actionMsg} exitosamente!`);
+                    } else {
+                        alert('Error al guardar la certificación.');
+                    }
+                })
+                .catch(error => {
+                    alert('Hubo un error al enviar el formulario. Intenta nuevamente.');
+                });
+        });
+    });
+
+</script>
+
+
+
+
+
+{% endblock %}

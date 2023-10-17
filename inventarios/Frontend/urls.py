@@ -32,6 +32,7 @@ urlpatterns = [
 
     path('add-grupo/', add_grupo, name='add_grupo'),
     path('list-grupo/', list_grupo, name='list_grupo'),
+    path('add-grupo/edit/<str:grupo_id>/', add_grupo, name='edit_grupo'),
 
     path('list-entradas/', list_entradas, name='list_entradas'),
     path('inicialentrada/',list_entradas_primer_status,name='inicialentrada'),
@@ -44,15 +45,15 @@ urlpatterns = [
 
     path('list-lotes/', list_lotes, name='list_lotes'),
     path('add-lotes/', add_lotes, name='add_lotes'),
-    path('add-lotes/edit/<str:lotes_id>/', add_lotes, name='edit_lotes'),
+    path('add-lotes/edit/<int:lotes_id>/', add_lotes, name='edit_lotes'),
 
     path('list-bodegas/', list_bodegas, name='list_bodegas'),
     path('add-bodegas/', add_bodegas, name='add_bodegas'),
-    path('add-bodegas/edit/<str:bodegas_id>/', add_bodegas, name='edit_bodegas'),
+    path('add-bodegas/edit/<int:bodegas_id>/', add_bodegas, name='edit_bodegas'),
 
     path('list-salidas/', list_salidas, name='list_salidas'),
     path('add-salidas/', add_salidas, name='add_salidas'),
-    path('add-salidas/edit/<str:salidas_id>/', add_salidas, name='edit_bodegas'),
+    path('add-salidas/edit/<int:salidas_id>/', add_salidas, name='edit_bodegas'),
 
 
     

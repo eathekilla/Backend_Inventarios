@@ -1,0 +1,112 @@
+{% extends "./todo.html" %}
+{%load static%}
+
+{% block body %}
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+
+                <h4 class="card-title">Añadir Ingrediente Activo</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="page-list-users.html" data-toggle="validator" id ="ingredienteform" name="ingredienteform">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nombre *</label>
+                            <input type="text" id="nombreIngrediente" name="nombreIngrediente" class="form-control"
+                                placeholder="Ingrese el Nombre del Ingrediente Activo" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">
+                    {% if ingrediente_id %}
+                    Actualizar
+                    {% else %}
+                    Crear
+                    {% endif %} Ingrediente Activo</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        let ingrediente_id;
+        {% if ingrediente_id %}
+        ingrediente_id = parseInt("{{ingrediente_id}}");
+        {% else %}
+        ingrediente_id = null;
+        {%endif%}
+
+        if (ingrediente_id) {
+            // Si existe un user_id en la URL, estamos en modo de edición
+            fetch(`/insumos/editar/ingrediente/${ingrediente_id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    // Suponiendo que la respuesta contenga la información del ingrediente
+                    document.getElementById('nombreIngrediente').value = data.nombre;
+                    // Puedes continuar con otros campos si existen...
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    });
+</script>
+
+<script>
+    document.getElementById('ingredienteform').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            nombre: document.getElementById('nombreIngrediente').value,
+            // ... otros campos si los tienes
+        };
+
+        let ingrediente_id;
+        {% if ingrediente_id %}
+            ingrediente_id = parseInt("{{ingrediente_id}}");
+        {% else %}
+            ingrediente_id = null;
+        {% endif %}
+
+        const method = ingrediente_id ? 'PUT' : 'POST';
+        const url = ingrediente_id ? `/insumos/ingredientes-activos/retrieve/${ingrediente_id}/` : `/insumos/ingredientes-activos/list-create/`;
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La petición falló');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Operación exitosa!');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ha ocurrido un error. Por favor intente de nuevo.');
+        });
+    });
+</script>
+
+
+{% endblock %}
