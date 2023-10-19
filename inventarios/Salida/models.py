@@ -31,7 +31,7 @@ class Salida(models.Model):
                 total_unidades = 0
             # Si aún queda cantidad pendiente después de considerar todas las entradas
             if cantidad_pendiente > total_unidades:
-                raise ValidationError(f"No hay suficiente stock para el insumo {self.insumo}. Falta: {cantidad_pendiente} unidades.")
+                raise ValidationError(f"No hay suficiente unidades para el insumo {self.insumo}. Faltan: {cantidad_pendiente} unidades.")
             
             valor_total = 0
             for entrada in entradas:

@@ -145,7 +145,8 @@
         const row = event.target.closest('tr');
 
         // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
-        const userId = event.target.getAttribute('data-id');
+        const buttonElement = event.target.closest('.delete-button');
+        const userId = buttonElement.getAttribute('data-id');
         
         console.log("Botón activo")
         deleteUser(userId, row);

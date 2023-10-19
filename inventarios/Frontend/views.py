@@ -10,16 +10,40 @@ from Insumo.models import Insumo,IngredienteActivo,Certificacion,Grupo,UnidadMed
 from Entrada.models import Entrada
 from Salida.models import Salida
 from Fincas.models import Bodegas,Lotes,Finca, arbol
+from django.contrib.auth import logout
+from django.shortcuts import redirect, reverse
+from django.contrib.auth.decorators import login_required
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.shortcuts import render, redirect
+from django.urls import reverse
 
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            # Suponiendo que "nombre_de_tu_vista" es el nombre de la URL de la vista a la que quieres redirigir
+            return redirect(reverse('home'))
+        else:
+            # Aquí puedes agregar un mensaje de error si lo deseas
+            context = {"error": "Credenciales incorrectas"}
+            return render(request, 'html/app/auth-sign-in.html', context)
+    else:
+        return render(request, 'html/app/auth-sign-in.html')
 
+def logout_view(request):
+    auth_logout(request)
+    return redirect(reverse('login'))
+
+@login_required
 def test_view(request):
-    return render(request,"html/app/todo.html")
+    return render(request, "html/app/todo.html")
 
-def login(request):
-    return render(request,'html/app/auth-sign-in.html')
-
-
+@login_required
 def add_user(request,user_id=None):
     if user_id:
         user_instance = get_object_or_404(User, id=user_id)
@@ -27,22 +51,23 @@ def add_user(request,user_id=None):
         
     else:
         return render(request,"html/app/add-usuario.html")
-    
+
+@login_required    
 def list_users(request):
 
     return render(request,"html/app/list-usuarios.html") 
-
+@login_required
 def add_proveedor(request,prov_id=None):
     if prov_id:
         prov_instance = get_object_or_404(Proveedor,id=prov_id)
         return render(request,"html/app/add-proveedor.html",{'providerId': prov_instance.pk})
     else:
         return render(request,"html/app/add-proveedor.html")
-
+@login_required
 def list_proveedor(request):
     return render(request,"html/app/list-proveedor.html") 
 
-
+@login_required
 def add_insumo(request,insumo_id=None):
     unidades_medida = UnidadMedida.objects.all()
     certificaciones = Certificacion.objects.all()
@@ -56,11 +81,13 @@ def add_insumo(request,insumo_id=None):
         return render(request,"html/app/add-insumo.html",context)
     else:
         return render(request,"html/app/add-insumo.html",context)
-    
+
+@login_required   
 def list_insumo(request):
     insumo_instance = Insumo.objects.all()
     return render(request,"html/app/list-insumos.html",{"insumos":insumo_instance})
 
+@login_required
 def add_certificacion(request,cert_id=None):
     ingredientes = IngredienteActivo.objects.all()
     context = {"ingredientes":ingredientes}
@@ -71,12 +98,16 @@ def add_certificacion(request,cert_id=None):
         return render(request,"html/app/add-certificacion.html",context)
     else:
         return render(request,"html/app/add-certificacion.html",context)
-    
+
+
+@login_required
 def list_certificacion(request):
     certificaciones = Certificacion.objects.all()
     
     return render(request,"html/app/list-certificacion.html",{'certificaciones':certificaciones})
 
+
+@login_required
 def add_ingrediente(request,ingrediente_id=None):
     ingredientes = IngredienteActivo.objects.all()
     context = {'ingredientes': ingredientes}
@@ -86,12 +117,16 @@ def add_ingrediente(request,ingrediente_id=None):
         return render(request,"html/app/add-ingrediente.html",context)
     else:
         return render(request,"html/app/add-ingrediente.html",context)
-    
+
+
+@login_required
 def list_ingrediente(request):
     ingredientes = IngredienteActivo.objects.all()
     context = {'ingredientes': ingredientes}
     return render(request,"html/app/list-ingrediente.html",context)
 
+
+@login_required
 def add_grupo(request,grupo_id=None):
     insumos = Insumo.objects.all()
     context = {"insumos":insumos}
@@ -103,25 +138,29 @@ def add_grupo(request,grupo_id=None):
         return render(request,"html/app/add-grupos.html",context)
     return render(request,"html/app/add-grupos.html",context)
 
+
+@login_required
 def list_grupo(request):
     grupos = Grupo.objects.all()
     context = {"grupos":grupos}
     return render(request,"html/app/list-grupos.html",context)
 
-
+@login_required
 def add_unidad(request,unidad_id=None):
     if unidad_id:
         insumo_instance = get_object_or_404(UnidadMedida,pk=unidad_id)
         return render(request,"html/app/add-unidad.html",{'unidad_id': insumo_instance.pk})
     else:
         return render(request,"html/app/add-unidad.html")
-    
+
+
+@login_required
 def list_unidad(request):
     unidades = UnidadMedida.objects.all()
     context = {"unidades":unidades}
     return render(request,"html/app/list-unidad.html",context)
 
-
+@login_required
 def add_entradas(request,entradas_id=None):
     unidades = UnidadMedida.objects.all()
     estructura = arbol()
@@ -155,7 +194,8 @@ def add_entradas(request,entradas_id=None):
         return render(request,"html/app/add-entradas.html",context)
     else:
         return render(request,"html/app/add-entradas.html",{"insumos":insumos,"unidades_medida":unidades,'estructura': estructura,'proveedores':proveedores})
-    
+
+@login_required    
 def list_entradas(request):
     entradas_instance = Entrada.objects.all()
     for entrada in entradas_instance:
@@ -163,6 +203,8 @@ def list_entradas(request):
         entrada.unidad_medida = entrada.insumo.unidad_medida
     return render(request,"html/app/list-entradas.html",{'entradas':entradas_instance})
 
+
+@login_required
 def list_entradas_primer_status(request):
     historial = Entrada.history.all().order_by('history_date')
     unidades = UnidadMedida.objects.all()
@@ -178,10 +220,13 @@ def list_entradas_primer_status(request):
     context = {'unidades_medida':unidades,'entradas':historial_ordenado}
     return render(request,"html/app/list-entradas-inicial.html",context)
 
+
+@login_required
 def list_fincas(request):
     fincas = Finca.objects.all()
     return render(request,"html/app/list-fincas.html",{'fincas':fincas})
 
+@login_required
 def add_fincas(request,fincas_id=None):
     if fincas_id:
         fincas_instance = get_object_or_404(Finca,pk=fincas_id)
@@ -189,12 +234,12 @@ def add_fincas(request,fincas_id=None):
     else:
         return render(request,"html/app/add-fincas.html")
 
-
+@login_required
 def list_lotes(request):
     lotes = Lotes.objects.all()
     return render(request,"html/app/list-lotes.html",{'lotes':lotes})
 
-
+@login_required
 def add_lotes(request,lotes_id=None):
     fincas = Finca.objects.all()
     estructura = arbol()
@@ -208,11 +253,12 @@ def add_lotes(request,lotes_id=None):
 
     return render(request,"html/app/add-lotes.html",context)
 
-
+@login_required
 def list_bodegas(request):
     bodegas = Bodegas.objects.all()
     return render(request,"html/app/list-bodegas.html",{'bodegas':bodegas})
 
+@login_required
 def add_bodegas(request,bodegas_id=None):
     bodegas = Bodegas.objects.all()
     usuarios = User.objects.all()
@@ -230,11 +276,11 @@ def add_bodegas(request,bodegas_id=None):
 
     return render(request,"html/app/add-bodegas.html",context)
 
-
+@login_required
 def list_salidas(request):
     salidas_instance = Salida.objects.all()
     return render(request,"html/app/list-salidas.html",{'salidas':salidas_instance})
-
+@login_required
 def add_salidas(request, salidas_id=None):
     insumos = Insumo.objects.all()
     bodegas = Bodegas.objects.all()

@@ -47,10 +47,10 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body-aviso">
+                <div class="modal-body-aviso" style="text-align: center;">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -110,7 +110,7 @@
                                 <b>Permisos del Usuario:</b> ${user.usuario.groups.join(', ') || 'Ninguno'}
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 <!--                                 <button type="button" class="btn btn-primary">Save changes</button> -->
                             </div>
                         </div>
@@ -155,9 +155,9 @@
         const row = event.target.closest('tr');
 
         // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
-        const userId = event.target.getAttribute('data-id');
-        
-        console.log("Botón activo")
+        const buttonElement = event.target.closest('.delete-button');
+        const userId = buttonElement.getAttribute('data-id');
+
         deleteUser(userId, row);
     }
 });
@@ -188,9 +188,9 @@
                 if (data.success) {
                     // Elimina la fila de la tabla
                     row.remove();
-                    showAlertInModal('<p> Usuario y su información asociada eliminados exitosamente.</p>');
+                    showAlertInModal('Usuario y su información asociada eliminados exitosamente.');
                 } else {
-                    showAlertInModal('<p> Hubo un error al eliminar el usuario. </p>');
+                    showAlertInModal('Hubo un error al eliminar el usuario. ');
                 }
             })
             .catch(error => {

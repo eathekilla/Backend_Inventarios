@@ -83,7 +83,7 @@
             <div class="modal-body-aviso" style="text-align: center;">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -193,11 +193,13 @@
         if (insumoId) {
             // Edición
             method = 'PUT';
-            url = `/api/provider/edit/${insumoId}/`;
+            url = `/insumos/retrieve/${insumoId}/`;
+            mensaje = 'Insumo editado exitosamente';
         } else {
             // Creación
             method = 'POST';
             url = `/insumos/list-create/`;
+            mensaje = 'Insumo creado exitosamente';
         }
     
         fetch(url, {
@@ -213,7 +215,7 @@
                 throw new Error('Network response was not ok');
                 showAlertInModal('Network response was not ok');
             }
-            showAlertInModal('Insumo creado exitosamente');
+            showAlertInModal(mensaje);
             document.getElementById("insumoform").reset();
         })
         .then(data => {
