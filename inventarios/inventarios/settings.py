@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-c!ln%xnu77e9&vloqlfmi!ldz-7c76g(*hva13(#ba5f61xg*3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://backendappinventarios-production.up.railway.app/']
 LOGIN_URL = '/login/'
 
 CORS_ALLOW_ALL_ORIGINS = [
@@ -35,6 +35,7 @@ CORS_ALLOW_ALL_ORIGINS = [
     'https://backendappinventarios-production.up.railway.app'
 ]
 
+CSRF_TRUSTED_ORIGINS = ['https://backendappinventarios-production.up.railway.app','https://*.127.0.0.1']
 
 # Application definition
 
