@@ -139,7 +139,7 @@
         // Si existe un providerId, estamos en modo de edición
         fetch(`/proveedores/edit/${providerId}/`, {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
         .then(response => response.json())
@@ -213,7 +213,7 @@
         fetch(url, {
             method: method,
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)

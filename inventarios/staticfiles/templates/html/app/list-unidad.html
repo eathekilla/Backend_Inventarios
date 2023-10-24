@@ -81,9 +81,14 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         fetch('/insumos/unidades-medida/list-create/', {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())
@@ -120,6 +125,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
 
         // Event listener para editar Ingrediente Activo
         document.body.addEventListener('click', function (event) {
@@ -152,7 +162,7 @@
             fetch(`/insumos/unidades-medida/retrieve/${ingredientId}/`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
                 .then(data => {

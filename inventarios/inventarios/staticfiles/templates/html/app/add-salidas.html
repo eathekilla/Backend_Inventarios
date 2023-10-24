@@ -139,7 +139,7 @@
             method: 'POST',
             body: formData,
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())

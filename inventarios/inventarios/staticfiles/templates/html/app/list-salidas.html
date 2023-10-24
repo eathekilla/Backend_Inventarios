@@ -140,7 +140,7 @@
         fetch(`/salidas/retrieve/${userId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(data => {

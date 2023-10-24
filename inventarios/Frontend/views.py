@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from rest_framework_simplejwt.tokens import AccessToken
 
 def login_view(request):
     if request.method == "POST":
@@ -45,35 +46,46 @@ def test_view(request):
 
 @login_required
 def add_user(request,user_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     if user_id:
         user_instance = get_object_or_404(User, id=user_id)
-        return render(request,"html/app/add-usuario.html",{'userId': user_instance.pk})
+        return render(request,"html/app/add-usuario.html",{'userId': user_instance.pk,'token':token})
         
     else:
-        return render(request,"html/app/add-usuario.html")
+        return render(request,"html/app/add-usuario.html",{'token':token})
 
 @login_required    
 def list_users(request):
-
-    return render(request,"html/app/list-usuarios.html") 
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    context = {"token":token}
+    return render(request,"html/app/list-usuarios.html",context) 
 @login_required
 def add_proveedor(request,prov_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     if prov_id:
         prov_instance = get_object_or_404(Proveedor,id=prov_id)
-        return render(request,"html/app/add-proveedor.html",{'providerId': prov_instance.pk})
+        return render(request,"html/app/add-proveedor.html",{'providerId': prov_instance.pk,'token':token})
     else:
-        return render(request,"html/app/add-proveedor.html")
+        return render(request,"html/app/add-proveedor.html",{'token':token})
 @login_required
 def list_proveedor(request):
-    return render(request,"html/app/list-proveedor.html") 
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    return render(request,"html/app/list-proveedor.html",{'token':token}) 
 
 @login_required
 def add_insumo(request,insumo_id=None):
     unidades_medida = UnidadMedida.objects.all()
     certificaciones = Certificacion.objects.all()
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     context ={
         "unidades_medida":unidades_medida,
         "certificaciones":certificaciones
+        ,'token':token
     }
     if insumo_id:
         insumo_instance = get_object_or_404(Insumo,id=insumo_id)
@@ -84,13 +96,17 @@ def add_insumo(request,insumo_id=None):
 
 @login_required   
 def list_insumo(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     insumo_instance = Insumo.objects.all()
-    return render(request,"html/app/list-insumos.html",{"insumos":insumo_instance})
+    return render(request,"html/app/list-insumos.html",{"insumos":insumo_instance,'token':token})
 
 @login_required
 def add_certificacion(request,cert_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     ingredientes = IngredienteActivo.objects.all()
-    context = {"ingredientes":ingredientes}
+    context = {"ingredientes":ingredientes,'token':token}
 
     if cert_id:
         cert_instance = get_object_or_404(Certificacion,pk=cert_id)
@@ -103,14 +119,18 @@ def add_certificacion(request,cert_id=None):
 @login_required
 def list_certificacion(request):
     certificaciones = Certificacion.objects.all()
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     
-    return render(request,"html/app/list-certificacion.html",{'certificaciones':certificaciones})
+    return render(request,"html/app/list-certificacion.html",{'certificaciones':certificaciones,'token':token})
 
 
 @login_required
 def add_ingrediente(request,ingrediente_id=None):
     ingredientes = IngredienteActivo.objects.all()
-    context = {'ingredientes': ingredientes}
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    context = {'ingredientes': ingredientes,'token':token}
     if ingrediente_id:
         insumo_instance = get_object_or_404(IngredienteActivo,pk=ingrediente_id)
         context['insumo_instance'] = insumo_instance.pk
@@ -121,15 +141,20 @@ def add_ingrediente(request,ingrediente_id=None):
 
 @login_required
 def list_ingrediente(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     ingredientes = IngredienteActivo.objects.all()
-    context = {'ingredientes': ingredientes}
+    context = {'ingredientes': ingredientes,'token':token}
     return render(request,"html/app/list-ingrediente.html",context)
 
 
 @login_required
 def add_grupo(request,grupo_id=None):
     insumos = Insumo.objects.all()
-    context = {"insumos":insumos}
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    context = {"insumos":insumos,'token':token}
+    
     if grupo_id:
         grupo_instance = get_object_or_404(Grupo,pk=grupo_id)
         context['grupo_id'] = grupo_instance.pk
@@ -141,27 +166,35 @@ def add_grupo(request,grupo_id=None):
 
 @login_required
 def list_grupo(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     grupos = Grupo.objects.all()
-    context = {"grupos":grupos}
+    context = {"grupos":grupos,'token':token}
     return render(request,"html/app/list-grupos.html",context)
 
 @login_required
 def add_unidad(request,unidad_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     if unidad_id:
         insumo_instance = get_object_or_404(UnidadMedida,pk=unidad_id)
-        return render(request,"html/app/add-unidad.html",{'unidad_id': insumo_instance.pk})
+        return render(request,"html/app/add-unidad.html",{'unidad_id': insumo_instance.pk,'token':token})
     else:
-        return render(request,"html/app/add-unidad.html")
+        return render(request,"html/app/add-unidad.html",{'token':token})
 
 
 @login_required
 def list_unidad(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     unidades = UnidadMedida.objects.all()
-    context = {"unidades":unidades}
+    context = {"unidades":unidades,'token':token}
     return render(request,"html/app/list-unidad.html",context)
 
 @login_required
 def add_entradas(request,entradas_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     unidades = UnidadMedida.objects.all()
     estructura = arbol()
     proveedores = Proveedor.objects.all()
@@ -190,22 +223,27 @@ def add_entradas(request,entradas_id=None):
             'finca_preseleccionada':finca_preseleccionada.pk,
             'insumo_preseleccionado':entradas_instance.insumo.pk,
             'insumos':insumos
+            ,'token':token
             }
         return render(request,"html/app/add-entradas.html",context)
     else:
-        return render(request,"html/app/add-entradas.html",{"insumos":insumos,"unidades_medida":unidades,'estructura': estructura,'proveedores':proveedores})
+        return render(request,"html/app/add-entradas.html",{"insumos":insumos,"unidades_medida":unidades,'estructura': estructura,'proveedores':proveedores,'token':token})
 
 @login_required    
 def list_entradas(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     entradas_instance = Entrada.objects.all()
     for entrada in entradas_instance:
         entrada.total = entrada.valor_unitario_entrada_a * entrada.cantidad
         entrada.unidad_medida = entrada.insumo.unidad_medida
-    return render(request,"html/app/list-entradas.html",{'entradas':entradas_instance})
+    return render(request,"html/app/list-entradas.html",{'entradas':entradas_instance,'token':token})
 
 
 @login_required
 def list_entradas_primer_status(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     historial = Entrada.history.all().order_by('history_date')
     unidades = UnidadMedida.objects.all()
     # Crear un diccionario para almacenar el primer registro de cada grupo por el campo identificador (ID)
@@ -223,27 +261,35 @@ def list_entradas_primer_status(request):
 
 @login_required
 def list_fincas(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     fincas = Finca.objects.all()
-    return render(request,"html/app/list-fincas.html",{'fincas':fincas})
+    return render(request,"html/app/list-fincas.html",{'fincas':fincas,'token':token})
 
 @login_required
 def add_fincas(request,fincas_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     if fincas_id:
         fincas_instance = get_object_or_404(Finca,pk=fincas_id)
-        return render(request,"html/app/add-fincas.html",{'fincas_id': fincas_instance.pk,'finca':fincas_instance})
+        return render(request,"html/app/add-fincas.html",{'fincas_id': fincas_instance.pk,'finca':fincas_instance,'token':token})
     else:
-        return render(request,"html/app/add-fincas.html")
+        return render(request,"html/app/add-fincas.html",{'token':token})
 
 @login_required
 def list_lotes(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     lotes = Lotes.objects.all()
-    return render(request,"html/app/list-lotes.html",{'lotes':lotes})
+    return render(request,"html/app/list-lotes.html",{'lotes':lotes,'token':token})
 
 @login_required
 def add_lotes(request,lotes_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     fincas = Finca.objects.all()
     estructura = arbol()
-    context = {'fincas':fincas,'estructura':estructura}
+    context = {'fincas':fincas,'estructura':estructura,'token':token}
 
     if lotes_id:
         lotes_instance = get_object_or_404(Lotes,pk=lotes_id)
@@ -255,15 +301,19 @@ def add_lotes(request,lotes_id=None):
 
 @login_required
 def list_bodegas(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     bodegas = Bodegas.objects.all()
-    return render(request,"html/app/list-bodegas.html",{'bodegas':bodegas})
+    return render(request,"html/app/list-bodegas.html",{'bodegas':bodegas,'token':token})
 
 @login_required
 def add_bodegas(request,bodegas_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     bodegas = Bodegas.objects.all()
     usuarios = User.objects.all()
     estructura = arbol()
-    context = {'bodegas':bodegas,'estructura': estructura,'usuarios':usuarios}
+    context = {'bodegas':bodegas,'estructura': estructura,'usuarios':usuarios,'token':token}
 
     if bodegas_id:
         bodega_instance = get_object_or_404(Bodegas,pk=bodegas_id)
@@ -278,15 +328,20 @@ def add_bodegas(request,bodegas_id=None):
 
 @login_required
 def list_salidas(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     salidas_instance = Salida.objects.all()
-    return render(request,"html/app/list-salidas.html",{'salidas':salidas_instance})
+    return render(request,"html/app/list-salidas.html",{'salidas':salidas_instance,'token':token})
 @login_required
 def add_salidas(request, salidas_id=None):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
     insumos = Insumo.objects.all()
     bodegas = Bodegas.objects.all()
     context = {
         "insumos":insumos,
         "bodegas":bodegas
+        ,'token':token
     }
 
 

@@ -105,7 +105,7 @@
         // Función para llenar el dropdown de ingredientes activos
         function fillIngredientesDropdown(selectedId) {
             fetch('/insumos/ingredientes-activos/list-create/', {
-                headers: { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` }
+                headers: { 'Authorization': `Bearer ${accessToken}` }
             })
                 .then(response => response.json())
                 .then(data => {
@@ -127,9 +127,14 @@
 
         // Si hay un cert_id, estamos en modo de edición
         if (cert_id) {
+            {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
             fetch(`/insumos/editar/certificacion/${cert_id}/`, {
                 headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
                 .then(response => response.json())
@@ -181,11 +186,17 @@
 
             const httpMethod = cert_id ? 'PUT' : 'POST';  // Método PUT para edición, POST para creación
 
+            {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
             fetch(apiEndpoint, {
                 method: httpMethod,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${accessToken}`
                 },
                 body: JSON.stringify(dataToSend)
             })

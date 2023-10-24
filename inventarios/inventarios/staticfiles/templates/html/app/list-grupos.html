@@ -110,7 +110,7 @@
 <!-- Script Generar insumos -->
 <script>
     function viewGroup(userId, row) {
-                fetch(`/insumos/consultar_grupo/${userId}/`, { method: 'GET', headers: { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` } })  // Reemplaza "ruta-de-tu-vista" y "1" con los valores correctos
+                fetch(`/insumos/consultar_grupo/${userId}/`, { method: 'GET', headers: { 'Authorization': `Bearer ${accessToken}` } })  // Reemplaza "ruta-de-tu-vista" y "1" con los valores correctos
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -185,7 +185,7 @@
 </script>
 <script>
     function deleteUser(userId, row) {
-        fetch(`/insumos/grupos/retrieve/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`}})
+        fetch(`/insumos/grupos/retrieve/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${accessToken}`}})
             .then(data => {
                 if (data.status==204) {
                     row.remove();

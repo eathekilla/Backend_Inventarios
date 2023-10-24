@@ -55,7 +55,10 @@
 
 
 <!--<script>
-    const accessToken = sessionStorage.getItem('accessToken');
+    {% if user.is_authenticated %}
+    //const accessToken = accessToken;
+    const accessToken ="{{token}}"
+    {% endif %}
  
     fetch('/entradas/list-create/', {
         headers: {
@@ -150,7 +153,7 @@
         fetch(`/salidas/retrieve/${userId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())

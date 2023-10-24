@@ -137,10 +137,15 @@
 
 <script>
     function deleteUser(bodegas_id, row) {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         fetch(`/user/bodegas/retrieve/${bodegas_id}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())

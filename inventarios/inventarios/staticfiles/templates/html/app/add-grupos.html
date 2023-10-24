@@ -145,7 +145,7 @@
         fetch(url, {
             method: httpMethod,
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             },
             body: formData
         })

@@ -89,7 +89,7 @@
         fetch(`/user/bodegas/retrieve/${bodegas_id}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())

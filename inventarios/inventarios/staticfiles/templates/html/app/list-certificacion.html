@@ -83,7 +83,7 @@
 
         fetch('/insumos/certificaciones/list-create/', {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}`
             }
         })
         .then(response => response.json())
@@ -93,7 +93,7 @@
             data.forEach(certificacion => {
                 fetch(`/insumos/editar/ingrediente/${certificacion.ingrediente_activo}/`, {
                     headers: {
-                        'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                        'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}`
                     }
                 })
                 .then(response => response.json())
@@ -163,7 +163,7 @@
             fetch(`/insumos/certificaciones/retrieve/${certId}/`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}`
                 }
             })
             .then(data => {

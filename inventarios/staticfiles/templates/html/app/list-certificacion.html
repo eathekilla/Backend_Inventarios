@@ -79,11 +79,17 @@
 
 
 <script>
+    
     document.addEventListener("DOMContentLoaded", function () {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
 
         fetch('/insumos/certificaciones/list-create/', {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
         .then(response => response.json())
@@ -93,7 +99,7 @@
             data.forEach(certificacion => {
                 fetch(`/insumos/editar/ingrediente/${certificacion.ingrediente_activo}/`, {
                     headers: {
-                        'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                        'Authorization': `Bearer ${accessToken}`
                     }
                 })
                 .then(response => response.json())
@@ -139,6 +145,9 @@
 </script>
 
 <script>
+    {% if user.is_authenticated %}
+    const accessToken ="{{token}}"
+    {% endif %}
     document.addEventListener("DOMContentLoaded", function() {
         // Event listener para editar certificación
         document.body.addEventListener('click', function(event) {
@@ -163,7 +172,7 @@
             fetch(`/insumos/certificaciones/retrieve/${certId}/`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
             .then(data => {

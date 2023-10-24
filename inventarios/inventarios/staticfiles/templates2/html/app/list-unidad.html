@@ -31,7 +31,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         fetch('/insumos/unidades-medida/list-create/', {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())
@@ -100,7 +100,7 @@
             fetch(`/insumos/ingredientes-activos/retrieve/${ingredientId}/`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
                 .then(response => response.json())

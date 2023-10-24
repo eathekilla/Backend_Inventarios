@@ -105,7 +105,7 @@
         // Función para llenar el dropdown de ingredientes activos
         function fillIngredientesDropdown(selectedId) {
             fetch('/insumos/ingredientes-activos/list-create/', {
-                headers: { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` }
+                headers: { 'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}` }
             })
                 .then(response => response.json())
                 .then(data => {
@@ -129,7 +129,7 @@
         if (cert_id) {
             fetch(`/insumos/editar/certificacion/${cert_id}/`, {
                 headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}`
                 }
             })
                 .then(response => response.json())
@@ -185,7 +185,7 @@
                 method: httpMethod,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}`
                 },
                 body: JSON.stringify(dataToSend)
             })

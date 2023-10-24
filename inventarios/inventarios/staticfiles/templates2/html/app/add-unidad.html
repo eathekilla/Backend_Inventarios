@@ -48,7 +48,7 @@
             // Si existe un user_id en la URL, estamos en modo de edición
             fetch(`/insumos/editar/unidad/${unidad_id}/`, {
                 headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
                 .then(response => response.json())
@@ -87,7 +87,7 @@
         fetch(url, {
             method: method,
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)

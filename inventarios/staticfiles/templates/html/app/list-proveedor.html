@@ -72,8 +72,11 @@
 
 
 <script>
-    const accessToken = sessionStorage.getItem('accessToken');
-
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
     fetch('/proveedores/list-create/', {
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -194,10 +197,15 @@
 
 <script>
     function deleteUser(userId, row) {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         fetch(`/proveedores/retrieve/${userId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(data => {

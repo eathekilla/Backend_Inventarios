@@ -142,10 +142,16 @@
         var url = isEditMode ? `/insumos/grupos/retrieve/${grupo_id}/` : '/insumos/grupos/list-create/';
         var httpMethod = isEditMode ? 'PUT' : 'POST';
 
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
         fetch(url, {
             method: httpMethod,
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             },
             body: formData
         })

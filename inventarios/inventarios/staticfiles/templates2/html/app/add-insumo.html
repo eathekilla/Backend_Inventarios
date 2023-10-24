@@ -76,7 +76,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         fetch('/insumos/certificaciones/list-create/', {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())
@@ -106,7 +106,7 @@
         // Si existe un providerId, estamos en modo de edición
         fetch(`/insumos/editar/${insumoId}/`, {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
         .then(response => response.json())
@@ -168,7 +168,7 @@
         fetch(url, {
             method: method,
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
@@ -191,7 +191,7 @@
     // Realizar una solicitud usando fetch a tu API
     fetch('/insumos/unidades-medida/list-create/', {
         headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            'Authorization': `Bearer ${accessToken}`
         }
     })
     .then(response => {

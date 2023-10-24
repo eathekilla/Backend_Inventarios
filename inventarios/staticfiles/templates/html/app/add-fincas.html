@@ -110,11 +110,17 @@
         var url = isEditMode ? `/user/finca/retrieve/${fincas_id}/` : '/user/finca/list-create/';
         var httpMethod = isEditMode ? 'PUT' : 'POST';
 
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
         fetch(url, {
             method: httpMethod,
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify(payload)
         })

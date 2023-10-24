@@ -96,9 +96,18 @@
 
 
 <script>
-    const accessToken = sessionStorage.getItem('accessToken');
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
     
     document.addEventListener("DOMContentLoaded", function() {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         // URL de tu API
         fetch('/insumos/list-create/', {
             headers: {
@@ -211,7 +220,7 @@
         fetch(`/insumos/retrieve/${userId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(data => {

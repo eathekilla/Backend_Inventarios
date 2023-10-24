@@ -14,7 +14,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-
+from django.contrib.auth.decorators import login_required
 
 
 UserModel = get_user_model()
@@ -168,6 +168,7 @@ def delete_user(request, user_id):
 
 
 @api_view(['GET'])
+@login_required
 def get_all_info_users(request):
     if request.method == 'GET':
         # Obtén todos los objetos InfoUser
