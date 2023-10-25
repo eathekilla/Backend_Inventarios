@@ -164,16 +164,15 @@
                 'Authorization': `Bearer ${accessToken}`
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Elimina la fila de la tabla
-                    row.remove();
-                    showAlertInModal('Insumo eliminado exitosamente.');
-                } else {
-                    showAlertInModal('Hubo un error al eliminar el Insumo.');
-                }
-            })
+            
+        .then(data => {
+            if (data.status==204) {
+                row.remove();
+                showAlertInModal('Bodega eliminada exitosamente');
+            } else {
+                showAlertInModal('Hubo un error al eliminar la Grupo');
+            }
+        })
             .catch(error => {
                 console.error('Error:', error);
             });

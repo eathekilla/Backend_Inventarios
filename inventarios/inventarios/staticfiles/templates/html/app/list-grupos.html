@@ -190,6 +190,12 @@
 
 </script>
 <script>
+
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
     function deleteUser(userId, row) {
         fetch(`/insumos/grupos/retrieve/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${accessToken}`}})
             .then(data => {

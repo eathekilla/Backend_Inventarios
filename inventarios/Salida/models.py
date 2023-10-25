@@ -17,51 +17,47 @@ class Salida(models.Model):
         return f"Salida - {self.fecha_salida} - {self.insumo.nombre}"
     
     def save(self, *args, **kwargs):
-        # Creamos una variable para determinar si es una nueva instancia
         es_nueva_instancia = not self.pk
 
-        if es_nueva_instancia:  # Estamos creando una nueva salida
+        if es_nueva_instancia:
             cantidad_pendiente = self.cantidad
 
-            # Consulta las entradas más antiguas de este insumo
             entradas = Entrada.objects.filter(insumo=self.insumo).order_by('fecha_creacion')
             suma_total = entradas.aggregate(total_unidades=Sum('cantidad'))
-            total_unidades = suma_total['total_unidades'] 
-            if entradas.count() == 0:
-                total_unidades = 0
-            # Si aún queda cantidad pendiente después de considerar todas las entradas
+            total_unidades = suma_total['total_unidades'] or 0
+
             if cantidad_pendiente > total_unidades:
-                raise ValidationError(f"No hay suficiente unidades para el insumo {self.insumo}. Faltan: {cantidad_pendiente} unidades.")
-            
+                raise ValidationError(f"No hay suficientes unidades para el insumo {self.insumo}. Faltan: {cantidad_pendiente} unidades.")
+
             valor_total = 0
             for entrada in entradas:
-                if entrada.cantidad >= cantidad_pendiente:  # La entrada cubre la cantidad pendiente
+                if entrada.cantidad >= cantidad_pendiente:
                     valor_total += cantidad_pendiente * entrada.valor_unitario_entrada_a
                     relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=cantidad_pendiente, precio_unitario=entrada.valor_unitario_entrada_a)
-                    relacion.save()
                     entrada.cantidad -= cantidad_pendiente
-                    entrada.save()
-                    break  # Hemos cubierto la cantidad necesaria con las entradas
-                else:  # La entrada no cubre toda la cantidad pendiente
+                    
+                    break
+                else:
                     valor_total += entrada.cantidad * entrada.valor_unitario_entrada_a
                     relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=entrada.cantidad, precio_unitario=entrada.valor_unitario_entrada_a)
-                    relacion.save()
                     cantidad_pendiente -= entrada.cantidad
                     entrada.cantidad = 0
-                    entrada.save()
+                relacion.save()
+                entrada.save()
 
             self.valor_total_salida = valor_total
 
-        # Ahora, después de todas las verificaciones, guardamos la instancia.
         super(Salida, self).save(*args, **kwargs)
 
 
 
+
 class SalidaEntradaRelacion(models.Model):
-    salida = models.ForeignKey(Salida, on_delete=models.CASCADE)
-    entrada = models.ForeignKey(Entrada, on_delete=models.CASCADE)
+    salida = models.ForeignKey(Salida, on_delete=models.CASCADE, related_name='relaciones_salida')
+    entrada = models.ForeignKey(Entrada, on_delete=models.CASCADE, related_name='relaciones_entrada')
     cantidad_usada = models.FloatField()
     precio_unitario = models.FloatField()
 
     def __str__(self):
         return f"Salida {self.salida.id} - Entrada {self.entrada.id}"
+

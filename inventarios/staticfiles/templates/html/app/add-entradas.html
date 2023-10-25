@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form data-toggle="validator" id="insumoform" name="insumoform">
+            <form data-toggle="validator" id="insumoform" name="insumoform" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row"> 
 
@@ -144,11 +144,21 @@
                             <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0">
                                 {%for proveedor in proveedores%}
                                 <option value="{{proveedor.id}}" selected >{{proveedor.razon_social}}</option>
+                                
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-                
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="proveedor">Cargar Archivo *</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="factura" id="archivo" required>
+                                <label class="custom-file-label" for="inputGroupFile01">Escoge el Archivo</label>
+                            </div>
+                        </div>
+                    </div>                
                 </div>
                 
                 
@@ -351,16 +361,19 @@
         var bodega = parseInt(document.getElementById('selectBodega').value);
         var insumo = parseInt(document.getElementById('insumo').value);
         var proveedor = parseInt(document.getElementById('proveedor').value);
+        var fileInput = document.getElementById('archivo');
+        var file = null//fileInput.files[0]; // Obtiene el archivo seleccionado
+    
     
         var payload = {
             fecha_vencimiento: fecha_vencimiento,
             cantidad: cantidad,
             valor_unitario_entrada_a: valor_unitario_entrada_a,
             numero_factura: numero_factura,
-            factura: null, // si tienes un campo para este valor, debes agregarlo
             bodega: bodega,
             insumo: insumo,
-            proveedor: proveedor
+            proveedor: proveedor,
+            factura :file
         };
     
         // Determinar si estamos en modo edición o creación
@@ -385,7 +398,9 @@
         fetch(url, {
             method: httpMethod,
             headers: {'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
+            'Content-Disposition': `attachment; filename=  ${numero_factura}.jpg`,
+            'Content-Type': 'application/json',
+                
                 'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify(payload)

@@ -12,21 +12,41 @@ from itertools import groupby
 from django.utils import timezone
 from datetime import timedelta
 from django.http import JsonResponse
+from rest_framework.parsers import FileUploadParser
+
 
 class EntradaListCreateView(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
     serializer_class = EntradaSerializer
-    def get(self, request):
-        entradas = Entrada.objects.all()
-        serializer = EntradaSerializer(entradas, many=True)
-        return Response({'entradas': serializer.data}, status=status.HTTP_200_OK)
+    parser_classes = (FileUploadParser,)  # Agrega el parser para manejar archivos
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class EntradaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
     queryset = Entrada.objects.all()
     serializer_class = EntradaSerializer
+    parser_classes = (FileUploadParser,)  # Agrega el parser para manejar archivos
+
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class InventarioHistoricoView(generics.ListAPIView):
     serializer_class = EntradaSerializer
