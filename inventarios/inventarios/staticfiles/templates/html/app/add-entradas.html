@@ -98,7 +98,7 @@
                         <div class="form-group">
                             <label for="selectFinca">Finca *</label>
                             <select id="selectFinca" class="form-control">
-                                <option value="" disabled>Seleccione una Finca</option>
+                                <option>Seleccione una Finca</option>
                                 {% for finca in estructura %}
                                 <option value="{{ finca.id }}" {% if forloop.counter0 == finca_preseleccionada %}selected{% endif %}>{{ finca.nombre_finca }}</option>
                                 {% endfor %}
@@ -111,7 +111,7 @@
                         <div class="form-group">
                             <label for="selectLote">Lote *</label>
                             <select id="selectLote" class="form-control">
-                                <option value="" disabled>Seleccione un Lote</option>
+                                <option >Seleccione un Lote</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
                         </div>
@@ -121,7 +121,7 @@
                         <div class="form-group">
                             <label for="selectBodega">Bodega *</label>
                             <select id="selectBodega" class="form-control">
-                                <option value="" disabled>Seleccione una Bodega</option>
+                                <option >Seleccione una Bodega</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
                         </div>
