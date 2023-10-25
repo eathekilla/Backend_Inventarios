@@ -33,8 +33,9 @@
                         <div class="form-group">
                             <label for="insumo">Insumo *</label>
                             <select id="insumo" name="insumo" class="selectpicker form-control" data-style="py-0">
+                                <option>Seleccione una opción</option>
                                 {%for insumo in insumos%}
-                                <option value="{{insumo.pk}}" selected >{{insumo.nombre}}</option>
+                                <option value="{{insumo.pk}}" >{{insumo.nombre}}</option>
                                 {% endfor %}
                             </select>
                             <div class="help-block with-errors"></div>

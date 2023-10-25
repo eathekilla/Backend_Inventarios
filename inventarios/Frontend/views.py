@@ -133,7 +133,8 @@ def add_ingrediente(request,ingrediente_id=None):
     context = {'ingredientes': ingredientes,'token':token}
     if ingrediente_id:
         insumo_instance = get_object_or_404(IngredienteActivo,pk=ingrediente_id)
-        context['insumo_instance'] = insumo_instance.pk
+        context['ingrediente_id'] = insumo_instance.pk
+        context['insumo_instance'] = insumo_instance
         return render(request,"html/app/add-ingrediente.html",context)
     else:
         return render(request,"html/app/add-ingrediente.html",context)
@@ -205,10 +206,15 @@ def add_entradas(request,entradas_id=None):
         entradas_instance.unidad_id = entradas_instance.insumo.unidad_medida.id
         entradas_instance.proveedor_id = entradas_instance.proveedor.id
         
-        bodega_preseleccionada = entradas_instance.bodega.pk
-        bodega_instance = get_object_or_404(Bodegas,pk=bodega_preseleccionada)
-        lote_preseleccionado = bodega_instance.lote
-        finca_preseleccionada = lote_preseleccionado.finca
+        if entradas_instance.bodega:
+            bodega_preseleccionada = entradas_instance.bodega.pk
+            bodega_instance = get_object_or_404(Bodegas,pk=bodega_preseleccionada)
+            lote_preseleccionado = bodega_instance.lote.pk
+            finca_preseleccionada = bodega_instance.lote.finca.pk
+        else:
+            bodega_preseleccionada = ""
+            lote_preseleccionado = ""
+            finca_preseleccionada = ""
         
 
 
@@ -219,8 +225,8 @@ def add_entradas(request,entradas_id=None):
             'estructura': estructura,
             'proveedores':proveedores,
             'bodega_preseleccionada':bodega_preseleccionada,
-            'lote_preseleccionado':lote_preseleccionado.pk,
-            'finca_preseleccionada':finca_preseleccionada.pk,
+            'lote_preseleccionado':lote_preseleccionado,
+            'finca_preseleccionada':finca_preseleccionada,
             'insumo_preseleccionado':entradas_instance.insumo.pk,
             'insumos':insumos
             ,'token':token

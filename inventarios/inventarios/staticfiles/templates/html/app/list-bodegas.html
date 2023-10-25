@@ -140,7 +140,7 @@
         fetch(`/user/bodegas/retrieve/${bodegas_id}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`,'X-CSRFToken': getCookie('csrftoken')
             }
         })
             .then(response => response.json())
