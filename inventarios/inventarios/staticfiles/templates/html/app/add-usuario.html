@@ -152,6 +152,12 @@
     {% else %}const userId = null;
     {% endif %}
 
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
     if (userId) {
         // Si existe un user_id en la URL, estamos en modo de edición
         fetch(`/user/info/edit/${userId}/`, {
@@ -219,6 +225,12 @@
         {% if userId %}
         const userId = parseInt("{{userId}}");
         {% else %}const userId = null;
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
         {% endif %}
 
         let method, url;

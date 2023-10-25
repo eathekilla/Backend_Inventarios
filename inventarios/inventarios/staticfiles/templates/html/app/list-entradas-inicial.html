@@ -160,6 +160,11 @@
 
 <script>
     function deleteUser(userId, row) {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         fetch(`/proveedores/retrieve/${userId}`, {
             method: 'DELETE',
             headers: {

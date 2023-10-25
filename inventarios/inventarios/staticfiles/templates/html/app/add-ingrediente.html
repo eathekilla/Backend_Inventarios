@@ -63,6 +63,12 @@
         ingrediente_id = null;
         {%endif%}
 
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
         if (ingrediente_id) {
             // Si existe un user_id en la URL, estamos en modo de edición
             fetch(`/insumos/editar/ingrediente/${ingrediente_id}/`, {
@@ -114,6 +120,12 @@
 
         const method = ingrediente_id ? 'PUT' : 'POST';
         const url = ingrediente_id ? `/insumos/ingredientes-activos/retrieve/${ingrediente_id}/` : `/insumos/ingredientes-activos/list-create/`;
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
 
         fetch(url, {
             method: method,

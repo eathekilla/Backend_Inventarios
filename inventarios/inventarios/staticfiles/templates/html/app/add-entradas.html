@@ -15,13 +15,14 @@
         </div>
         <div class="card-body">
             <form data-toggle="validator" id="insumoform" name="insumoform">
+                {% csrf_token %}
                 <div class="row"> 
 
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label for="fecha_vencimiento">Fecha de Vencimiento *</label>
                             {% if entradas_id %}
-                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento" value="{{ entradas.fecha_vencimiento|date:'j \d\e F \d\e Y' }}">
+                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento" value="{{ entradas.fecha_vencimiento|date:'Y-m-d' }}">
                             {% else %}
                             <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento">
                             {% endif %}
@@ -298,7 +299,7 @@
     
     window.onload = function() {
         precargarSelects();
-        document.getElementById('insumoform').removeAttribute('novalidate');
+        //document.getElementById('insumoform').removeAttribute('novalidate');
         }
 
 </script>
@@ -324,13 +325,30 @@
         e.preventDefault();
         enviarDatos();
     });
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Buscar la cookie por nombre
+                if (cookie.substring(0, name.length + 1) === name + '=') {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
     
     function enviarDatos() {
         var fecha_vencimiento = document.getElementById('fecha_vencimiento').value;
         var cantidad = parseFloat(document.getElementById('cantidad').value);
         var valor_unitario_entrada_a = parseFloat(document.getElementById('valor_unitario_entrada_a').value);
         var numero_factura = document.getElementById('numero_factura').value;
-        var finca = parseInt(document.getElementById('selectFinca').value);
+        var bodega = parseInt(document.getElementById('selectBodega').value);
         var insumo = parseInt(document.getElementById('insumo').value);
         var proveedor = parseInt(document.getElementById('proveedor').value);
     
@@ -340,7 +358,7 @@
             valor_unitario_entrada_a: valor_unitario_entrada_a,
             numero_factura: numero_factura,
             factura: null, // si tienes un campo para este valor, debes agregarlo
-            finca: finca,
+            bodega: bodega,
             insumo: insumo,
             proveedor: proveedor
         };
@@ -356,10 +374,17 @@
         
         var url = isEditMode ? `/entradas/retrieve/${entradas_id}/` : '/entradas/list-create/';
         var httpMethod = isEditMode ? 'PUT' : 'POST';
+        var message = isEditMode ? 'Entrada editada exitosamente' : 'Entrada creada exitosamente';
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
     
         fetch(url, {
             method: httpMethod,
-            headers: {
+            headers: {'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
@@ -370,7 +395,7 @@
                 throw new Error('Network response was not ok');
                 showAlertInModal('Network response was not ok');
             }
-            showAlertInModal('Entrada creada exitosamente');
+            showAlertInModal(message);
         })
         .catch(error => {
             console.error('Error:', error);

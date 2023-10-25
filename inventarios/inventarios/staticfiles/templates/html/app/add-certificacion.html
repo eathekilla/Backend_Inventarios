@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form action="page-list-users.html" data-toggle="validator" id="certform" name="certform">
+            <form data-toggle="validator" id="certform" name="certform">
                 <div class="row"> 
                     <div class="col-md-6">                      
                         <div class="form-group">
@@ -94,6 +94,11 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        {% if user.is_authenticated %}
+            const accessToken = "{{token}}"
+            {%else%}
+            const accessToken = ""
+            {% endif %}
 
         let cert_id;
         {% if cert_id %}
@@ -105,7 +110,7 @@
         // Función para llenar el dropdown de ingredientes activos
         function fillIngredientesDropdown(selectedId) {
             fetch('/insumos/ingredientes-activos/list-create/', {
-                headers: { 'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}` }
+                headers: { 'Authorization': `Bearer ${accessToken}` }
             })
                 .then(response => response.json())
                 .then(data => {
@@ -127,9 +132,15 @@
 
         // Si hay un cert_id, estamos en modo de edición
         if (cert_id) {
+            {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+        
             fetch(`/insumos/editar/certificacion/${cert_id}/`, {
                 headers: {
-                    'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}`
+                    'Authorization': `Bearer ${accessToken}`
                 }
             })
                 .then(response => response.json())
@@ -181,11 +192,17 @@
 
             const httpMethod = cert_id ? 'PUT' : 'POST';  // Método PUT para edición, POST para creación
 
+            {% if user.is_authenticated %}
+            const accessToken = "{{token}}"
+            {%else%}
+            const accessToken = ""
+            {% endif %}
+
             fetch(apiEndpoint, {
                 method: httpMethod,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${{% if user.is_authenticated %}  "{{token}}" {% endif %}}`
+                    'Authorization': `Bearer ${accessToken}`
                 },
                 body: JSON.stringify(dataToSend)
             })

@@ -134,6 +134,12 @@
     const providerId = null;
     {% endif %}
 
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
 
     if (providerId) {
         // Si existe un providerId, estamos en modo de edición
@@ -209,6 +215,12 @@
             url = `/proveedores/list-create/`;
             message = "Proveedor Creado Correctamente";
         }
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
     
         fetch(url, {
             method: method,

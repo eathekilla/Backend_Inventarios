@@ -156,6 +156,12 @@
     var url = isEditMode ? `/user/lotes/retrieve/${lotes_id}/` : '/user/lotes/list-create/';
     var httpMethod = isEditMode ? 'PUT' : 'POST';
 
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
     fetch(url, {
         method: httpMethod,
         headers: {

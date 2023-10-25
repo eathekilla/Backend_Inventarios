@@ -136,11 +136,32 @@
 </script>
 
 <script>
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Buscar la cookie por nombre
+                if (cookie.substring(0, name.length + 1) === name + '=') {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
     function deleteUser(bodegas_id, row) {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         fetch(`/user/bodegas/retrieve/${bodegas_id}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,'X-CSRFToken': getCookie('csrftoken')
+            headers: {'X-CSRFToken': getCookie('csrftoken'),
+                'Authorization': `Bearer ${accessToken}`
             }
         })
             .then(response => response.json())

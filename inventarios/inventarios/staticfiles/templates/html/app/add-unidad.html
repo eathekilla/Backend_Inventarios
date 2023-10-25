@@ -74,6 +74,12 @@
         unidad_id = null;
         {%endif%}
 
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
         if (unidad_id) {
             // Si existe un user_id en la URL, estamos en modo de edición
             fetch(`/insumos/editar/unidad/${unidad_id}/`, {
@@ -114,6 +120,12 @@
         const method = unidad_id ? 'PUT' : 'POST';
         const url = unidad_id ? `/insumos/unidades-medida/retrieve/${unidad_id}/` : `/insumos/unidades-medida/list-create/`;
 
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
         fetch(url, {
             method: method,
             headers: {
@@ -127,7 +139,7 @@
                 showAlertInModal('Error al guardar el Grupo.');
             }
             const actionMsg = unidad_id ? 'editado' : 'creado';
-            showAlertInModal(`Grupo ${actionMsg} exitosamente!`);
+            showAlertInModal(`Unidad de medida ${actionMsg} exitosamente!`);
         })
         .then(data => {
         })

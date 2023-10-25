@@ -15,7 +15,19 @@
         </div>
         <div class="card-body">
             <form data-toggle="validator" id="insumoform" name="insumoform">
-                <div class="row"> 
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            
+                            <label>Unidad de Medida * </label>
+                            <select name="type" class="selectpicker form-control" data-style="py-0" id="unidad" name="unidad">
+                                {% for unidad in unidades_medida %}
+                                <option value="{{ unidad.id }}" >{{ unidad.nombre }}</option>
+                                {% endfor%}
+                                <!--Acá va un script con base de datos de unidades de medida, standard-->
+                            </select>
+                        </div>
+                    </div> 
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label>Nombre *</label>
@@ -30,18 +42,7 @@
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            
-                            <label>Unidad de Medida * </label>
-                            <select name="type" class="selectpicker form-control" data-style="py-0" id="unidad" name="unidad">
-                                {% for unidad in unidades_medida %}
-                                <option value="{{ unidad.id }}" >{{ unidad.nombre }}</option>
-                                {% endfor%}
-                                <!--Acá va un script con base de datos de unidades de medida, standard-->
-                            </select>
-                        </div>
-                    </div>
+                    
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Certificación * </label>
@@ -63,7 +64,11 @@
                         </div>
                     </div>              
                 </div>                            
-                <button type="submit" class="btn btn-primary mr-2">Añadir Insumo</button>
+                <button type="submit" class="btn btn-primary mr-2">{% if insumoId %}
+                    Editar Insumo
+                    {% else %}
+                    Añadir Insumo
+                    {% endif %}</button>
                 <button type="reset" class="btn btn-danger">Limpiar</button>
             </form>
         </div>
@@ -93,6 +98,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         fetch('/insumos/certificaciones/list-create/', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -130,6 +140,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     {% if insumoId %}
     const insumoId = parseInt("{{insumoId}}");
+
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
 
     if (insumoId) {
         // Si existe un providerId, estamos en modo de edición
@@ -201,6 +217,12 @@
             url = `/insumos/list-create/`;
             mensaje = 'Insumo creado exitosamente';
         }
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
     
         fetch(url, {
             method: method,

@@ -54,6 +54,7 @@
             </div>
             <div class="modal-body">
                 <ul id="insumosList{{ grupo.id }}"></ul>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -110,6 +111,11 @@
 <!-- Script Generar insumos -->
 <script>
     function viewGroup(userId, row) {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
                 fetch(`/insumos/consultar_grupo/${userId}/`, { method: 'GET', headers: { 'Authorization': `Bearer ${accessToken}` } })  // Reemplaza "ruta-de-tu-vista" y "1" con los valores correctos
                     .then(response => response.json())
                     .then(data => {
