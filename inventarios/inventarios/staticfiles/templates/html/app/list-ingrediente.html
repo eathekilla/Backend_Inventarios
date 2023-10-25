@@ -153,6 +153,12 @@
             }
         });
 
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
         // Función para eliminar Ingrediente Activo
         function deleteIngrediente(ingredientId, row) {
             fetch(`/insumos/ingredientes-activos/retrieve/${ingredientId}/`, {
