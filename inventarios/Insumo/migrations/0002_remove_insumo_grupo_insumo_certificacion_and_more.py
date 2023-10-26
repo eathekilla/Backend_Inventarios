@@ -26,16 +26,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='Insumo.ingredienteactivo'),
         ),
         migrations.AlterField(
-            model_name='certificacion',
-            name='periodo_carencia',
-            field=models.DateTimeField(),
-        ),
-        migrations.AlterField(
-            model_name='certificacion',
-            name='periodo_reingreso',
-            field=models.DateTimeField(),
-        ),
-        migrations.AlterField(
             model_name='insumo',
             name='unidad_medida',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='Insumo.unidadmedida'),

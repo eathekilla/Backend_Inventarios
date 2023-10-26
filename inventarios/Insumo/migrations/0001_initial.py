@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('ingrediente_activo', models.CharField(max_length=100, null=True)),
-                ('periodo_carencia', models.IntegerField()),
-                ('periodo_reingreso', models.IntegerField()),
+                ('periodo_carencia', models.DateTimeField()),
+                ('periodo_reingreso', models.DateTimeField()),
                 ('registro_ica', models.CharField(max_length=50, null=True)),
                 ('fecha_registro', models.DateField()),
             ],

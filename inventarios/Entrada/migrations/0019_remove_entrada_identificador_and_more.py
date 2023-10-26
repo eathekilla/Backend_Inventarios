@@ -22,12 +22,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entrada',
             name='id',
-            field=models.IntegerField(default=132321321312, primary_key=True, serialize=False, unique=True),
+            field=models.IntegerField( primary_key=True, serialize=False, unique=True),
         ),
         migrations.AddField(
             model_name='historicalentrada',
             name='id',
-            field=models.IntegerField(db_index=True, default=132321321312),
+            field=models.IntegerField(db_index=True ),
         ),
         migrations.AlterField(
             model_name='entrada',

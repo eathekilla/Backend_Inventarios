@@ -105,6 +105,7 @@ class FincaRelListCreateView(generics.ListCreateAPIView):
 
 @api_view(['POST'])
 def create_user_with_info_user(request):
+    
     if request.method == 'POST':
         username = request.data.get('username')
         if User.objects.filter(username=username).exists():
