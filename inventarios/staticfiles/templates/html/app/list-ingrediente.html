@@ -160,7 +160,7 @@
         {% endif %}
 
         // Función para eliminar Ingrediente Activo
-        function deleteIngrediente(ingredient Id, row) {
+        function deleteIngrediente(ingredientId, row) {
             fetch(`/insumos/ingredientes-activos/retrieve/${ingredientId}/`, {
                 method: 'DELETE',
                 headers: {

@@ -97,26 +97,22 @@ WSGI_APPLICATION = 'inventarios.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'PASSWORD': 'estepin97',
-        'HOST': 'localhost',
-        'NAME': 'inventarios',
-        'USER': 'postgres',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inventarios',
         'USER': 'postgres',
-        'PASSWORD': 'vK,e9yZ20]_4',
-        'HOST': 'inventarios.cxklqq1pgnsl.us-east-1.rds.amazonaws.com',
+        'PASSWORD': 'estepin97',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
-}
+}'''
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
