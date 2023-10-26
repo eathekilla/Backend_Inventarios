@@ -19,8 +19,7 @@ class Certificacion(models.Model):
         return f"Certificación - {self.registro_ica}"
     
 class UnidadMedida(models.Model):
-    nombre = models.CharField(max_length=50,  null=True, unique=True)
-    unidad = models.CharField(max_length=4, null=True)
+    nombre = models.CharField(max_length=50,  null=True)
     def __str__(self):
         return self.nombre
 

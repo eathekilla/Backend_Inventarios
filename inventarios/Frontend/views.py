@@ -28,7 +28,7 @@ def login_view(request):
         if user is not None:
             auth_login(request, user)
             # Suponiendo que "nombre_de_tu_vista" es el nombre de la URL de la vista a la que quieres redirigir
-            return redirect(reverse('list_entradas'))
+            return redirect(reverse('home'))
         else:
             # Aquí puedes agregar un mensaje de error si lo deseas
             context = {"error": "Credenciales incorrectas"}

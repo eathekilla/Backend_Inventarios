@@ -114,17 +114,6 @@ def create_user_with_info_user(request):
         serializer = CreateUserWithInfoUserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            usuario = get_object_or_404(User,username=username)
-            usuario.first_name = request.data.get('first_name')
-            usuario.last_name = request.data.get('last_name')
-            usuario.save()
-            info_user = get_object_or_404(InfoUser,usuario=usuario)
-            info_user.telefono = request.data.get('telefono')
-            info_user.direccion = request.data.get('direccion')
-            info_user.tipo_documento = request.data.get('tipo_documento')
-            info_user.numero_documento = request.data.get('numero_documento')
-            info_user.save()
-
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
