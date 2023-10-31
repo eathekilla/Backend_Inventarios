@@ -12,17 +12,19 @@ from itertools import groupby
 from django.utils import timezone
 from datetime import timedelta
 from django.http import JsonResponse
-from rest_framework.parsers import FileUploadParser
+from rest_framework.parsers import MultiPartParser
 
 
 class EntradaListCreateView(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
     serializer_class = EntradaSerializer
-    parser_classes = (FileUploadParser,)  # Agrega el parser para manejar archivos
+    parser_classes = (MultiPartParser,) 
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        print(request.FILES)  # Debería mostrar los archivos subidos 
+        print(request.POST) 
 
         if serializer.is_valid():
             serializer.save()
@@ -36,7 +38,7 @@ class EntradaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = (SessionAuthentication,)
     queryset = Entrada.objects.all()
     serializer_class = EntradaSerializer
-    parser_classes = (FileUploadParser,)  # Agrega el parser para manejar archivos
+    parser_classes = (MultiPartParser,)  # Agrega el parser para manejar archivos
 
     def put(self, request, *args, **kwargs):
         instance = self.get_object()

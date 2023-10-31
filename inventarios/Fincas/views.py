@@ -119,56 +119,38 @@ def create_user_with_info_user(request):
             usuario.last_name = request.data.get('last_name')
             usuario.save()
             info_user = get_object_or_404(InfoUser,usuario=usuario)
-            info_user.telefono = request.data.get('telefono')
-            info_user.direccion = request.data.get('direccion')
-            info_user.tipo_documento = request.data.get('tipo_documento')
-            info_user.numero_documento = request.data.get('numero_documento')
+            info_user_request = request.data.get('info_user')
+            info_user.telefono= info_user_request['telefono']
+            info_user.direccion = info_user_request['direccion']
+            info_user.tipo_documento = info_user_request['tipo_documento']
+            info_user.numero_documento = info_user_request['numero_documento']
             info_user.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET','PUT'])
+@api_view(['GET', 'PUT'])
 def edit_info_user(request, pk):
     try:
         user = User.objects.get(pk=pk)
-        info_user = InfoUser.objects.get(usuario=user)
     except User.DoesNotExist:
         return Response({"message": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    except InfoUser.DoesNotExist:
-        return Response({"message": "InfoUser no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     if request.method == 'PUT':
-        serializer = EditeUserWithInfoUserSerializer(data=request.data)
-        print(request.data)
+        serializer = EditeUserWithInfoUserSerializer(user, data=request.data)
         if serializer.is_valid():
-            serializer.update()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    if request.method == 'GET':
-        user = info_user.usuario  # Obtén el objeto User relacionado
-        groups = Group.objects.filter(user=user)  # Obtén los grupos a los que pertenece el usuario
 
-        user_data = {
-            'nombre':user.first_name,
-            'apellido':user.last_name,
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'groups': [group.name for group in groups]  # Lista de nombres de grupos
-        }
+    elif request.method == 'GET':
+        serializer = EditeUserWithInfoUserSerializer(user)
+        return Response(serializer.data, content_type='application/json', status=status.HTTP_200_OK)
+    else:
+        return Response({"message": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        info_users_data ={
-            'telefono': info_user.telefono,
-            'direccion': info_user.direccion,
-            'tipo_documento': info_user.tipo_documento,
-            'numero_documento': info_user.numero_documento,
-            'usuario': user_data,
-        }
-        return Response(info_users_data, content_type='application/json', status=status.HTTP_200_OK)
-    return Response({"message": "InfoUser no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
 
 @api_view(['DELETE'])
 def delete_user(request, user_id):

@@ -150,24 +150,29 @@ class CreateUserWithInfoUserSerializer(serializers.ModelSerializer):
         return user_obj
 
 class EditeUserWithInfoUserSerializer(serializers.ModelSerializer):
-    info_user = InfoUserSerializer()  # Serializador de InfoUser
-    
+    info_user = InfoUserSerializer(many=True)  # Indica que puede haber múltiples objetos InfoUser
+
     class Meta:
         model = User
-        fields = ('email','groups','info_user')
-    
-    def update(self, validated_data):
-        # Extrae los datos de info_user del validated_data
+        fields = ('first_name', 'last_name', 'email', 'username', 'groups', 'info_user')
+
+    def update(self, instance, validated_data):
         info_user_data = validated_data.pop('info_user')
-        user_obj = UserModel.objects.update_user(email=validated_data['email'], password=validated_data['password'],username = validated_data['email'])
-        user_obj.groups.set(validated_data['groups'])
-        user_obj.save()
+        info_user = InfoUser.objects.get(usuario=instance)
         
-        info_usuario = self.data['info_user']
-        # Crea un InfoUser relacionado con el usuario
-        InfoUser.objects.update(usuario=user_obj, telefono=info_usuario['telefono'],direccion=info_usuario['direccion'],tipo_documento=info_usuario['tipo_documento'],numero_documento=info_usuario['numero_documento'])
         
-        return user_obj
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.username = validated_data.get('username', instance.username)
+        instance.save()
+
+        info_user = InfoUser.objects.get(usuario__id=instance.id)
+        for attr, value in info_user_data.items():
+            setattr(info_user, attr, value)
+        info_user.save()
+
+        return instance
 
 class InfoUserSerializerDetail(serializers.ModelSerializer):
     class Meta:

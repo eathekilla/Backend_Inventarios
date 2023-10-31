@@ -154,7 +154,7 @@
                         <div class="form-group">
                             <label for="proveedor">Cargar Archivo *</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="factura" id="archivo" required>
+                                <input type="file" class="custom-file-input" name="factura" id="archivo" >
                                 <label class="custom-file-label" for="inputGroupFile01">Escoge el Archivo</label>
                             </div>
                         </div>
@@ -354,6 +354,12 @@
     
     
     function enviarDatos() {
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
         var fecha_vencimiento = document.getElementById('fecha_vencimiento').value;
         var cantidad = parseFloat(document.getElementById('cantidad').value);
         var valor_unitario_entrada_a = parseFloat(document.getElementById('valor_unitario_entrada_a').value);
@@ -362,61 +368,66 @@
         var insumo = parseInt(document.getElementById('insumo').value);
         var proveedor = parseInt(document.getElementById('proveedor').value);
         var fileInput = document.getElementById('archivo');
-        var file = null//fileInput.files[0]; // Obtiene el archivo seleccionado
+        var file = fileInput.files[0]; // Obtiene el archivo seleccionado
     
+        // Verifica que cantidad y valor_unitario_entrada_a tengan valores válidos
+        if (isNaN(cantidad)) {
+            alert('La cantidad es requerida y debe ser un número válido.');
+            return;
+        }
     
-        var payload = {
-            fecha_vencimiento: fecha_vencimiento,
-            cantidad: cantidad,
-            valor_unitario_entrada_a: valor_unitario_entrada_a,
-            numero_factura: numero_factura,
-            bodega: bodega,
-            insumo: insumo,
-            proveedor: proveedor,
-            factura :file
-        };
+        if (isNaN(valor_unitario_entrada_a)) {
+            alert('El valor unitario es requerido y debe ser un número válido.');
+            return;
+        }
     
-        // Determinar si estamos en modo edición o creación
-        console.log("LISTO")
+        var payload = new FormData();
+        payload.append('fecha_vencimiento', fecha_vencimiento);
+        payload.append('cantidad', cantidad);
+        payload.append('valor_unitario_entrada_a', valor_unitario_entrada_a);
+        payload.append('numero_factura', numero_factura);
+        payload.append('bodega', bodega);
+        payload.append('insumo', insumo);
+        payload.append('proveedor', proveedor);
+        var fileInput = document.getElementById('archivo');
+        var file = fileInput.files[0]; // Obtiene el archivo seleccionado
+
+        if (file) {
+            payload.append('factura', file, file.name); // Asegúrate de que aquí se pasa file.name
+        }
+
+    
+        // Resto del código...
         var isEditMode = {{ entradas_id|yesno:"true,false" }};
-        {% if entradas_id %}
-        var entradas_id = "{{ entradas.pk}}";
-        {% else %}
-        var entradas_id = null;
-        {% endif %}
-        
+        // ...
         var url = isEditMode ? `/entradas/retrieve/${entradas_id}/` : '/entradas/list-create/';
         var httpMethod = isEditMode ? 'PUT' : 'POST';
         var message = isEditMode ? 'Entrada editada exitosamente' : 'Entrada creada exitosamente';
-
-        {% if user.is_authenticated %}
-        const accessToken = "{{token}}"
-        {%else%}
-        const accessToken = ""
-        {% endif %}
     
+        // ...
         fetch(url, {
             method: httpMethod,
-            headers: {'X-CSRFToken': getCookie('csrftoken'),
-            'Content-Disposition': `attachment; filename=  ${numero_factura}.jpg`,
-            'Content-Type': 'application/json',
-                
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                // Intentar establecer Content-Disposition manualmente (no recomendado y probablemente no funcione)
+                'Content-Disposition': `attachment; filename="${numero_factura}.jpg"`,
                 'Authorization': `Bearer ${accessToken}`
             },
-            body: JSON.stringify(payload)
+            body: payload
         })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
-                showAlertInModal('Network response was not ok');
+                // showAlertInModal('Network response was not ok'); // Asegúrate de que esta función esté definida o usa alert()
             }
-            showAlertInModal(message);
+            // showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
         })
         .catch(error => {
             console.error('Error:', error);
-            showAlertInModal('Error al enviar el formulario');
+            // showAlertInModal('Error al enviar el formulario'); // Asegúrate de que esta función esté definida o usa alert()
         });
     }
+    
     </script>
     
     

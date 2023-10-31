@@ -15,7 +15,7 @@ class Entrada(models.Model):
     valor_unitario_entrada_a = models.FloatField()
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, null=True)
     numero_factura = models.CharField(max_length=150, null=True)
-    factura = models.FileField(upload_to='comprobantes/',null=True,blank=True)
+    factura = models.FileField(upload_to='comprobantes_inventarios/',null=True,blank=True)
     identificador = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = True, unique=True)
 
     history = HistoricalRecords()
