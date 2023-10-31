@@ -15,6 +15,13 @@
       <link rel="stylesheet" href="{% static '/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}">
       <link rel="stylesheet" href="{% static '/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
       <link rel="stylesheet" href="{% static '/assets/vendor/remixicon/fonts/remixicon.css' %}">  </head>
+
+      <!-- links para exportar a excel -->
+    <script src="https://unpkg.com/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/file-saverjs@latest/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/tableexport@latest/dist/js/tableexport.min.js"></script>
+
+    
   <body class="  ">
     <!-- loader Start -->
     <div id="loading">
@@ -62,6 +69,7 @@
                     </li>
                       <li class=" ">
                           <a href="#proveedores" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                            
                               <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                               </svg>
@@ -672,7 +680,7 @@
               <nav class="navbar navbar-expand-lg navbar-light p-0">
                   <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                       <i class="ri-menu-line wrapper-menu"></i>
-                      <a href="" class="header-logo">
+                      <a href="../backend/index.html" class="header-logo">
                           <img src="{% static '/assets/images/logo_ottsa.svg' %}" class="img-fluid rounded-normal" alt="logo">
                           <h5 class="logo-title ml-3">Invetarios Ottsa</h5>
       
@@ -984,6 +992,48 @@
             }
             return cookieValue;
         }
+    </script>
+
+    <script>
+        // Función para exportar cualquier tabla a Excel
+function exportarTablaAExcel(idTabla) {
+    const tabla = document.querySelector(`#${idTabla}`);
+    if (!tabla) {
+        console.error(`No se encontró ninguna tabla con el id "${idTabla}"`);
+        return;
+    }
+
+    let tableExport = new TableExport(tabla, {
+        exportButtons: false, // No queremos botones
+        filename: "Reporte de prueba", // Nombre del archivo de Excel
+        sheetname: "Reporte de prueba", // Título de la hoja
+    });
+
+    let datos = tableExport.getExportData();
+    let preferenciasDocumento = datos[idTabla].xlsx;
+    tableExport.export2file(
+        preferenciasDocumento.data,
+        preferenciasDocumento.mimeType,
+        preferenciasDocumento.filename,
+        preferenciasDocumento.fileExtension,
+        preferenciasDocumento.merges,
+        preferenciasDocumento.RTL,
+        preferenciasDocumento.sheetname
+    );
+}
+
+// Event listeners para botones de exportación específicos
+document.addEventListener("DOMContentLoaded", function() {
+    const botonesExportar = document.querySelectorAll(".btnExportar");
+
+    botonesExportar.forEach((boton) => {
+        boton.addEventListener("click", function() {
+            const idTabla = boton.getAttribute("data-table-id");
+            exportarTablaAExcel(idTabla);
+        });
+    });
+});
+
     </script>
   </body>
 </html>

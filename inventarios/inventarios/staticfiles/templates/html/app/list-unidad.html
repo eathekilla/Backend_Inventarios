@@ -17,6 +17,7 @@
             <thead class="bg-white text-uppercase">
                 <tr class="ligth ligth-data">
                     <th>Nombre de la unidad de medida</th>
+                    <th>Unidad de medida</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -99,6 +100,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                 <td>${unidad.nombre}</td>
+                <td>${unidad.unidad}</td>
                 <td>
                     <div class="d-flex align-items-center list-action">
                         <a class="badge badge-info mr-2" data-toggle="modal" data-placement="top" title="Información del unidad" href="#" data-target="#exampleModalCenteredScrollable${unidad.id}><i class="ri-eye-line mr-0"></i></a>
