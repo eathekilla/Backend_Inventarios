@@ -176,3 +176,96 @@ def cantidad_total_insumo(request, id_insumo):
     insumo = get_object_or_404(Insumo,id=id_insumo)
     unidad_medida = insumo.unidad_medida
     return JsonResponse({'unidad_medida': unidad_medida.nombre})
+
+
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from django.http import HttpResponse
+from datetime import datetime, timedelta
+
+def alerta_proximas_a_vencer(request):
+    # Configuración de Gmail
+    gmail_user = 'inventarioscrecento@gmail.com'
+    gmail_password = 'monidblpfeuzfwga'
+
+    # Calcula la fecha de hoy y la fecha límite para las entradas a vencer
+    today = datetime.now()
+    one_week_later = today + timedelta(weeks=1)
+
+    # Consulta las entradas que vencen en una semana
+    entradas_a_vencer = Entrada.objects.filter(fecha_vencimiento__gte=today, fecha_vencimiento__lte=one_week_later)
+
+    # Configuración del correo
+    subject = f'Alerta: Entradas próximas a vencer - {today.strftime("%Y-%m-%d")}'
+    from_email = gmail_user
+    recipient_list = ['inventarioscrecento@gmail.com']  # Reemplaza con la dirección del destinatario
+
+    # Cuerpo del correo
+    message = 'Las siguientes entradas vencerán en una semana:\n\n'
+    for entrada in entradas_a_vencer:
+        message += f"Entrada: {entrada.insumo}\n"
+        message += f"Bodega: {entrada.bodega}\n"
+        message += f"Lote: {entrada.bodega.lote}\n"
+        message += f"Finca: {entrada.bodega.lote.finca}\n"
+        message += f"Cantidad: {entrada.cantidad}\n"
+        message += f"Proveedor: {entrada.proveedor}\n"
+        message += f"Identificador: {entrada.identificador}\n"
+        message += f"Fecha de vencimiento: {entrada.fecha_vencimiento}\n"
+        message += '--------------------------------------\n'
+
+    try:
+        # Configura el servidor SMTP de Gmail
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(gmail_user, gmail_password)
+
+        # Crea el mensaje
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = ', '.join(recipient_list)
+        msg['Subject'] = subject
+        msg.attach(MIMEText(message, 'plain'))
+
+        # Envía el correo
+        server.sendmail(from_email, recipient_list, msg.as_string())
+        server.close()
+
+        return HttpResponse('Correo de alerta enviado exitosamente.')
+    except Exception as e:
+        return HttpResponse(f'Error al enviar el correo: {str(e)}')
+
+
+def enviar_correo_prueba(request):
+    # Configuración de Gmail
+    gmail_user = 'inventarioscrecento@gmail.com'
+    gmail_password = 'monidblpfeuzfwga'  # Reemplaza con tu contraseña de Gmail
+
+    # Configuración del correo
+    subject = 'Prueba de envío de correo desde Django'
+    from_email = gmail_user
+    recipient_list = ['eamezquita97@gmail.com']  # Reemplaza con tu dirección de correo
+
+    # Cuerpo del correo
+    message = 'Este es un correo de prueba enviado desde Django.'
+
+    try:
+        # Configura el servidor SMTP de Gmail
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(gmail_user, gmail_password)
+
+        # Crea el mensaje
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = ', '.join(recipient_list)
+        msg['Subject'] = subject
+        msg.attach(MIMEText(message, 'plain'))
+
+        # Envía el correo
+        server.sendmail(from_email, recipient_list, msg.as_string())
+        server.close()
+
+        print('Correo de prueba enviado exitosamente.')
+    except Exception as e:
+        print(f'Error al enviar el correo de prueba: {str(e)}')
+
