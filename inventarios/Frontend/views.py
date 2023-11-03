@@ -80,12 +80,14 @@ def list_proveedor(request):
 def add_insumo(request,insumo_id=None):
     unidades_medida = UnidadMedida.objects.all()
     certificaciones = Certificacion.objects.all()
+    grupo_insumos = Grupo.objects.all()
     user = get_object_or_404(User,email=request.user.email)
     token = str(AccessToken.for_user(user))
     context ={
         "unidades_medida":unidades_medida,
         "certificaciones":certificaciones
         ,'token':token
+        ,"grupos":grupo_insumos
     }
     if insumo_id:
         insumo_instance = get_object_or_404(Insumo,id=insumo_id)

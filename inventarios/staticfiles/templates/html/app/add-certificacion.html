@@ -40,7 +40,7 @@
                         <div class="form-group">
                             <label>Ingrediente Activo</label>
                             <select name="type" class="selectpicker form-control" data-style="py-0" id="ingrediente" name="ingrediente">
-                                <option >Seleccione una opción</option>
+                                
                                 {% for ingrediente in ingredientes %}
                                 <option value="{{ ingrediente.id }}" >{{ ingrediente.nombre }}</option>
                                 {% endfor%}
