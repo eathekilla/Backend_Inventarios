@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-12">
+                    {% comment %} <div class="col-md-12">
                         <div class="form-group">
                             <label>Seleccione los insumos para añadir al grupo</label>
                             <select class="select selectpicker form-control" placeholder="Selecciona al menos un insumo" data-style="py-0"  multiple id="insumos" name="insumos">
@@ -51,7 +51,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                    </div> 
+                    </div>  {% endcomment %}
                 </div>                            
                 <button type="submit" class="btn btn-primary mr-2">
                     {% if grupo_id %}Editar{% else %}Crear{% endif %} Grupo de Insumo</button>
@@ -83,11 +83,11 @@
 
 
 
-<script>
+{% comment %} <script>
     window.onload = function() {
         precargarSelects();
         }
-</script>
+</script> {% endcomment %}
 
 <script>
     function precargarSelects() {
@@ -130,14 +130,15 @@
         {% else %}
         var grupo_id = null;
         {% endif %}
-        // Obtener los valores seleccionados del campo de selección
+        
+        {% comment %} // Obtener los valores seleccionados del campo de selección
         const selectedOptions = Array.from(groupForm.elements.insumos.selectedOptions).map(option => option.value);
 
         // Crear una cadena JSON con los valores seleccionados
         const insumosJSON = JSON.stringify(selectedOptions);
 
         // Agregar la cadena JSON como un campo en el formulario
-        groupForm.elements.insumos.value = insumosJSON;
+        groupForm.elements.insumos.value = insumosJSON; {% endcomment %}
 
         var url = isEditMode ? `/insumos/grupos/retrieve/${grupo_id}/` : '/insumos/grupos/list-create/';
         var httpMethod = isEditMode ? 'PUT' : 'POST';

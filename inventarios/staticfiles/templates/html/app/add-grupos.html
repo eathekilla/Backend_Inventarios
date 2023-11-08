@@ -25,7 +25,7 @@
                     </div>
                     <div class="col-md-6">                      
                         <div class="form-group">
-                            <label>Iniciales del Grupo de Insumos *</label>
+                            <label>Iniciales del Grupo de Insumoss *</label>
                             {% if grupo_id %}
                             <input type="text" class="form-control" placeholder="Iniciales del grupo" required id="inicial" name="inicial" value="{{grupo_instance.inicial}}">
                             {% else %}
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-12">
+                    {% comment %} <div class="col-md-12">
                         <div class="form-group">
                             <label>Seleccione los insumos para añadir al grupo</label>
                             <select class="select selectpicker form-control" placeholder="Selecciona al menos un insumo" data-style="py-0"  multiple id="insumos" name="insumos">
@@ -51,7 +51,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                    </div> 
+                    </div>  {% endcomment %}
                 </div>                            
                 <button type="submit" class="btn btn-primary mr-2">
                     {% if grupo_id %}Editar{% else %}Crear{% endif %} Grupo de Insumo</button>

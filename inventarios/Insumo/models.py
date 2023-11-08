@@ -38,7 +38,7 @@ class Insumo(models.Model):
 class Grupo(models.Model):
     nombre = models.CharField(max_length=100,  null=True)
     inicial = models.CharField(max_length=5, null=True)
-    insumos = models.ManyToManyField(Insumo, null=True,related_name='grupos')
+    insumos = models.ManyToManyField(Insumo, null=True,related_name='grupos',blank=True)
     def __str__(self):
         return self.nombre
 
