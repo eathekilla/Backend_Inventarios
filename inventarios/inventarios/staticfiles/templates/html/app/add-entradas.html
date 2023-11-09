@@ -2,6 +2,25 @@
 {%load static%}
 {% block body %}
 
+<style>
+ 
+  /* Estilos del loader */
+  .loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+</style>
+
 <div class="col-sm-12">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
@@ -193,8 +212,29 @@
             </div>
         </div>
     </div>
+
+    
 </div>
 
+
+<div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div id="loader" class="loader"></div>
+                <p>Espere por favor...</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script>
     document.getElementById('insumo').addEventListener('change', function() {
@@ -405,6 +445,7 @@
         var message = isEditMode ? 'Entrada editada exitosamente' : 'Entrada creada exitosamente';
     
         // ...
+        activarLoader()
         fetch(url, {
             method: httpMethod,
             headers: {
@@ -417,19 +458,37 @@
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
-                // showAlertInModal('Network response was not ok'); // Asegúrate de que esta función esté definida o usa alert()
+                desactivarLoader()
+                showAlertInModal('Network response was not ok'); // Asegúrate de que esta función esté definida o usa alert()
             }
-            // showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
+            desactivarLoader()
+            showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
         })
         .catch(error => {
             console.error('Error:', error);
-            // showAlertInModal('Error al enviar el formulario'); // Asegúrate de que esta función esté definida o usa alert()
+            desactivarLoader()
+            showAlertInModal('Error al enviar el formulario'); // Asegúrate de que esta función esté definida o usa alert()
         });
     }
     
     </script>
-    
+    <script>
+                // Función para activar el modal con loader
+        function activarLoader() {
+            $("#myModal").modal('show');
+            
+        }
+        
+        // Función para desactivar el modal con loader
+        function desactivarLoader() {
+            $("#myModal").modal('hide');
+            setTimeout(function() {
+                console.log("");
+              }, 1000);
+        }
+        
+                
+    </script>
     
 
 
