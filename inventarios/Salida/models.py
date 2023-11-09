@@ -1,17 +1,24 @@
 from django.db import models
-from Fincas.models import Finca
-from Insumo.models import Insumo, Grupo
+from Insumo.models import Insumo
 from Entrada.models import Entrada
 from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+
+class SalidaEntradaRelacion(models.Model):
+    salida = models.ForeignKey('Salida', on_delete=models.CASCADE)
+    entrada = models.ForeignKey(Entrada, on_delete=models.CASCADE)
+    cantidad_usada = models.FloatField(default=0)
+    precio_unitario = models.FloatField(default=0)
+
+    def __str__(self):
+        return f"Relacion - {self.salida} - {self.entrada}"
 
 class Salida(models.Model):
     fecha_salida = models.DateTimeField(default=datetime.now())
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE)
     cantidad = models.FloatField(default=0)
     valor_total_salida = models.FloatField(default=0)
-    #grupo = models.ForeignKey(Grupo,related_name='grupo_insumo_salida', on_delete=models.CASCADE,null=True )
 
     def __str__(self):
         return f"Salida - {self.fecha_salida} - {self.insumo.nombre}"
@@ -35,19 +42,20 @@ class Salida(models.Model):
                     valor_total += cantidad_pendiente * entrada.valor_unitario_entrada_a
                     relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=cantidad_pendiente, precio_unitario=entrada.valor_unitario_entrada_a)
                     entrada.cantidad -= cantidad_pendiente
-                    
+                    entrada.save()
                     break
                 else:
                     valor_total += entrada.cantidad * entrada.valor_unitario_entrada_a
                     relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=entrada.cantidad, precio_unitario=entrada.valor_unitario_entrada_a)
                     cantidad_pendiente -= entrada.cantidad
                     entrada.cantidad = 0
-                relacion.save()
-                entrada.save()
+                    entrada.save()
+                #relacion.save()
 
-            self.valor_total_salida = valor_total
+            self.valor_total_salida = valor_total 
 
         super(Salida, self).save(*args, **kwargs)
+
 
 
 
