@@ -418,13 +418,13 @@
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
-                // showAlertInModal('Network response was not ok'); // Asegúrate de que esta función esté definida o usa alert()
+                showAlertInModal('Network response was not ok'); // Asegúrate de que esta función esté definida o usa alert()
             }
-            // showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
+            showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
         })
         .catch(error => {
             console.error('Error:', error);
-            // showAlertInModal('Error al enviar el formulario'); // Asegúrate de que esta función esté definida o usa alert()
+            showAlertInModal('Error al enviar el formulario'); // Asegúrate de que esta función esté definida o usa alert()
         });
     }
     
