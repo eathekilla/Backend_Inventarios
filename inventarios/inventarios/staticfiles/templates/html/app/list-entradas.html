@@ -1,7 +1,19 @@
 {% extends "./todo.html" %}
 {% load static %}
 {% block body %}
-
+{% load humanize %}
+<style>
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1041;
+        width: 0;
+        height: 100vh;
+        background-color: #000;
+    }
+    
+</style>
 
 <div class="col-lg-12">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
@@ -41,11 +53,11 @@
                     <td>{{entrada.insumo}}</td>
                     <td>{{entrada.unidad_medida}}</td>
                     <td>{{entrada.cantidad}}</td>
-                    <td>{{entrada.valor_unitario_entrada_a}}</td>
-                    <td>{{entrada.total}}</td>
+                    <td>$ {{entrada.valor_unitario_entrada_a |floatformat:2|intcomma}}</td>
+                    <td>$ {{entrada.total|floatformat:2|intcomma}}</td>
                     <td>{{entrada.fecha_vencimiento|date:"j \d\e F \d\e Y" }}</td>
                     <td>{{entrada.bodega}}</td>
-                    <td>{{entrada.numero_factura}}</td>
+                    <td><u><a href="/entradas/comprobante/{{entrada.pk}}" target="_blank" style="color: #000000;">{{entrada.numero_factura}}</a></u></td>
                     <td>{{entrada.proveedor}}</td>
 
                 
@@ -77,7 +89,7 @@
                                 <b>Valor Total: </b>{{entrada.total}}<br>
                                 <b>Vencimiento: </b>{{entrada.fecha_vencimiento|date:"j \d\e F \d\e Y" }}<br>  
                                 <b>Finca/Bodega: </b>{{entrada.bodega}}<br>                                  
-                                <b>Numero Factura: </b>{{entrada.numero_factura}}<br>
+                                <b>Numero Factura: </b><u><a href="/entradas/comprobante/{{entrada.pk}}" target="_blank" style="color: #000000;">{{entrada.numero_factura}}</a></u><br>
                                 <b>Proveedor: </b>{{entrada.proveedor}}<br>
                             </div>
                             <div class="modal-footer">

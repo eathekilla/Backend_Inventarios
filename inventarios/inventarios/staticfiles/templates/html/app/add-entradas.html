@@ -52,7 +52,7 @@
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label for="insumo">Insumo *</label>
-                            <select id="insumo" name="insumo" class="selectpicker form-control" data-style="py-0">
+                            <select id="insumo" name="insumo" class="selectpicker form-control" data-style="py-0" required>
                                 {%for insumo in insumos%}
                                 <option value="{{insumo.pk}}" selected >{{insumo.nombre}}</option>
                                 {% endfor %}
@@ -64,7 +64,7 @@
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label for="unidad_medida">Unidades de Medida *</label>
-                            <input id="unidad_medida" name="unidad_medida" class="form-control" Disabled>
+                            <input id="unidad_medida" name="unidad_medida" class="form-control" Disabled >
                             </select>
                         </div>
                     </div>
@@ -90,9 +90,9 @@
                             <label for="valor_unitario_entrada_a">Valor Unitario *</label>
                             
                             {% if entradas_id %}
-                            <input type="number" class="form-control" placeholder="Ingrese valor unitario" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a">
+                            <input type="text" class="form-control" placeholder="0.00" oninput="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
                             {% else %}
-                            <input type="number" class="form-control" placeholder="Ingrese valor unitario" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a">
+                            <input type="text" class="form-control" placeholder="0.00" oninput="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
                             {% endif %}
                             <script>
                                 var vlrunitario = parseInt("{{ entradas.valor_unitario_entrada_a }}");
@@ -116,7 +116,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="selectFinca">Finca *</label>
-                            <select id="selectFinca" class="form-control">
+                            <select id="selectFinca" class="form-control" required>
                                 <option>Seleccione una Finca</option>
                                 {% for finca in estructura %}
                                 <option value="{{ finca.id }}" {% if forloop.counter0 == finca_preseleccionada %}selected{% endif %}>{{ finca.nombre_finca }}</option>
@@ -129,7 +129,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="selectLote">Lote *</label>
-                            <select id="selectLote" class="form-control">
+                            <select id="selectLote" class="form-control" required>
                                 <option >Seleccione un Lote</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
@@ -139,7 +139,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="selectBodega">Bodega *</label>
-                            <select id="selectBodega" class="form-control">
+                            <select id="selectBodega" class="form-control" required>
                                 <option >Seleccione una Bodega</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
@@ -160,7 +160,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="proveedor">Proveedor *</label>
-                            <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0">
+                            <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0" required>
                                 {%for proveedor in proveedores%}
                                 <option value="{{proveedor.id}}" selected >{{proveedor.razon_social}}</option>
                                 
@@ -173,7 +173,7 @@
                         <div class="form-group">
                             <label for="proveedor">Cargar Archivo *</label>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="factura" id="archivo" >
+                                <input type="file" class="custom-file-input" name="factura" id="archivo" required>
                                 <label class="custom-file-label" for="inputGroupFile01">Escoge el Archivo</label>
                             </div>
                         </div>
@@ -457,15 +457,19 @@
             body: payload
         })
         .then(response => {
-            if (!response.ok) {
+            if (response.status === 201) {
                 desactivarLoader()
-                showAlertInModal('Network response was not ok'); // Asegúrate de que esta función esté definida o usa alert()
+                showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
+            } else if (response.status === 400) {
+                desactivarLoader()
+                showAlertInModal('Error enviando la información de la entrada!'); // Asegúrate de que esta función esté definida o usa alert()
+            } else {
+                // Acciones para otros códigos de estado
+                desactivarLoader();
+                showAlertInModal(`Error ${response.status}: ${response.statusText}`);
             }
-            desactivarLoader()
-            showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
         })
         .catch(error => {
-            console.error('Error:', error);
             desactivarLoader()
             showAlertInModal('Error al enviar el formulario'); // Asegúrate de que esta función esté definida o usa alert()
         });

@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404, redirect
 from rest_framework import generics
 from .models import Entrada
 from Insumo.models import Insumo
@@ -13,7 +14,10 @@ from django.utils import timezone
 from datetime import timedelta
 from django.http import JsonResponse
 from rest_framework.parsers import MultiPartParser
-
+import boto3
+from django.conf import settings
+from botocore.exceptions import ClientError
+AWS_STORAGE_BUCKET_NAME = settings.AWS_STORAGE_BUCKET_NAME
 
 class EntradaListCreateView(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -23,9 +27,6 @@ class EntradaListCreateView(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        print(request.FILES)  # Debería mostrar los archivos subidos 
-        print(request.POST) 
-
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -174,3 +175,25 @@ def entradas_proximas_a_vencer(request):
              "insumo": e.insumo.nombre,  # Asumiendo que el modelo Insumo tiene un campo llamado 'nombre'
              "identificador": e.identificador} for e in entradas]
     return JsonResponse(data, safe=False)
+
+def comprobante(request,pk):
+    entrada = get_object_or_404(Entrada,pk=pk)
+    s3_client = boto3.client(
+    's3',
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+
+    try:
+        response = s3_client.generate_presigned_url(
+            'get_object',
+            Params={
+                'Bucket': AWS_STORAGE_BUCKET_NAME,
+                'Key': entrada.factura.name
+            },
+            ExpiresIn=360
+        )
+        return redirect(f'{response}')
+    except ClientError as e:
+        # Manejar cualquier error de generación de URL firmada
+
+        return redirect('/')

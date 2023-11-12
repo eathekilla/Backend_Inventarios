@@ -1,6 +1,7 @@
 {% extends "./todo.html" %}
 {% load static %}
 {% block body %}
+{% load humanize %}
 
 
 <div class="col-lg-12">
@@ -9,6 +10,9 @@
             <h4 class="mb-3">Listado de estado inicial de Entradas</h4>
             <p class="mb-0"> Listado de Entradas registrados en plataforma </p>
         </div>
+        <button data-table-id="suppliersTable" class="btn btn-success btnExportar">
+            <i class="fas fa-file-excel"></i> Exportar datos a Excel
+        </button>
         <a href="{% url 'add_entradas' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir</a>
     </div>
 </div>
@@ -40,8 +44,8 @@
                     <td>{{entrada.insumo}}</td>
                     <td>{{entrada.unidad_medida}}</td>
                     <td>{{entrada.cantidad}}</td>
-                    <td>{{entrada.valor_unitario_entrada_a}}</td>
-                    <td>{{entrada.total}}</td>
+                    <td>$ {{entrada.valor_unitario_entrada_a |floatformat:2|intcomma}}</td>
+                    <td>$ {{entrada.total |floatformat:2|intcomma}}</td>
                     <td>{{entrada.fecha_vencimiento|date:"j \d\e F \d\e Y" }}</td>
                     <td>{{entrada.bodega}}</td>
                     <td>{{entrada.numero_factura}}</td>
