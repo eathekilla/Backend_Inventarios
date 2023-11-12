@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'Frontend.apps.FrontendConfig',
     'simple_history',
     'whitenoise.runserver_nostatic', 
+    'django.contrib.humanize'
 
 ]
 
