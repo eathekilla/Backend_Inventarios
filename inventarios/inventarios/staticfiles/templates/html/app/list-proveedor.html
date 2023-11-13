@@ -1,72 +1,97 @@
 {% extends "./todo.html" %}
 {% load static %}
 {% block body %}
+<head>
 <style>
     .modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1041;
-        width: 0;
-        height: 100vh;
-        background-color: #000;
+
+        width: auto;
+
     }
-    
 </style>
+</head>
 
-<div class="col-lg-12">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="mb-3">Listado de Proveedores</h4>
-            <p class="mb-0"> Listado de Proveedores registrados en plataforma </p>
+
+<body>
+
+    <!-- Contenido HTML principal -->
+    <<div class="col-lg-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="mb-3">Listado de Proveedores test!</h4>
+                <p class="mb-0">Listado de Proveedores registrados en la plataforma</p>
+            </div>
+            <a href="{% url 'add_proveedor' %}" class="btn btn-primary add-list">
+                <i class="las la-plus mr-3"></i>Añadir
+            </a>
         </div>
-        <a href="{% url 'add_proveedor' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir</a>
     </div>
-</div>
-<div class="col-lg-12">
-    <div class="table-responsive rounded mb-3">
-    <table class="data-table table mb-0 tbl-server-info" id="suppliersTable">
-        <thead class="bg-white text-uppercase">
-            <tr class="ligth ligth-data">
-                <th>NIT</th>
-                <th>Razón Social</th>
-                <th>Representante Legal</th>
-                <th>Dirección</th>
-                <th>Departamento</th>
-                <th>Municipio</th>
-                <th>Accion</th>
-                
-            </tr>
-        </thead>
-        <tbody class="ligth-body">
-            <tr>
-                <td>321654987</td>
-                <td>Thekilla Apps</td>
-                <td>Esteban Ramirez</td>
-                <td>Cra 50 # 35 -40</td>
-                <td>Casanare</td>
-                <td>Yopal</td>
-                <td>
-                    <div class="d-flex align-items-center list-action">
-                        <a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"
-                            href="#"><i class="ri-eye-line mr-0"></i></a>
-                        <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"
-                            href="#"><i class="ri-pencil-line mr-0"></i></a>
-                        <a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"
-                            href="#"><i class="ri-delete-bin-line mr-0"></i></a>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 
-    
+    <div class="col-lg-12">
+        <div class="table-responsive rounded mb-3">
+            <table class="data-table table mb-0 tbl-server-info" id="suppliersTable">
+                <thead class="bg-white text-uppercase">
+                    <tr class="ligth ligth-data">
+                        <th>NIT</th>
+                        <th>Razón Social</th>
+                        <th>Representante Legal</th>
+                        <th>Dirección</th>
+                        <th>Departamento</th>
+                        <th>Municipio</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="ligth-body">
+                    {% for proveedor in proveedores %}
+                    <tr>
+                        <td>{{proveedor.nit_cedula}}</td>
+                        <td>{{proveedor.razon_social}}</td>
+                        <td>{{proveedor.representante_legal}}</td>
+                        <td>{{proveedor.direccion}}</td>
+                        <td>{{proveedor.departamento}}</td>
+                        <td>{{proveedor.municipio}}</td>
+                        <td>
+                        <div class="d-flex align-items-center list-action">
+                            <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable{{proveedor.id}}" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
+                            <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="{{proveedor.id}}"><i class="ri-pencil-line mr-0"></i></a>
+                            <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="{{proveedor.id}}"><i class="ri-delete-bin-line mr-0"></i></a>
+                        </div>
+                        </td>
+                        <div id="exampleModalCenteredScrollable{{proveedor.id}}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Entrada</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <b>Razón Social:</b> {{proveedor.razon_social}}<br>
+                                    <b>NIT:</b> {{proveedor.nit_cedula}}<br>
+                                    <b>Representante Legal:</b> {{proveedor.representante_legal}}<br>
+                                    <b>Departamento: </b> {{proveedor.departamento}}<br>
+                                    <b>Municipio: </b>{{proveedor.municipio}}<br>
+                                    <b>Dirección: </b> {{proveedor.direccion}}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-        style="display: none;" aria-hidden="true">
+    <!-- Modal -->
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -76,6 +101,7 @@
                     </button>
                 </div>
                 <div class="modal-body-aviso" style="text-align: center;">
+                    <!-- Contenido del cuerpo del aviso, si es necesario -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -84,7 +110,10 @@
         </div>
     </div>
 
+    <!-- Scripts y otros elementos pueden ir aquí -->
 
+
+<!--
 <script>
     {% if user.is_authenticated %}
         const accessToken = "{{token}}"
@@ -106,14 +135,6 @@
             data.forEach(supplier => {
                 const row = document.createElement('tr');
 
-                /*<th>NIT</th>
-                <th>Razón Social</th>
-                <th>Representante Legal</th>
-                <th>Dirección</th>
-                <th>Departamento</th>
-                <th>Municipio</th>
-                <th>Accion</th>*/
-
                 // Crear y agregar cada columna (td) al row
                 row.innerHTML = `
                 <td>${supplier.nit_cedula}</td>
@@ -123,36 +144,35 @@
                 <td>${supplier.departamento}</td>
                 <td>${supplier.municipio}</td>
                 <td>
-                    <div class="d-flex align-items-center list-action">
-                <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable${supplier.id}"  data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
-                <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${supplier.id}"><i class="ri-pencil-line mr-0"></i></a>
-                <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${supplier.id}"><i class="ri-delete-bin-line mr-0"></i></a>
-            </div>
+                <div class="d-flex align-items-center list-action">
+                    <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable${supplier.id}" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
+                    <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${supplier.id}"><i class="ri-pencil-line mr-0"></i></a>
+                    <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${supplier.id}"><i class="ri-delete-bin-line mr-0"></i></a>
+                </div>
                 </td>
                 <div id="exampleModalCenteredScrollable${supplier.id}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Entrada</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <b>Razón Social:</b>  ${supplier.razon_social}<br>
-                                <b>NIT:</b> ${supplier.nit_cedula}<br>
-                                <b>Representante Legal:</b> ${supplier.representante_legal}<br>
-                                <b>Departamento: </b> ${supplier.departamento}<br>
-                                <b>Municipio: </b>${supplier.municipio}<br>
-                                <b>Dirección: </b> ${supplier.direccion}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            </div>
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Entrada</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                            </button>
                         </div>
+                        <div class="modal-body">
+                            <b>Razón Social:</b> ${supplier.razon_social}<br>
+                            <b>NIT:</b> ${supplier.nit_cedula}<br>
+                            <b>Representante Legal:</b> ${supplier.representante_legal}<br>
+                            <b>Departamento: </b> ${supplier.departamento}<br>
+                            <b>Municipio: </b>${supplier.municipio}<br>
+                            <b>Dirección: </b> ${supplier.direccion}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
-                `;
+                </div>
+                </div>`;
 
                 // Agregar el row al tbody
                 tableBody.appendChild(row);
@@ -167,7 +187,7 @@
         .catch(error => {
             console.error('Error:', error);
         });
-</script>
+</script>-->
 
 
 <!--Script de Edición-->
@@ -239,6 +259,7 @@
 
 
 </script>
+</body>
 
 
 {% endblock %}

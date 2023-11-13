@@ -74,7 +74,9 @@ def add_proveedor(request,prov_id=None):
 def list_proveedor(request):
     user = get_object_or_404(User,email=request.user.email)
     token = str(AccessToken.for_user(user))
-    return render(request,"html/app/list-proveedor.html",{'token':token}) 
+    proveedores = Proveedor.objects.all()
+
+    return render(request,"html/app/list-proveedor.html",{'token':token,'proveedores':proveedores,'user':user}) 
 
 @login_required
 def add_insumo(request,insumo_id=None):
