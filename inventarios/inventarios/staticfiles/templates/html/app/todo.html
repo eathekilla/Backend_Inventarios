@@ -50,6 +50,7 @@
             <div class="data-scrollbar" data-scroll="1">
                 <nav class="iq-sidebar-menu">
                     <ul id="iq-sidebar-toggle" class="iq-menu">
+                        {% if "administracion" in grupos_usuario%}
                         <li class=" ">
                             <a href="#people" class="collapsed" data-toggle="collapse" aria-expanded="false">
                                 <svg class="svg-icon" id="p-dash8" width="20" height="20"
@@ -84,6 +85,7 @@
                                 
                             </ul>
                         </li>
+                        {% endif %}
 
                         <li class=" ">
                             <a href="#fincas" class="collapsed" data-toggle="collapse" aria-expanded="false">
@@ -132,11 +134,13 @@
                                 </svg>
                             </a>
                             <ul id="proveedores" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_proveedor' %}">
                                         <i class="las la-minus"></i><span>Añadir Proveedor</span>
                                     </a>
                                 </li>
+                                {% endif %}
                                 <li class="">
                                     <a href="{% url 'list_proveedor' %}">
                                         <i class="las la-minus"></i><span>Listado de Proveedores</span>
@@ -185,11 +189,13 @@
                                         <i class="las la-minus"></i><span>Listado de Insumos</span>
                                     </a>
                                 </li>
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_insumo' %}">
                                         <i class="las la-minus"></i><span>Añadir Insumo</span>
                                     </a>
                                 </li>
+                                {%endif%}
                                 
                                 
                                 
@@ -212,11 +218,13 @@
                                 </svg>
                             </a>
                             <ul id="entradas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_entradas' %}">
                                         <i class="las la-minus"></i><span>Añadir Entradas</span>
                                     </a>
                                 </li>
+                                {%endif%}
                                 <li class="">
                                     <a href="{% url 'list_entradas' %}">
                                         <i class="las la-minus"></i><span>Listado de Entradas</span>
@@ -247,11 +255,13 @@
                                 </svg>
                             </a>
                             <ul id="salidas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_salidas' %}">
                                         <i class="las la-minus"></i><span>Añadir Salidas</span>
                                     </a>
                                 </li>
+                                {%endif%}
                                 <li class="">
                                     <a href="{% url 'list_salidas' %}">
                                         <i class="las la-minus"></i><span>Listado de Salidas</span>
@@ -417,7 +427,7 @@
                                                 <div class="p-3">
                                                     <h5 class="mb-1">
                                                         {% if user.is_authenticated %}
-                                                        <p>Email: {{ user.username }}</p>
+                                                        <p>{{ user.fist_name }} {{user.last_name}}</p>
                                                         {% else %}
                                                         <p>Por favor, inicie sesión para ver su correo electrónico.</p>
                                                         {% endif %}

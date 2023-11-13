@@ -8,7 +8,9 @@
         <div>
             <h4 class="mb-3">Listado de Unidad de Medida</h4>
         </div>
+        {% if "creacion" in grupos_usuario%}
         <a href="{% url 'add_unidad' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Unidad de Medida</a>
+        {%endif%}
     </div>
 </div>
 <div class="col-lg-12">
@@ -98,14 +100,31 @@
                 console.log(data)
                 data.forEach(unidad => {
                     const row = document.createElement('tr');
+
+                    var esAdministrador = {% if 'administracion' in grupos_usuario %}true{% else %}false{% endif %};
+                    if (esAdministrador) {
+                        var btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="${unidad.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
+                    }
+                    else{
+                        var btn_eliminar = ''
+                    }
+
+                    var esEditar = {% if 'edicion' in grupos_usuario %}true{% else %}false{% endif %};
+                    if (esEditar) {
+                        var btn_editar = `<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="${unidad.id}"><i class="ri-pencil-line mr-0"></i></a>`    
+                    }
+                    else{
+                        var btn_editar = ''
+                    }
                     row.innerHTML = `
                 <td>${unidad.nombre}</td>
                 <td>${unidad.unidad}</td>
                 <td>
                     <div class="d-flex align-items-center list-action">
                         <a class="badge badge-info mr-2" data-toggle="modal" data-placement="top" title="Información del unidad" href="#" data-target="#exampleModalCenteredScrollable${unidad.id}><i class="ri-eye-line mr-0"></i></a>
-                        <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="${unidad.id}"><i class="ri-pencil-line mr-0"></i></a>
-                        <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="${unidad.id}"><i class="ri-delete-bin-line mr-0"></i></a>
+                        ${btn_editar}
+                        ${btn_eliminar}
+                        
                     </div>
                 </td>
             `;

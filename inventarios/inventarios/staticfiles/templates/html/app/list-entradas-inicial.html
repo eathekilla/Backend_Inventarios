@@ -13,7 +13,9 @@
         <button data-table-id="suppliersTable" class="btn btn-success btnExportar">
             <i class="fas fa-file-excel"></i> Exportar datos a Excel
         </button>
+        {% if "creacion" in grupos_usuario%}
         <a href="{% url 'add_entradas' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir</a>
+        {% endif %}
     </div>
 </div>
 <div class="col-lg-12">
@@ -56,10 +58,10 @@
                             <a class="badge badge-info mr-2" data-toggle="popover" data-title="Información del Usuario"
                                 data-content="Representante Legal: {entrada.representante_legal} <br>Razón Social: {entrada.razon_social} <br>NIT: {entrada.nit_cedula}<br>Departamento: {entrada.departamento}<br>Municipio: {entrada.municipio}"
                                 data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
-                            <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#"
-                                data-id="{{entrada.pk}}"><i class="ri-pencil-line mr-0"></i></a>
-                            <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#"
-                                data-id="{{entrada.pk}}"><i class="ri-delete-bin-line mr-0"></i></a>
+                                {% if "edicion" in grupos_usuario%}<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#"
+                                data-id="{{entrada.pk}}"><i class="ri-pencil-line mr-0"></i></a>{%endif%}
+                                {% if "adminsitracion" in grupos_usuario%}<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#"
+                                data-id="{{entrada.pk}}"><i class="ri-delete-bin-line mr-0"></i></a>{%endif%}
                         </div>
                     </td>
                 </tr>

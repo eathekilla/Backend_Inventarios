@@ -256,10 +256,18 @@
             },
             body: JSON.stringify(formData)
         })
-            .then(response => response.json())
-            .then(data => {
-                showAlertInModal(message);
-                document.getElementById('userform').reset();
+            .then(response => {
+                if (response.status === 201) {
+                    
+                    showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
+                } else if (response.status === 400) {
+                    
+                    showAlertInModal('Error enviando la información del usuario'); // Asegúrate de que esta función esté definida o usa alert()
+                } else {
+                    // Acciones para otros códigos de estado
+                    ;
+                    showAlertInModal(`Error ${response.status}: ${response.statusText}`);
+                }
             })
             .catch(error => {
                 console.error('Error:', error);

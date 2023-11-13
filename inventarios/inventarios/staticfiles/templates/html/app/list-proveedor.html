@@ -21,9 +21,11 @@
                 <h4 class="mb-3">Listado de Proveedores test!</h4>
                 <p class="mb-0">Listado de Proveedores registrados en la plataforma</p>
             </div>
+            {% if "creacion" in grupos_usuario%}
             <a href="{% url 'add_proveedor' %}" class="btn btn-primary add-list">
                 <i class="las la-plus mr-3"></i>Añadir
             </a>
+            {% endif %}
         </div>
     </div>
 
@@ -53,8 +55,8 @@
                         <td>
                         <div class="d-flex align-items-center list-action">
                             <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable{{proveedor.id}}" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
-                            <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="{{proveedor.id}}"><i class="ri-pencil-line mr-0"></i></a>
-                            <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="{{proveedor.id}}"><i class="ri-delete-bin-line mr-0"></i></a>
+                            {% if "edicion" in grupos_usuario%}<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="{{proveedor.id}}"><i class="ri-pencil-line mr-0"></i></a> {%endif%}
+                            {% if "administracion" in grupos_usuario%}<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="{{proveedor.id}}"><i class="ri-delete-bin-line mr-0"></i></a> {%endif%}
                         </div>
                         </td>
                         <div id="exampleModalCenteredScrollable{{proveedor.id}}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
