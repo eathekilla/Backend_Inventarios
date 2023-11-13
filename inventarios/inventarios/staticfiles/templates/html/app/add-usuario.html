@@ -169,8 +169,8 @@
         .then(data => {
             console.log(data)
             // Aquí llenas el formulario con los datos del usuario
-            document.getElementById('nombres').value = data.usuario.nombre;
-            document.getElementById('apellidos').value = data.usuario.apellido;
+            document.getElementById('nombres').value = data.usuario.first_name;
+            document.getElementById('apellidos').value = data.usuario.last_name;
             document.getElementById('username').value = data.usuario.email;
             document.getElementById('email').value = data.usuario.email;
             document.getElementById('telefono').value = data.telefono;
