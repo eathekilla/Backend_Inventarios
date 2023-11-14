@@ -173,10 +173,10 @@
             document.getElementById('apellidos').value = data.last_name;
             document.getElementById('username').value = data.email;
             document.getElementById('email').value = data.email;
-            document.getElementById('telefono').value = data.info_user.telefono;
-            document.getElementById('direccion').value = data.info_user.direccion;
-            document.getElementById('tipodoc').value = data.info_user.tipo_documento;
-            document.getElementById('documento').value = data.info_user.numero_documento;
+            document.getElementById('telefono').value = data.info_user[0].telefono;
+            document.getElementById('direccion').value = data.info_user[0].direccion;
+            document.getElementById('tipodoc').value = data.info_user[0].tipo_documento;
+            document.getElementById('documento').value = data.info_user[0].numero_documento;
             // ... y así sucesivamente para otros campos
         })
         .catch(error => {
