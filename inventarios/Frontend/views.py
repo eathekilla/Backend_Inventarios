@@ -280,6 +280,7 @@ def list_entradas_primer_status(request):
     for entrada in historial:
         identificador = entrada.identificador
         entrada.total = entrada.valor_unitario_entrada_a * entrada.cantidad
+        user = get_object_or_404(User,email=request.user.email)
         entrada.unidad_medida = entrada.insumo.unidad_medida
         if identificador not in primeros_registros:
             primeros_registros[identificador] = entrada

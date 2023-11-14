@@ -8,7 +8,7 @@ import uuid
 
 class Entrada(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_vencimiento = models.DateTimeField(default=datetime.now())
+    fecha_vencimiento = models.DateTimeField(default=datetime.now)
     bodega = models.ForeignKey(Bodegas,related_name='entradas_de_finca', on_delete=models.CASCADE, null=True)
     insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE, null=True)
     cantidad = models.FloatField()
