@@ -159,7 +159,7 @@
                                 // Crear y agregar cada columna (td) al row
                 var esAdministrador = {% if 'administracion' in grupos_usuario%}true{% else %}false{% endif %};
                 if (esAdministrador) {
-                    var btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${user.usuario.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
+                    var btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${insumo.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
                 }
                 else{
                     var btn_eliminar = ''
