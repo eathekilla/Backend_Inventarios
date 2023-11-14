@@ -45,9 +45,10 @@ class Salida(models.Model):
             for entrada in entradas:
                 if entrada.cantidad >= cantidad_pendiente:
                     valor_total += cantidad_pendiente * entrada.valor_unitario_entrada_a
+                    valor = str(cantidad_pendiente * entrada.valor_unitario_entrada_a)
                     valor_unitario_entrada_a_str=str(entrada.valor_unitario_entrada_a)
                     cantidad_pendiente_str = str(cantidad_pendiente)
-                    str_entrada = f"- Cant {cantidad_pendiente_str} * Vrl/u ${valor_unitario_entrada_a_str} = ${str(valor_total)}\n"
+                    str_entrada = f"- Cant {cantidad_pendiente_str} * Vrl/u ${valor_unitario_entrada_a_str} = ${str(valor)}\n"
                     suma_movimientos += str_entrada
                     relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=cantidad_pendiente, precio_unitario=entrada.valor_unitario_entrada_a)
                     entrada.cantidad -= cantidad_pendiente
@@ -55,9 +56,10 @@ class Salida(models.Model):
                     break
                 else:
                     valor_total += entrada.cantidad * entrada.valor_unitario_entrada_a
+                    valor = str(cantidad_pendiente * entrada.valor_unitario_entrada_a)
                     valor_unitario_entrada_a_str=str(entrada.valor_unitario_entrada_a)
                     cantidad_pendiente_str = str(cantidad_pendiente)
-                    str_entrada = f"- Cant {cantidad_pendiente_str} * Vrl/u {valor_unitario_entrada_a_str} = {str(valor_total)}\n"
+                    str_entrada = f"- Cant {cantidad_pendiente_str} * Vrl/u {valor_unitario_entrada_a_str} = {str(valor)}\n"
                     suma_movimientos += str_entrada
                     relacion = SalidaEntradaRelacion(salida=self, entrada=entrada, cantidad_usada=entrada.cantidad, precio_unitario=entrada.valor_unitario_entrada_a)
                     cantidad_pendiente -= entrada.cantidad
