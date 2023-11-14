@@ -56,7 +56,7 @@ class Salida(models.Model):
                     break
                 else:
                     valor_total += entrada.cantidad * entrada.valor_unitario_entrada_a
-                    valor = str(cantidad_pendiente * entrada.valor_unitario_entrada_a)
+                    valor = str(entrada.cantidad * entrada.valor_unitario_entrada_a)
                     valor_unitario_entrada_a_str=str(entrada.valor_unitario_entrada_a)
                     cantidad_pendiente_str = str(entrada.cantidad)
                     if entrada.cantidad > 0:
