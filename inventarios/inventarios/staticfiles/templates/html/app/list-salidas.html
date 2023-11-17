@@ -54,7 +54,7 @@
 </div>
 {% for salida in salidas %}
     <div id="exampleModalCenteredScrollable{{ salida.id }}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style = "max-width: 800px;" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Salida</h5>
@@ -66,7 +66,7 @@
                     <b>Fecha de Salida: </b><td>{{salida.fecha_salida|date:"j \d\e F \d\e Y" }}</td><br>
                     <b>Insumo: </b><td>{{salida.insumo}}</td><br>
                     <b>Cantidad: </b><td>{{salida.cantidad}}</td><br>
-                    <b>Valor Total de Salida: </b><td>{{salida.valor_total_salida}}</td> <br>
+                    <b>Valor Total de Salida: </b><td>${{salida.valor_total_salida|floatformat:2|intcomma}}</td> <br>
                     <b>Movimientos: </b><td><pre>{{salida.movimientos}}</pre></td> <br>
                 </div>
                 <div class="modal-footer">

@@ -4,7 +4,9 @@ from Insumo.serializers import InsumoSerializer
 from Entrada.models import Entrada
 
 class SalidaSerializer(serializers.ModelSerializer):
-    #insumo = InsumoSerializer()
     class Meta:
         model = Salida
-        fields = '__all__'
+        fields = ('fecha_salida','insumo','cantidad','valor_total_salida')
+        extra_kwargs = {
+            'entradas': {'required': False}
+        }

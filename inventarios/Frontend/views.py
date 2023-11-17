@@ -260,7 +260,7 @@ def add_entradas(request,entradas_id=None):
 def list_entradas(request):
     user = get_object_or_404(User,email=request.user.email)
     token = str(AccessToken.for_user(user))
-    entradas_instance = Entrada.objects.all()
+    entradas_instance = Entrada.objects.filter(cantidad__gt=0).order_by('fecha_creacion')
     grupos_usuario = list(request.user.groups.values_list('name', flat=True))
     for entrada in entradas_instance:
         entrada.total = entrada.valor_unitario_entrada_a * entrada.cantidad
