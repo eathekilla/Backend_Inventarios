@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-c!ln%xnu77e9&vloqlfmi!ldz-7c76g(*hva13(#ba5f61xg*3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['backendappinventarios-production.up.railway.app','127.0.0.1','localhost','34.232.246.79','192.168.101.12']
+ALLOWED_HOSTS = ['backendappinventarios-production.up.railway.app','127.0.0.1','localhost','34.232.246.79']
 LOGIN_URL = '/login/'
 
 CORS_ALLOW_ALL_ORIGINS = [
@@ -54,9 +54,8 @@ INSTALLED_APPS = [
     'Fincas.apps.FincasConfig',
     'Insumo.apps.InsumoConfig',
     'Frontend.apps.FrontendConfig',
-    
     'simple_history',
-    'whitenoise.runserver_nostatic',
+    'whitenoise.runserver_nostatic', 
     'django.contrib.humanize'
 
 ]
@@ -105,7 +104,7 @@ DATABASES = {
 }
 
 
-""" DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inventarios',
@@ -113,10 +112,10 @@ DATABASES = {
         'PASSWORD': 'vK,e9yZ20]_4',
         'HOST': 'inventarios.cxklqq1pgnsl.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
-    }} """
+    }}
 
 
-DATABASES = {
+""" DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inventarios',
@@ -124,7 +123,7 @@ DATABASES = {
         'PASSWORD': 'estepin97',
         'HOST': 'localhost',
         'PORT': '5432',
-    }} 
+    }} """
 
 
 REST_FRAMEWORK = {
