@@ -122,7 +122,7 @@
                     const row = document.createElement('tr');
                     var esAdministrador = {% if 'administracion' in grupos_usuario %}true{% else %}false{% endif %};
                     if (esAdministrador) {
-                        var btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="${ingrediente.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
+                        var btn_eliminar = `<a class="badge bg-warning mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Editar" href="#" data-id="${ingrediente.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
                     }
                     else{
                         var btn_eliminar = ''
