@@ -169,14 +169,14 @@
         .then(data => {
             console.log(data)
             // Aquí llenas el formulario con los datos del usuario
-            document.getElementById('nombres').value = data.usuario.nombre;
-            document.getElementById('apellidos').value = data.usuario.apellido;
+            document.getElementById('nombres').value = data.usuario.first_name;
+            document.getElementById('apellidos').value = data.usuario.last_name;
             document.getElementById('username').value = data.usuario.email;
             document.getElementById('email').value = data.usuario.email;
-            document.getElementById('telefono').value = data.telefono;
-            document.getElementById('direccion').value = data.direccion;
-            document.getElementById('tipodoc').value = data.tipo_documento;
-            document.getElementById('documento').value = data.numero_documento;
+            document.getElementById('telefono').value = data.info_user[0].telefono;
+            document.getElementById('direccion').value = data.info_user[0].direccion;
+            document.getElementById('tipodoc').value = data.info_user[0].tipo_documento;
+            document.getElementById('documento').value = data.info_user[0].numero_documento;
             // ... y así sucesivamente para otros campos
         })
         .catch(error => {
