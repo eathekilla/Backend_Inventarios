@@ -104,7 +104,6 @@ DATABASES = {
     }
 }
 
-"""
 
 DATABASES = {
     'default': {
@@ -114,9 +113,9 @@ DATABASES = {
         'PASSWORD': 'vK,e9yZ20]_4',
         'HOST': 'inventarios.cxklqq1pgnsl.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
-    }}""" 
+    }}
 
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -125,7 +124,7 @@ DATABASES = {
         'PASSWORD': 'estepin97',
         'HOST': 'localhost',
         'PORT': '5432',
-    }} 
+    }} """
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
