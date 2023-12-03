@@ -49,24 +49,6 @@
         
 </div>
 
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-            style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body-aviso" style="text-align: center;">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
 <!-- Modal -->
 {% for insumo in insumos %}
@@ -98,6 +80,78 @@
 
 
 
+
+
+
+
+
+
+<!--Script de Edición-->
+<script>
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
+            const userId = event.target.closest(".edit-button").getAttribute("data-id");
+            window.location.href = `/insumo/edit/${userId}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
+        }
+    });
+</script>
+
+
+<script>
+    document.body.addEventListener('click', function(event) {
+    if (event.target.closest('.delete-button')) {
+        event.preventDefault();
+
+        // Identifica la fila que contiene el botón
+        const row = event.target.closest('tr');
+
+        // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
+        const buttonElement = event.target.closest('.delete-button');
+        const userId = buttonElement.getAttribute('data-id');
+        
+        console.log("Botón activo")
+        deleteUser(userId, row);
+    }
+});
+
+</script>
+
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
+
+<script>
+    function deleteUser(userId, row) {
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este insumo?', () => {fetch(`/insumos/retrieve/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(data => {
+                if (data.status==204) {
+                    // Elimina la fila de la tabla
+                    row.remove();
+                    showAlertInModal('Insumo eliminado exitosamente.');
+                } else {
+                    showAlertInModal('Hubo un error al eliminar el Insumo.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });});
+    }
+
+
+</script>
 
 <script>
     {% if user.is_authenticated %}
@@ -201,75 +255,6 @@
             console.error("Hubo un error  al cargar los datos:", error);
         });
     });
-</script>
-
-
-
-
-<!--Script de Edición-->
-<script>
-    document.addEventListener("click", function (event) {
-        if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
-            const userId = event.target.closest(".edit-button").getAttribute("data-id");
-            window.location.href = `/insumo/edit/${userId}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
-        }
-    });
-</script>
-
-<!--Funciones para eliminar la información -->
-<script>
-    document.body.addEventListener('click', function(event) {
-    if (event.target.closest('.delete-button')) {
-        event.preventDefault();
-
-        // Identifica la fila que contiene el botón
-        const row = event.target.closest('tr');
-
-        // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
-        const buttonElement = event.target.closest('.delete-button');
-        const userId = buttonElement.getAttribute('data-id');
-        
-        console.log("Botón activo")
-        deleteUser(userId, row);
-    }
-});
-
-</script>
-
-<script>
-    function showAlertInModal(message) {
-    // Establecer el mensaje en el cuerpo del modal
-    document.querySelector(".modal-body-aviso").textContent = message;
-    
-    // Mostrar el modal
-    $("#avisomodal").modal('show');
-}
-
-</script>
-
-<script>
-    function deleteUser(userId, row) {
-        fetch(`/insumos/retrieve/${userId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        })
-            .then(data => {
-                if (data.status==204) {
-                    // Elimina la fila de la tabla
-                    row.remove();
-                    showAlertInModal('Insumo eliminado exitosamente.');
-                } else {
-                    showAlertInModal('Hubo un error al eliminar el Insumo.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-
 </script>
 
 {% endblock %}

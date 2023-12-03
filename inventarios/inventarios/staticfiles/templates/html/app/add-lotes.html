@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div class="header-title">
-                <h4 class="card-title">Añadir Lote</h4>
+                <h4 class="card-title">Añadir Bodega</h4>
             </div>
         </div>
         <div class="card-body">
@@ -14,11 +14,11 @@
                 <div class="row"> 
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="nombre_finca">Nombre del Lote *</label>
+                            <label for="nombre_finca">Nombre del Bodega *</label>
                             {% if lotes_id %}
-                            <input type="text" class="form-control" placeholder="Ingrese Número del Lote" required id="nombre_lotes" name="nombre_lotes" value="{{lote_edit.nombre_lote}}">
+                            <input type="text" class="form-control" placeholder="Ingrese Número del Bodega" required id="nombre_lotes" name="nombre_lotes" value="{{lote_edit.nombre_lote}}">
                             {% else %}
-                            <input type="text" class="form-control" placeholder="Ingrese Nombre del Lote" required id="nombre_lotes" name="nombre_lotes">
+                            <input type="text" class="form-control" placeholder="Ingrese Nombre del Bodega" required id="nombre_lotes" name="nombre_lotes">
                             {% endif %}
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                     
                     
                 </div>                            
-                <button type="submit" class="btn btn-primary mr-2">Crear Lote</button>
+                <button type="submit" class="btn btn-primary mr-2">Crear Bodega</button>
                 <button type="reset" class="btn btn-danger">Limpiar</button>
             </form>
         </div>
@@ -175,7 +175,7 @@
                 showAlertInModal('Error al guardar el lote.');
             }
             const actionMsg = lotes_id ? 'editado' : 'creado';
-            showAlertInModal(`Lote ${actionMsg} exitosamente!`);
+            showAlertInModal(`Bodega ${actionMsg} exitosamente!`);
             document.getElementById("formularioLotes").reset();
         })
         .then(data => {

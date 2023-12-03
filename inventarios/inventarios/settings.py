@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c!ln%xnu77e9&vloqlfmi!ldz-7c76g(*hva13(#ba5f61xg*3'
+X_FRAME_OPTIONS = 'ALLOWALL'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -103,6 +104,7 @@ DATABASES = {
     }
 }
 
+"""
 
 DATABASES = {
     'default': {
@@ -112,10 +114,10 @@ DATABASES = {
         'PASSWORD': 'vK,e9yZ20]_4',
         'HOST': 'inventarios.cxklqq1pgnsl.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
-    }}
+    }}""" 
 
 
-""" DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inventarios',
@@ -123,8 +125,7 @@ DATABASES = {
         'PASSWORD': 'estepin97',
         'HOST': 'localhost',
         'PORT': '5432',
-    }} """
-
+    }} 
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (

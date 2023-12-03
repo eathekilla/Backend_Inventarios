@@ -69,24 +69,7 @@
 
 
 
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-        style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body-aviso" style="text-align: center;">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 
 
@@ -198,7 +181,9 @@
         const accessToken = ""
         {% endif %}
     function deleteUser(userId, row) {
-        fetch(`/insumos/grupos/retrieve/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${accessToken}`}})
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este grupo?', () => {
+            fetch(`/insumos/grupos/retrieve/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${accessToken}`}})
             .then(data => {
                 if (data.status==204) {
                     row.remove();
@@ -209,7 +194,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-            });
+            });});
     }
 
 

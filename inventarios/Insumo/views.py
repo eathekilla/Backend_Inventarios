@@ -86,6 +86,8 @@ def edit_info_proveedor(request, pk):
                     "codigo_contable": insumo.codigo_contable,
                     "unidad_medida": insumo.unidad_medida.pk,
                     "certificacion": insumo.certificacion.pk,
+                    "ingrediente": insumo.ingrediente.pk,
+                    "carencia": insumo.carencia,
                     }
     
         return Response(proveedor_data, status=status.HTTP_200_OK)
@@ -136,11 +138,10 @@ def edit_certificacion(request, pk):
     
     if request.method == 'GET':
         certificacion =  get_object_or_404(Certificacion,pk=pk)  # Obtén los grupos a los que pertenece el usuario
-        certificacion_data={    "periodo_carencia": certificacion.periodo_carencia,
-                                "periodo_reingreso": certificacion.periodo_reingreso,
+        certificacion_data={    "periodo_reingreso": certificacion.periodo_reingreso,
                                 "registro_ica": certificacion.registro_ica,
                                 "fecha_registro": certificacion.fecha_registro,
-                                "ingrediente_activo": certificacion.ingrediente_activo_id  }
+                            }
         return Response(certificacion_data, content_type='application/json', status=status.HTTP_200_OK)
     return Response({"message": "Certificacion no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 

@@ -53,34 +53,7 @@
 {% endfor %}
 
 <!--Modal de Avisos-->
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body-aviso" style="text-align: center;">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    function showAlertInModal(message) {
-        // Establecer el mensaje en el cuerpo del modal
-        document.querySelector(".modal-body-aviso").textContent = message;
-
-        // Mostrar el modal
-        $("#avisomodal").modal('show');
-    }
-</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -179,25 +152,42 @@
         });
 
         // Función para eliminar Ingrediente Activo
-        function deleteIngrediente(ingredientId, row) {
+        // Event listener para eliminar Ingrediente Activo
+    document.body.addEventListener('click', function (event) {
+        if (event.target.closest('.delete-button')) {
+            event.preventDefault();
+            const ingredientId = event.target.getAttribute('data-id');
+            const row = event.target.closest('tr');
+            deleteIngrediente(ingredientId, row);
+        }
+    });
+
+    // Función para eliminar Ingrediente Activo
+    function deleteIngrediente(ingredientId, row) {
+        // Mostrar modal de confirmación
+        showAlertInModal('¿Estás seguro de que deseas eliminar esta unidad de medida?', () => {
+            // Si el usuario confirma, proceder con la eliminación
             fetch(`/insumos/unidades-medida/retrieve/${ingredientId}/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
             })
-                .then(data => {
-                    if (data.status == 204) {
-                        row.remove();
-                        showAlertInModal('Ingrediente eliminado exitosamente.');
-                    } else {
-                        showAlertInModal('Hubo un error al eliminar el ingrediente.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
+            .then(data => {
+                if (data.status == 204) {
+                    row.remove();
+                    showAlertInModal('Ingrediente eliminado exitosamente.');
+                } else {
+                    showAlertInModal('Hubo un error al eliminar el ingrediente.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    }
+
+    
 
         // Funciones de popover con jQuery
         $(document).ready(function () {

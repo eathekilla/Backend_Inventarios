@@ -18,7 +18,7 @@
     <<div class="col-lg-12">
         <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
             <div>
-                <h4 class="mb-3">Listado de Proveedores test!</h4>
+                <h4 class="mb-3">Listado de Proveedores</h4>
                 <p class="mb-0">Listado de Proveedores registrados en la plataforma</p>
             </div>
             {% if "creacion" in grupos_usuario%}
@@ -93,7 +93,8 @@
     </div>
 
     <!-- Modal -->
-    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -103,9 +104,8 @@
                     </button>
                 </div>
                 <div class="modal-body-aviso" style="text-align: center;">
-                    <!-- Contenido del cuerpo del aviso, si es necesario -->
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" id = "modal_footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
@@ -115,81 +115,6 @@
     <!-- Scripts y otros elementos pueden ir aquí -->
 
 
-<!--
-<script>
-    {% if user.is_authenticated %}
-        const accessToken = "{{token}}"
-        {%else%}
-        const accessToken = ""
-        {% endif %}
-    fetch('/proveedores/list-create/', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('suppliersTable').querySelector('tbody');
-
-            // Limpiar el tbody por si hay datos previos
-            tableBody.innerHTML = '';
-
-            data.forEach(supplier => {
-                const row = document.createElement('tr');
-
-                // Crear y agregar cada columna (td) al row
-                row.innerHTML = `
-                <td>${supplier.nit_cedula}</td>
-                <td>${supplier.razon_social}</td>
-                <td>${supplier.representante_legal}</td>
-                <td>${supplier.direccion}</td>
-                <td>${supplier.departamento}</td>
-                <td>${supplier.municipio}</td>
-                <td>
-                <div class="d-flex align-items-center list-action">
-                    <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable${supplier.id}" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
-                    <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${supplier.id}"><i class="ri-pencil-line mr-0"></i></a>
-                    <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${supplier.id}"><i class="ri-delete-bin-line mr-0"></i></a>
-                </div>
-                </td>
-                <div id="exampleModalCenteredScrollable${supplier.id}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Entrada</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <b>Razón Social:</b> ${supplier.razon_social}<br>
-                            <b>NIT:</b> ${supplier.nit_cedula}<br>
-                            <b>Representante Legal:</b> ${supplier.representante_legal}<br>
-                            <b>Departamento: </b> ${supplier.departamento}<br>
-                            <b>Municipio: </b>${supplier.municipio}<br>
-                            <b>Dirección: </b> ${supplier.direccion}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        </div>
-                    </div>
-                </div>
-                </div>`;
-
-                // Agregar el row al tbody
-                tableBody.appendChild(row);
-            });
-            $('[data-toggle="popover"]').popover();
-
-            $('[data-toggle="popover"]').on('show.bs.popover', function () {
-                $('[data-toggle="popover"]').not(this).popover('hide');
-            });
-
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-</script>-->
 
 
 <!--Script de Edición-->
@@ -202,7 +127,7 @@
     });
 </script>
 
-<script>
+{% comment %} <script>
     function showAlertInModal(message) {
     // Establecer el mensaje en el cuerpo del modal
     document.querySelector(".modal-body-aviso").textContent = message;
@@ -211,7 +136,7 @@
     $("#avisomodal").modal('show');
 }
 
-</script>
+</script> {% endcomment %}
 
 <!--Funciones para eliminar la información -->
 <script>
@@ -238,7 +163,8 @@
         {%else%}
         const accessToken = ""
         {% endif %}
-        fetch(`/proveedores/retrieve/${userId}`, {
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este proveedor?', () => {fetch(`/proveedores/retrieve/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -257,6 +183,7 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+        });
     }
 
 

@@ -36,7 +36,7 @@
     <!-- Wrapper Start -->
     <div class="wrapper">
 
-        <div class="iq-sidebar  sidebar-default">
+        <div class="iq-sidebar  sidebar-default ">
             <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
                 <a href="#" class="header-logo">
                     <img src="{% static 'assets/images/logo_ottsa.svg' %}" class="img-fluid rounded-normal light-logo"
@@ -71,7 +71,7 @@
                                     <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                                 </svg>
                             </a>
-                            <ul id="people" class="iq-submenu collapse"  data-toggle="collapse" data-parent="#iq-sidebar-toggle">
+                            <ul id="people" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                                 <li class="">
                                     <a href="{% url 'add_user' %}">
                                         <i class="las la-minus"></i><span>Añadir Usuarios</span>
@@ -89,8 +89,9 @@
 
                         <li class=" ">
                             <a href="#fincas" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                                
-                                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="#FFF" d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
+                                <span class="material-symbols-outlined">
+                                    home
+                                </span>
                                 <span class="ml-4">Fincas</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -99,7 +100,6 @@
                                     <polyline points="10 15 15 20 20 15"></polyline>
                                     <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                                 </svg>
-
                             </a>
                             <ul id="fincas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                                 <li class="">
@@ -121,7 +121,9 @@
                         </li>
                         <li class=" ">
                             <a href="#proveedores" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="#FFF" d="M640-640h120-120Zm-440 0h338-18 14-334Zm16-80h528l-34-40H250l-34 40Zm184 270 80-40 80 40v-190H400v190Zm182 330H200q-33 0-56.5-23.5T120-200v-499q0-14 4.5-27t13.5-24l50-61q11-14 27.5-21.5T250-840h460q18 0 34.5 7.5T772-811l50 61q9 11 13.5 24t4.5 27v196q-19-7-39-11t-41-4v-122H640v153q-35 20-61 49.5T538-371l-58-29-160 80v-320H200v440h334q8 23 20 43t28 37Zm138 0v-120H600v-80h120v-120h80v120h120v80H800v120h-80Z"/></svg>
+                                <span class="material-symbols-outlined">
+                                    box_add
+                                </span>
                                 <span class="ml-4">Proveedores</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -149,7 +151,9 @@
                         </li>
                         <li class=" ">
                             <a href="#insumos" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="#FFF" d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z"/></svg>
+                                <span class="material-symbols-outlined">
+                                    inventory_2
+                                </span>
                                 <span class="ml-4">Insumos</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -201,7 +205,9 @@
                         </li>
                         <li class=" ">
                             <a href="#entradas" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="#FFF" d="M200-200v-400h80v264l464-464 56 56-464 464h264v80H200Z"/></svg>
+                                <span class="material-symbols-outlined">
+                                    call_received
+                                </span>
                                 <span class="ml-4">Entradas</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -236,8 +242,9 @@
                         </li>
                         <li class=" ">
                             <a href="#salidas" class="collapsed" data-toggle="collapse" aria-expanded="false">
-
-                                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="#FFF" d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"/></svg>
+                                <span class="material-symbols-outlined">
+                                    call_made
+                                </span>
                                 <span class="ml-4">Salidas</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -382,7 +389,7 @@
                                     </div>
                                 </li>
                                 <li class="nav-item nav-icon dropdown">
-                                    <!--<a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton"
+                                    <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -391,7 +398,7 @@
                                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                                         </svg>
                                         <span class="bg-primary "></span>
-                                    </a> -->
+                                    </a>
                                     <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <div class="card shadow-none m-0">
                                             <div class="card-body p-0 ">
@@ -479,8 +486,15 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-12 text-right">
-                            Ottsa
+                        <div class="col-lg-6">
+                            <ul class="list-inline mb-0">
+                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                </li>
+                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6 text-right">
                             <span class="mr-1">
                                 <script>document.write(new Date().getFullYear())</script>©
                             </span> <a href="#" class="">Ottsa</a>.

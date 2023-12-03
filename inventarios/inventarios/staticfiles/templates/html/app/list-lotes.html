@@ -6,11 +6,11 @@
 <div class="col-lg-12">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
         <div>
-            <h4 class="mb-3">Listado de Lotes</h4>
+            <h4 class="mb-3">Listado de Bodegas</h4>
             <p class="mb-0">  </p>
         </div>
         {% if "creacion" in grupos_usuario%}
-        <a href="{% url 'add_lotes' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Lote</a>
+        <a href="{% url 'add_bodegas' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Bodega</a>
         {% endif %}
     </div>
 </div>
@@ -19,7 +19,7 @@
         <table class="data-table table mb-0 tbl-server-info" id="bodegasTable" name="bodegasTable">
             <thead class="bg-white text-uppercase">
                 <tr class="ligth ligth-data">
-                    <th>Nombre de Lote</th>
+                    <th>Nombre de Bodega</th>
                     <th>Ubicación</th>
                     <th>Hectareas</th>
                     <th>Finca</th>
@@ -53,7 +53,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Lote</h5>
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Bodega</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -85,22 +85,13 @@
             </div>
             <div class="modal-body-aviso" style="text-align: center;">
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id = "modal_footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    function showAlertInModal(message) {
-        // Establecer el mensaje en el cuerpo del modal
-        document.querySelector(".modal-body-aviso").textContent = message;
-
-        // Mostrar el modal
-        $("#avisomodal").modal('show');
-    }
-</script>
 
 
 
@@ -139,7 +130,9 @@
         {%else%}
         const accessToken = ""
         {% endif %}
-        fetch(`/user/lotes/retrieve/${bodegas_id}`, {
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar esta bodega?', () => 
+        {fetch(`/user/lotes/retrieve/${bodegas_id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -149,15 +142,15 @@
                 if (data.status==204) {
                     // Elimina la fila de la tabla
                     row.remove();
-                    showAlertInModal('Lote eliminado exitosamente.');
+                    showAlertInModal('Bodega eliminado exitosamente.');
                 } else {
-                    showAlertInModal('Hubo un error al eliminar el Lote.');
+                    showAlertInModal('Hubo un error al eliminar el Bodega.');
                 }
             })
             .catch(error => {
                 showAlertInModal('Error:'+ error)
                 console.error('Error:', error);
-            });
+            });});
     }
 
 

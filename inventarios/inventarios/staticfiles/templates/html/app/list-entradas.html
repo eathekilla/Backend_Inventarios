@@ -253,7 +253,8 @@
         {%else%}
         const accessToken = ""
         {% endif %}
-        fetch(`/entradas/retrieve/delete/${userId}`, {method: 'DELETE',headers: {'X-CSRFToken': getCookie('csrftoken'),'Authorization': `Bearer ${accessToken}`}})
+        showAlertInModal('¿Estás seguro de que deseas eliminar este usuario?', () => 
+        {fetch(`/entradas/retrieve/delete/${userId}`, {method: 'DELETE',headers: {'X-CSRFToken': getCookie('csrftoken'),'Authorization': `Bearer ${accessToken}`}})
             .then(data => {
                 if (data.status==204) {
                     row.remove();
@@ -264,7 +265,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-            });
+            });});
     }
 
 

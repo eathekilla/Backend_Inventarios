@@ -23,18 +23,26 @@ urlpatterns = [
     path('add-certificacion/', add_certificacion, name='add_certificacion'),
     path('list-certificacion/', list_certificacion, name='list_certificacion'),
     path('certificacion/edit/<int:cert_id>/', add_certificacion, name='edit_certificacion'),
+    path('add-certificacion-insumo/', add_certificacion_insumo, name='add_certificacion_insumo'),
+    
 
     path('add-ingrediente/', add_ingrediente, name='add_ingrediente'),
     path('list-ingrediente/', list_ingrediente, name='list_ingrediente'),
     path('ingrediente/edit/<int:ingrediente_id>/', add_ingrediente, name='edit_ingrediente'),
+    path('add-ingrediente-insumo/', add_ingrediente_insumo, name='add_ingrediente_insumo'),
 
     path('add-unidad/', add_unidad, name='add_unidad'),
     path('list-unidad/', list_unidad, name='list_unidad'),
     path('unidad/edit/<int:unidad_id>/', add_unidad, name='edit_unidad'),
+    path('add-unidad-insumo/', add_unidad_insumo, name='add_unidad_insumo'),
+
+    
 
     path('add-grupo/', add_grupo, name='add_grupo'),
     path('list-grupo/', list_grupo, name='list_grupo'),
     path('add-grupo/edit/<str:grupo_id>/', add_grupo, name='edit_grupo'),
+    path('add-grupo-insumo/', add_grupo_insumo, name='add_grupo_insumo'),
+   
 
     path('list-entradas/', list_entradas, name='list_entradas'),
     path('inicialentrada/',list_entradas_primer_status,name='inicialentrada'),
@@ -45,17 +53,17 @@ urlpatterns = [
     path('add-fincas/', add_fincas, name='add_fincas'),
     path('add-fincas/edit/<str:fincas_id>/', add_fincas, name='edit_fincas'),
 
-    path('list-lotes/', list_lotes, name='list_lotes'),
-    path('add-lotes/', add_lotes, name='add_lotes'),
-    path('add-lotes/edit/<int:lotes_id>/', add_lotes, name='edit_lotes'),
+    path('list-bodegas/', list_lotes, name='list_bodegas'),
+    path('add-bodegas/', add_lotes, name='add_bodegas'),
+    path('add-bodegas/edit/<int:lotes_id>/', add_lotes, name='edit_bodegas'),
 
-    path('list-bodegas/', list_bodegas, name='list_bodegas'),
-    path('add-bodegas/', add_bodegas, name='add_bodegas'),
-    path('add-bodegas/edit/<int:bodegas_id>/', add_bodegas, name='edit_bodegas'),
+    path('list-lotes/', list_bodegas, name='list_lotes'),
+    path('add-lotes/', add_bodegas, name='add_lotes'),
+    path('add-lotes/edit/<int:bodegas_id>/', add_bodegas, name='edit_lotes'),
 
     path('list-salidas/', list_salidas, name='list_salidas'),
     path('add-salidas/', add_salidas, name='add_salidas'),
-    path('add-salidas/edit/<int:salidas_id>/', add_salidas, name='edit_bodegas'),
+    path('add-salidas/edit/<int:salidas_id>/', add_salidas, name='edit_salidas'),
 
 
     

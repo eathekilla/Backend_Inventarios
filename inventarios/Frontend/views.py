@@ -86,6 +86,7 @@ def list_proveedor(request):
 def add_insumo(request,insumo_id=None):
     unidades_medida = UnidadMedida.objects.all()
     certificaciones = Certificacion.objects.all()
+    ingredientes = IngredienteActivo.objects.all()
     grupo_insumos = Grupo.objects.all()
     user = get_object_or_404(User,email=request.user.email)
     grupos_usuario = list(request.user.groups.values_list('name', flat=True))
@@ -95,10 +96,19 @@ def add_insumo(request,insumo_id=None):
         "certificaciones":certificaciones
         ,'token':token
         ,"grupos":grupo_insumos
-        ,'grupos_usuario': grupos_usuario
+        ,'grupos_usuario': grupos_usuario,
+        'ingredientes':ingredientes,
     }
     if insumo_id:
         insumo_instance = get_object_or_404(Insumo,id=insumo_id)
+        if insumo_instance.certificacion:
+            context['certificacion'] = insumo_instance.certificacion.pk
+        if insumo_instance.ingrediente:
+            context['ingrediente'] = insumo_instance.ingrediente.pk
+        if insumo_instance.unidad_medida:
+            context['unidad_medida'] = insumo_instance.unidad_medida.pk
+        if insumo_instance.grupos:
+            context['grupos'] = list(insumo_instance.grupos.values_list('pk',flat=True))
         context["insumoId"] = insumo_instance.pk
         return render(request,"html/app/add-insumo.html",context)
     else:
@@ -126,6 +136,16 @@ def add_certificacion(request,cert_id=None):
         return render(request,"html/app/add-certificacion.html",context)
     else:
         return render(request,"html/app/add-certificacion.html",context)
+@login_required
+def add_certificacion_insumo(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    ingredientes = IngredienteActivo.objects.all()
+    grupos_usuario = list(request.user.groups.values_list('name', flat=True))
+    context = {"ingredientes":ingredientes,'token':token,'grupos_usuario': grupos_usuario}
+    
+
+    return render(request,"html/app/add-certificacion-insumo.html",context)
 
 
 @login_required
@@ -153,6 +173,15 @@ def add_ingrediente(request,ingrediente_id=None):
     else:
         return render(request,"html/app/add-ingrediente.html",context)
 
+@login_required
+def add_ingrediente_insumo(request):
+    ingredientes = IngredienteActivo.objects.all()
+
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    grupos_usuario = list(request.user.groups.values_list('name', flat=True))
+    context = {'ingredientes': ingredientes,'token':token,'grupos_usuario': grupos_usuario}
+    return render(request, 'html/app/add-ingrediente-insumo.html',context)
 
 @login_required
 def list_ingrediente(request):
@@ -182,6 +211,15 @@ def add_grupo(request,grupo_id=None):
 
 
 @login_required
+def add_grupo_insumo(request,grupo_id=None):
+    insumos = Insumo.objects.all()
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    grupos_usuario = list(request.user.groups.values_list('name', flat=True))
+    context = {"insumos":insumos,'token':token,'grupos_usuario': grupos_usuario}
+    return render(request,"html/app/add-grupos-insumos.html",context)
+
+@login_required
 def list_grupo(request):
     user = get_object_or_404(User,email=request.user.email)
     token = str(AccessToken.for_user(user))
@@ -200,6 +238,13 @@ def add_unidad(request,unidad_id=None):
         return render(request,"html/app/add-unidad.html",{'unidad_id': insumo_instance.pk,'token':token,'grupos_usuario': grupos_usuario})
     else:
         return render(request,"html/app/add-unidad.html",{'token':token,'grupos_usuario': grupos_usuario})
+
+@login_required
+def add_unidad_insumo(request):
+    user = get_object_or_404(User,email=request.user.email)
+    token = str(AccessToken.for_user(user))
+    grupos_usuario = list(request.user.groups.values_list('name', flat=True))
+    return render(request,"html/app/add-unidad-insumo.html",{'token':token,'grupos_usuario': grupos_usuario})
 
 
 @login_required
@@ -281,7 +326,7 @@ def list_entradas_primer_status(request):
         identificador = entrada.identificador
         entrada.total = entrada.valor_unitario_entrada_a * entrada.cantidad
         user = get_object_or_404(User,email=request.user.email)
-        entrada.unidad_medida = entrada.insumo.unidad_medida
+        #entrada.unidad_medida = entrada.insumo.unidad_medida
         if identificador not in primeros_registros:
             primeros_registros[identificador] = entrada
 

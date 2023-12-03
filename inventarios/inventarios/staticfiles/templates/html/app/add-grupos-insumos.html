@@ -1,0 +1,207 @@
+{%load static%}
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <title>Ottsa | Inventarios</title>
+
+    <!-- Favicon  -->
+    <!--<link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">-->
+    <link rel="shortcut icon" href="{% static '/assets/images/logo_ottsa.svg' %}" />
+    <link rel="stylesheet" href="{% static '/assets/css/backend-plugin.min.css' %}">
+    <link rel="stylesheet" href="{% static '/assets/css/backend.css' %}">
+    <link rel="stylesheet" href="{% static '/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static '/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static '/assets/vendor/remixicon/fonts/remixicon.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- links para exportar a excel -->
+    <script src="https://unpkg.com/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/file-saverjs@latest/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/tableexport@latest/dist/js/tableexport.min.js"></script>
+</head>
+<body>
+<div class="col-sm-12">
+    <div class="card">
+        {% comment %} <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                <h4 class="card-title">Añadir Grupos de Insumos</h4>
+            </div>
+        </div> {% endcomment %}
+        <div class="card-body">
+            <form id="groupForm" data-toggle="validator">
+                <div class="row"> 
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Nombre *</label>
+                            {% if grupo_id %}
+                            <input type="text" class="form-control" placeholder="Nombre" required id="nombre" name="nombre" value="{{grupo_instance.nombre}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Nombre" required id="nombre" name="nombre">
+                            {% endif %}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Iniciales del Grupo de Insumos *</label>
+                            {% if grupo_id %}
+                            <input type="text" class="form-control" placeholder="Iniciales del grupo" required id="inicial" name="inicial" value="{{grupo_instance.inicial}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Iniciales del grupo" required id="inicial" name="inicial">
+                            {% endif %}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    
+                    {% comment %} <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Seleccione los insumos para añadir al grupo</label>
+                            <select class="select selectpicker form-control" placeholder="Selecciona al menos un insumo" data-style="py-0"  multiple id="insumos" name="insumos">
+                                {% for insumo in insumos%}
+                                <option value="{{ insumo.id }}"
+                                {% if grupo_id %}
+                                {% if insumo.id in insumos_grupo %}
+                                    selected
+                                {% endif %}
+                                {% endif %}>
+                                    {{ insumo.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>  {% endcomment %}
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">
+                    {% if grupo_id %}Editar{% else %}Crear{% endif %} Grupo de Insumo</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% comment %} <script>
+    window.onload = function() {
+        precargarSelects();
+        }
+</script> {% endcomment %}
+
+<script>
+    function precargarSelects() {
+
+        {% if grupo_id != Null %}
+        var finca_preseleccionada = {{insumos_grupo}};
+
+        document.getElementById('insumo').selectedOptions = insumo_preseleccionado
+        {% else %}
+        const grupo_id = null;
+        {% endif %}
+
+    }
+</script>
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
+<script>
+    document.getElementById('groupForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        enviarDatos();
+    });
+
+
+    function enviarDatos() {
+        const formData = new FormData(groupForm);
+
+        // Determinar si estamos en modo edición o creación
+        var isEditMode = {{ grupo_id|yesno:"true,false" }};
+        {%if grupo_id %}
+        var grupo_id = {{ grupo_id }};
+        {% else %}
+        var grupo_id = null;
+        {% endif %}
+        
+        {% comment %} // Obtener los valores seleccionados del campo de selección
+        const selectedOptions = Array.from(groupForm.elements.insumos.selectedOptions).map(option => option.value);
+
+        // Crear una cadena JSON con los valores seleccionados
+        const insumosJSON = JSON.stringify(selectedOptions);
+
+        // Agregar la cadena JSON como un campo en el formulario
+        groupForm.elements.insumos.value = insumosJSON; {% endcomment %}
+
+        var url = isEditMode ? `/insumos/grupos/retrieve/${grupo_id}/` : '/insumos/grupos/list-create/';
+        var httpMethod = isEditMode ? 'PUT' : 'POST';
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        fetch(url, {
+            method: httpMethod,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    showAlertInModal('Error al guardar el Grupo.');
+                }
+                const actionMsg = grupo_id ? 'editado' : 'creado';
+                showAlertInModal(`Grupo ${actionMsg} exitosamente!`);
+            })
+            .then(data => { })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlertInModal('Error al guardar el Grupo.');
+            });
+    }
+
+    window.onload = function() {
+            document.getElementById('groupForm').removeAttribute('novalidate');
+        }
+
+
+
+
+
+</script>
+
+
+</body>

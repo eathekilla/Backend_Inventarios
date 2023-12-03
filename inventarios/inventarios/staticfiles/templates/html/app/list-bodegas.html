@@ -6,11 +6,11 @@
 <div class="col-lg-12">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
         <div>
-            <h4 class="mb-3">Listado de Bodegas</h4>
+            <h4 class="mb-3">Listado de Lotes</h4>
             <p class="mb-0">  </p>
         </div>
         {% if "creacion" in grupos_usuario%}
-        <a href="{% url 'add_bodegas' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Bodega</a>
+        <a href="{% url 'add_lotes' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Lote</a>
         {% endif %}
     </div>
 </div>
@@ -19,7 +19,7 @@
         <table class="data-table table mb-0 tbl-server-info" id="bodegasTable" name="bodegasTable">
             <thead class="bg-white text-uppercase">
                 <tr class="ligth ligth-data">
-                    <th>Nombre de Bodega</th>
+                    <th>Nombre de Lote</th>
                     <th>Ubicación</th>
                     <th>Finca</th>
                     <th>Lote Asociado</th>
@@ -42,7 +42,7 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center list-action">
-                                <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información de la Bodega" data-content="Nombre: {{ bodega.nombre_bodega }}" data-html="true" title="Información de Bodega" href="#" data-target="#exampleModalCenteredScrollable{{ bodega.id }}"><i class="ri-eye-line mr-0"></i></a>
+                                <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información de la Lote" data-content="Nombre: {{ bodega.nombre_bodega }}" data-html="true" title="Información de Lote" href="#" data-target="#exampleModalCenteredScrollable{{ bodega.id }}"><i class="ri-eye-line mr-0"></i></a>
                                 {% if "edicion" in grupos_usuario%}<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Editar" href="#" data-id="{{ bodega.id }}"><i class="ri-pencil-line mr-0"></i></a> {%endif%}
                                 {% if "administracion" in grupos_usuario%}<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Eliminar" href="#" data-id="{{ bodega.id }}"><i class="ri-delete-bin-line mr-0"></i></a>{%endif%}
                             </div>
@@ -60,7 +60,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Bodega</h5>
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Lote</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -80,7 +80,7 @@
     {% endfor %}
 
 <!--Modal de Avisos-->
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+{% comment %} <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -97,7 +97,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> {% endcomment %}
 
 <script>
     function showAlertInModal(message) {
@@ -114,7 +114,7 @@
     document.addEventListener("click", function (event) {
         if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
             const bodegas_id = event.target.closest(".edit-button").getAttribute("data-id");
-            window.location.href = `/add-bodegas/edit/${bodegas_id}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
+            window.location.href = `/add-lotes/edit/${bodegas_id}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
         }
     });
 </script>
@@ -160,7 +160,8 @@
         {%else%}
         const accessToken = ""
         {% endif %}
-        fetch(`/user/bodegas/retrieve/${bodegas_id}`, {
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este usuario?', () => {fetch(`/user/bodegas/retrieve/${bodegas_id}`, {
             method: 'DELETE',
             headers: {'X-CSRFToken': getCookie('csrftoken'),
                 'Authorization': `Bearer ${accessToken}`
@@ -170,14 +171,14 @@
         .then(data => {
             if (data.status==204) {
                 row.remove();
-                showAlertInModal('Bodega eliminada exitosamente');
+                showAlertInModal('Lote eliminada exitosamente');
             } else {
                 showAlertInModal('Hubo un error al eliminar la Grupo');
             }
         })
             .catch(error => {
                 console.error('Error:', error);
-            });
+            });});
     }
 
 

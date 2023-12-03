@@ -128,9 +128,9 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="selectLote">Lote *</label>
+                            <label for="selectLote">Bodega *</label>
                             <select id="selectLote" class="form-control" required>
-                                <option >Seleccione un Lote</option>
+                                <option >Seleccione una Bodega</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
                         </div>
@@ -138,9 +138,9 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="selectBodega">Bodega *</label>
+                            <label for="selectBodega">Lote *</label>
                             <select id="selectBodega" class="form-control" required>
-                                <option >Seleccione una Bodega</option>
+                                <option >Seleccione una Lote</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
                         </div>
@@ -173,11 +173,33 @@
                         <div class="form-group">
                             <label for="proveedor">Cargar Archivo *</label>
                             <div class="custom-file">
+                                {% if entradas_id %}
+                                <input type="file" class="custom-file-input" name="factura" id="archivo" >
+                                {% else %}
                                 <input type="file" class="custom-file-input" name="factura" id="archivo" required>
+                                {% endif %}
                                 <label class="custom-file-label" for="inputGroupFile01">Escoge el Archivo</label>
                             </div>
                         </div>
-                    </div>                
+                    </div>
+                    {% if entradas_id %}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% if entradas_id %}
+                                <!-- Mostrar enlace al archivo existente -->
+                                <u><a style="color: #000" href="/entradas/comprobante/{{entradas.pk}}" target="_blank">Ver Archivo Existente</a></u>
+
+                                <!-- Casilla de verificación para mantener el archivo existente -->
+                                <input type="checkbox" checked name="mantener_archivo" id="mantener_archivo">
+                                <label for="mantener_archivo">Mantener Archivo Existente</label>
+
+                            {% endif %}
+
+                            <!-- Campo de archivo para subir uno nuevo -->
+                            
+                        </div>
+                    </div>
+    {% endif %}                
                 </div>
                 
                 
@@ -337,7 +359,7 @@
         console.log(document.getElementById('selectLote').value)
         var loteSeleccionado = fincaSeleccionada.lotes.find(l => l.id == document.getElementById('selectLote').value);
         var selectBodega = document.getElementById('selectBodega');
-        selectBodega.innerHTML = '<option value="" disabled selected>Seleccione una Bodega</option>';
+        selectBodega.innerHTML = '<option value="" disabled selected>Seleccione un lote</option>';
         loteSeleccionado.bodegas.forEach(bodega => {selectBodega.innerHTML += `<option value="${bodega.id}">${bodega.nombre_bodega}</option>`;});
         selectBodega.disabled = false;
     }
@@ -429,6 +451,8 @@
         var proveedor = parseInt(document.getElementById('proveedor').value);
         var fileInput = document.getElementById('archivo');
         var file = fileInput.files[0]; // Obtiene el archivo seleccionado
+        
+        var mantener = document.getElementById('mantener_archivo').value;
     
         // Verifica que cantidad y valor_unitario_entrada_a tengan valores válidos
         if (isNaN(cantidad)) {
@@ -449,6 +473,8 @@
         payload.append('bodega', bodega);
         payload.append('insumo', insumo);
         payload.append('proveedor', proveedor);
+        payload.append('mantener',mantener_archivo)
+        
         var fileInput = document.getElementById('archivo');
         var file = fileInput.files[0]; // Obtiene el archivo seleccionado
 
@@ -456,6 +482,11 @@
             payload.append('factura', file, file.name); // Asegúrate de que aquí se pasa file.name
         }
 
+        {% if entradas_id %}
+        var entradas_id = "{{entradas_id}}"
+        {% else %}
+        var entradas_id = ""
+        {% endif %}
     
         // Resto del código...
         var isEditMode = {{ entradas_id|yesno:"true,false" }};

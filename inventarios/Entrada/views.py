@@ -34,21 +34,36 @@ class EntradaListCreateView(generics.ListCreateAPIView):
 
 
 
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
+
 class EntradaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
-    queryset = Entrada.objects.all()
-    serializer_class = EntradaSerializer
-    parser_classes = (MultiPartParser,)  # Agrega el parser para manejar archivos
+    def get_queryset(self):
+        return Entrada.objects.all()  # Sobrescribe el método get_queryset
 
     def put(self, request, *args, **kwargs):
         instance = self.get_object()
+
+        # Verifica si la casilla de verificación está marcada
+        mantener_archivo = request.data.get('mantener_archivo', False)
+
+        if not mantener_archivo:
+            # El usuario ha subido un nuevo archivo, maneja lógica de archivo aquí
+            nuevo_archivo = request.FILES.get('factura')
+            if nuevo_archivo:
+                # Sube el nuevo archivo a AWS y actualiza la referencia en el modelo
+                archivo_nombre = f"comprobantes_inventarios/{instance.identificador}/{nuevo_archivo.name}"
+                default_storage.save(archivo_nombre, ContentFile(nuevo_archivo.read()))
+                instance.factura.name = archivo_nombre
+
         serializer = self.get_serializer(instance, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class InventarioHistoricoView(generics.ListAPIView):

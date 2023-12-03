@@ -54,7 +54,7 @@
                 </div>
                 <div class="modal-body-aviso" style="text-align: center;">
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" id = "modal_footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
@@ -65,105 +65,7 @@
 
 
 
-<script>
-    {% if user.is_authenticated %}
-        const accessToken = "{{token}}"
-        {%else%}
-        const accessToken = ""
-        {% endif %}
 
-
-
-    fetch('/user/info/all/', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('usersTable').querySelector('tbody');
-
-            // Limpiar el tbody por si hay datos previos
-            tableBody.innerHTML = '';
-
-            data.forEach(user => {
-                const row = document.createElement('tr');
-
-                // Crear y agregar cada columna (td) al row
-                var esAdministrador = {% if 'administracion' in grupos_usuario%}true{% else %}false{% endif %};
-                if (esAdministrador) {
-                    var btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${user.usuario.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
-                }
-                else{
-                    var btn_eliminar = ''
-                }
-
-                var esEditar = {% if 'edicion' in grupos_usuario %}true{% else %}false{% endif %};
-                if (esEditar) {
-                    var btn_editar = `<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${user.usuario.id}"><i class="ri-pencil-line mr-0"></i></a>`
-                }
-                else{
-                    var btn_editar = ''
-                }
-
-                
-                row.innerHTML = `
-        <td>${user.usuario.nombre}</td>
-        <td>${user.usuario.apellido}</td>
-        <td>${user.usuario.email}</td>
-        <td>${user.telefono}</td>
-        <td>${user.usuario.groups.join(', ') || 'Ninguno'}</td>
-        <td>
-            <div class="d-flex align-items-center list-action">
-                
-                <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
-                ${btn_editar}
-                ${btn_eliminar}
-            </div>
-        </td>
-        <!--MOODAL-->
-                    <div id="exampleModalCenteredScrollable" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Usuario</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <b>Nombres y Apellidos:</b> ${user.usuario.nombre} ${user.usuario.apellido}<br>
-                                <b>Email:</b> ${user.usuario.email} <br>
-                                <b>Teléfono:</b> ${data.telefono}<br>
-                                <b>Dirección:</b> ${data.direccion}<br>
-                                <b>Permisos del Usuario:</b> ${user.usuario.groups.join(', ') || 'Ninguno'}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-<!--                                 <button type="button" class="btn btn-primary">Save changes</button> -->
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-        
-        
-        `;
-
-                // Agregar el row al tbody
-                tableBody.appendChild(row);
-            });
-
-            $('[data-toggle="popover"]').popover();
-
-            $('[data-toggle="popover"]').on('show.bs.popover', function () {
-                $('[data-toggle="popover"]').not(this).popover('hide');
-            });
-
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-</script>
 
 <script>
     document.addEventListener("click", function (event) {
@@ -194,24 +96,16 @@
 </script>
 
 <script>
-    function showAlertInModal(message) {
-    // Establecer el mensaje en el cuerpo del modal
-    document.querySelector(".modal-body-aviso").textContent = message;
-    
-    // Mostrar el modal
-    $("#avisomodal").modal('show');
-}
-
-</script>
-
-<script>
     function deleteUser(userId, row) {
-        fetch(`/user/delete_user/${userId}/`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        })
+        // Mostrar modal de confirmación
+        showAlertInModal('¿Estás seguro de que deseas eliminar este usuario?', () => {
+            // Si el usuario confirma, proceder con la eliminación
+            fetch(`/user/delete_user/${userId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -226,14 +120,15 @@
                 console.error('Error:', error);
                 showAlertInModal('Hubo un error inesperado al intentar eliminar el usuario.');
             });
+        });
     }
 
-
-
+    
 </script>
 
+
 <!--Funciones popover-->
-<scripT>
+<script>
     $(document).ready(function() {
         $('[data-toggle="popover"]').popover({
             html: true,  // Esto permite que el contenido del popover pueda interpretar HTML.
@@ -255,6 +150,69 @@
 
 </script>
 
+<script>
+    {% if user.is_authenticated %}
+    const accessToken = "{{token}}";
+    {% else %}
+    const accessToken = "";
+    {% endif %}
+
+    fetch('/user/info/all/', {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('usersTable').querySelector('tbody');
+
+            // Limpiar el tbody por si hay datos previos
+            tableBody.innerHTML = '';
+
+            data.forEach(user => {
+                const row = document.createElement('tr');
+
+                // Crear y agregar cada columna (td) al row
+                var esAdministrador = {% if 'administracion' in grupos_usuario %}true{% else %}false{% endif %};
+                var btn_eliminar = '';
+                var btn_editar = '';
+
+                if (esAdministrador) {
+                    btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${user.usuario.id}"><i class="ri-delete-bin-line mr-0"></i></a>`;
+                }
+
+                var esEditar = {% if 'edicion' in grupos_usuario %}true{% else %}false{% endif %};
+                if (esEditar) {
+                    btn_editar = `<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${user.usuario.id}"><i class="ri-pencil-line mr-0"></i></a>`;
+                }
+
+                row.innerHTML = `<td>${user.usuario.nombre}</td>
+                                <td>${user.usuario.apellido}</td>
+                                <td>${user.usuario.email}</td>
+                                <td>${user.telefono}</td>
+                                <td>${user.usuario.groups.join(', ') || 'Ninguno'}</td>
+                                <td>
+                                    <div class="d-flex align-items-center list-action">
+                                        <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
+                                        ${btn_editar}
+                                        ${btn_eliminar}
+                                    </div>
+                                </td>`;
+                // Agregar el row al tbody
+                tableBody.appendChild(row);
+            });
+
+            $('[data-toggle="popover"]').popover();
+
+            $('[data-toggle="popover"]').on('show.bs.popover', function () {
+                $('[data-toggle="popover"]').not(this).popover('hide');
+            });
+
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>
 
 
 

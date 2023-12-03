@@ -90,7 +90,7 @@
             </div>
             <div class="modal-body-aviso" style="text-align: center;">
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id = "modal_footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -98,9 +98,26 @@
 </div>
 
 <script>
-    function showAlertInModal(message) {
+    function showAlertInModal(message, callback) {
         // Establecer el mensaje en el cuerpo del modal
-        document.querySelector(".modal-body-aviso").textContent = message;
+        const modalBody = document.querySelector(".modal-body-aviso");
+        modalBody.textContent = message;
+
+        // Modificar el botón del modal para ejecutar la función callback al hacer clic
+        const modalFooter = document.querySelector(".modal-footer");
+        const confirmButton = document.createElement('button');
+        confirmButton.classList.add('btn', 'btn-primary');
+        confirmButton.textContent = 'Confirmar';
+
+        // Cerrar el modal al hacer clic en el botón Confirmar
+        confirmButton.addEventListener('click', () => {
+            $("#avisomodal").modal('hide');
+            callback();
+        });
+
+        // Agregar el botón al pie del modal
+        modalFooter.innerHTML = '';
+        modalFooter.appendChild(confirmButton);
 
         // Mostrar el modal
         $("#avisomodal").modal('show');
@@ -146,8 +163,8 @@
         {%else%}
         const accessToken = ""
         {% endif %}
-        
-        fetch(`/salidas/retrieve/${userId}`, {
+        showAlertInModal('¿Estás seguro de que deseas eliminar esta salida?', () => 
+        {fetch(`/salidas/retrieve/${userId}`, {
             method: 'DELETE',
             headers: {'X-CSRFToken': getCookie('csrftoken'),
                 'Authorization': `Bearer ${accessToken}`
@@ -166,7 +183,9 @@
                 showAlertInModal('Error: '+ error);
                 console.error('Error:', error);
             });
-    }
+    });
+
+}
 
 
 </script>

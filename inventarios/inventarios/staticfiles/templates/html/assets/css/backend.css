@@ -7454,7 +7454,7 @@ a.text-light-gray:hover, a.text-light-gray:focus {
   .iq-top-navbar .iq-navbar-custom .wrapper-menu {
     display: none; }
   body.sidebar-main .iq-sidebar {
-    width: 72px; }
+    width: 60px; }
     body.sidebar-main .iq-sidebar .iq-sidebar-menu .iq-menu li a span {
       -webkit-opacity: 0;
       -moz-opacity: 0;

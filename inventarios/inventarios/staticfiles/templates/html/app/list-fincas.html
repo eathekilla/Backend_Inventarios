@@ -67,25 +67,7 @@
     </div>
     {% endfor %}
 </div>
-<!--Modal de Avisos-->
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body-aviso" style="text-align: center;">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
     function showAlertInModal(message) {
@@ -134,7 +116,9 @@
         {%else%}
         const accessToken = ""
         {% endif %}
-        fetch(`/user/finca/retrieve/${bodegas_id}`, {
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este usuario?', () => {
+            fetch(`/user/finca/retrieve/${bodegas_id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -151,7 +135,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-            });
+            });});
     }
 
 
