@@ -27,6 +27,52 @@
 
 
 <body class="  ">
+
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body-aviso" style="text-align: center;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showAlertInModal(message, callback) {
+            // Establecer el mensaje en el cuerpo del modal
+            const modalBody = document.querySelector(".modal-body-aviso");
+            modalBody.textContent = message;
+    
+            // Modificar el botón del modal para ejecutar la función callback al hacer clic
+            const modalFooter = document.querySelector(".modal-footer");
+            const confirmButton = document.createElement('button');
+            confirmButton.classList.add('btn', 'btn-primary');
+            confirmButton.textContent = 'Confirmar';
+    
+            // Cerrar el modal al hacer clic en el botón Confirmar
+            confirmButton.addEventListener('click', () => {
+                $("#avisomodal").modal('hide');
+                callback();
+            });
+    
+            // Agregar el botón al pie del modal
+            modalFooter.innerHTML = '';
+            modalFooter.appendChild(confirmButton);
+    
+            // Mostrar el modal
+            $("#avisomodal").modal('show');
+        }
+    </script> 
     <!-- loader Start -->
     <div id="loading">
         <div id="loading-center">
@@ -50,6 +96,7 @@
             <div class="data-scrollbar" data-scroll="1">
                 <nav class="iq-sidebar-menu">
                     <ul id="iq-sidebar-toggle" class="iq-menu">
+                        {% if "administracion" in grupos_usuario%}
                         <li class=" ">
                             <a href="#people" class="collapsed" data-toggle="collapse" aria-expanded="false">
                                 <svg class="svg-icon" id="p-dash8" width="20" height="20"
@@ -84,6 +131,7 @@
                                 
                             </ul>
                         </li>
+                        {% endif %}
 
                         <li class=" ">
                             <a href="#fincas" class="collapsed" data-toggle="collapse" aria-expanded="false">
@@ -132,11 +180,13 @@
                                 </svg>
                             </a>
                             <ul id="proveedores" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_proveedor' %}">
                                         <i class="las la-minus"></i><span>Añadir Proveedor</span>
                                     </a>
                                 </li>
+                                {% endif %}
                                 <li class="">
                                     <a href="{% url 'list_proveedor' %}">
                                         <i class="las la-minus"></i><span>Listado de Proveedores</span>
@@ -185,11 +235,13 @@
                                         <i class="las la-minus"></i><span>Listado de Insumos</span>
                                     </a>
                                 </li>
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_insumo' %}">
                                         <i class="las la-minus"></i><span>Añadir Insumo</span>
                                     </a>
                                 </li>
+                                {%endif%}
                                 
                                 
                                 
@@ -212,11 +264,13 @@
                                 </svg>
                             </a>
                             <ul id="entradas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_entradas' %}">
                                         <i class="las la-minus"></i><span>Añadir Entradas</span>
                                     </a>
                                 </li>
+                                {%endif%}
                                 <li class="">
                                     <a href="{% url 'list_entradas' %}">
                                         <i class="las la-minus"></i><span>Listado de Entradas</span>
@@ -247,11 +301,13 @@
                                 </svg>
                             </a>
                             <ul id="salidas" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                {% if "creacion" in grupos_usuario%}
                                 <li class="">
                                     <a href="{% url 'add_salidas' %}">
                                         <i class="las la-minus"></i><span>Añadir Salidas</span>
                                     </a>
                                 </li>
+                                {%endif%}
                                 <li class="">
                                     <a href="{% url 'list_salidas' %}">
                                         <i class="las la-minus"></i><span>Listado de Salidas</span>
@@ -269,7 +325,7 @@
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
                     <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                         <i class="ri-menu-line wrapper-menu"></i>
-                        <a href="../backend/index.html" class="header-logo">
+                        <a href="#" class="header-logo">
                             <img src="{% static '/assets/images/logo_ottsa.svg' %}" class="img-fluid rounded-normal"
                                 alt="logo">
                             <h5 class="logo-title ml-3">Invetarios Ottsa</h5>
@@ -417,7 +473,7 @@
                                                 <div class="p-3">
                                                     <h5 class="mb-1">
                                                         {% if user.is_authenticated %}
-                                                        <p>Email: {{ user.username }}</p>
+                                                        <p>{{ user.fist_name }} {{user.last_name}}</p>
                                                         {% else %}
                                                         <p>Por favor, inicie sesión para ver su correo electrónico.</p>
                                                         {% endif %}
@@ -601,6 +657,28 @@
         });
 
     </script>
+
+    <script>
+        function formatCurrency(input) {
+            // Obtener el valor ingresado por el usuario
+            let value = input.value;
+    
+            // Eliminar cualquier caracter que no sea un número o un punto decimal
+            let numericValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+    
+            // Almacenar el valor numérico en un atributo personalizado
+            input.setAttribute('data-rawvalue', numericValue);
+    
+            // Formatear el valor con comas en la parte entera
+            let formattedValue = numericValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    
+            // Asignar el valor formateado al input
+            input.value = formattedValue;
+        }
+    </script>
+       
+
 </body>
+
 
 </html>

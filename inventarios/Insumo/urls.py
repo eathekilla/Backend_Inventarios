@@ -4,7 +4,7 @@ from .views import (
     CertificacionListCreateView, CertificacionRetrieveUpdateDeleteView,
     UnidadMedidaListCreateView, UnidadMedidaRetrieveUpdateDeleteView,
     InsumoListCreateView, InsumoRetrieveUpdateDeleteView,cantidad_total_insumo,enviar_correo_prueba,
-    GrupoListCreateView, GrupoRetrieveUpdateDeleteView,edit_info_proveedor,edit_ingrediente,edit_certificacion,edit_unidad, consultar_insumos_grupo,alerta_proximas_a_vencer
+    GrupoListCreateView, GrupoRetrieveUpdateDeleteView,edit_info_proveedor,edit_ingrediente,edit_certificacion,edit_unidad, consultar_insumos_grupo,alerta_proximas_a_vencer,InsumoListView
 )
 
 urlpatterns = [
@@ -25,7 +25,8 @@ urlpatterns = [
     path('cantidad-total/<int:id_insumo>/', cantidad_total_insumo, name='cantidad_total_insumo'),
     path('consultar_grupo/<int:grupo_id>/', consultar_insumos_grupo, name='consultar_grupo'),
     path('alerta_proximas_a_vencer/', alerta_proximas_a_vencer, name='alerta_proximas_a_vencer'),
-    path('test_emails/',enviar_correo_prueba)
+    path('test_emails/',enviar_correo_prueba),
+    path('maestro_insumos_materiales/',InsumoListView.as_view(), name='maestro_insumos_materiales' )
 
     
 ]

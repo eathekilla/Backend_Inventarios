@@ -8,7 +8,9 @@
         <div>
             <h4 class="mb-3">Listado de Ingrediente Activo</h4>
         </div>
+        {% if "creacion" in grupos_usuario%}
         <a href="{% url 'add_ingrediente' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Ingrediente Activo</a>
+        {% endif %}
     </div>
 </div>
 <div class="col-lg-12">
@@ -50,25 +52,7 @@
 {% endfor %}
 
 
-<!--Modal de Avisos-->
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body-aviso" style="text-align: center;">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         {% if user.is_authenticated %}
@@ -87,14 +71,30 @@
                 console.log(data)
                 data.forEach(ingrediente => {
                     const row = document.createElement('tr');
+                    var esAdministrador = {% if 'administracion' in grupos_usuario %}true{% else %}false{% endif %};
+                    if (esAdministrador) {
+                        var btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="${ingrediente.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
+                    }
+                    else{
+                        var btn_eliminar = ''
+                    }
+
+                    var esEditar = {% if 'edicion' in grupos_usuario %}true{% else %}false{% endif %};
+                    if (esEditar) {
+                        var btn_editar = `<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="${ingrediente.id}"><i class="ri-pencil-line mr-0"></i></a>`
+                    }
+                    else{
+                        var btn_editar = ''
+                    }
 
                     row.innerHTML = `
                 <td>${ingrediente.nombre}</td>
                 <td>
                     <div class="d-flex align-items-center list-action">
                         <a class="badge badge-info mr-2" data-toggle="modal" data-placement="top" title="Información del Ingrediente" href="#" data-content="Nombres del Ingrediente:${ingrediente.name}" data-target="#exampleModalCenteredScrollable${ingrediente.id}"><i class="ri-eye-line mr-0"></i></a>
-                        <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="${ingrediente.id}"><i class="ri-pencil-line mr-0"></i></a>
-                        <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="${ingrediente.id}"><i class="ri-delete-bin-line mr-0"></i></a>
+                        ${btn_editar}
+                        ${btn_eliminar}
+                        
                     </div>
                 </td>
             `;
@@ -161,7 +161,9 @@
 
         // Función para eliminar Ingrediente Activo
         function deleteIngrediente(ingredientId, row) {
-            fetch(`/insumos/ingredientes-activos/retrieve/${ingredientId}/`, {
+
+            showAlertInModal('¿Estás seguro de que deseas eliminar este ingrediente?', () => {
+                fetch(`/insumos/ingredientes-activos/retrieve/${ingredientId}/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
@@ -177,7 +179,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                });
+                });});
         }
 
         // Funciones de popover con jQuery

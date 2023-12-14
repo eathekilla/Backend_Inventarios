@@ -2,6 +2,25 @@
 {%load static%}
 {% block body %}
 
+<style>
+ 
+  /* Estilos del loader */
+  .loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+</style>
+
 <div class="col-sm-12">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
@@ -33,7 +52,7 @@
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label for="insumo">Insumo *</label>
-                            <select id="insumo" name="insumo" class="selectpicker form-control" data-style="py-0">
+                            <select id="insumo" name="insumo" class="selectpicker form-control" data-style="py-0" required>
                                 {%for insumo in insumos%}
                                 <option value="{{insumo.pk}}" selected >{{insumo.nombre}}</option>
                                 {% endfor %}
@@ -45,7 +64,7 @@
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label for="unidad_medida">Unidades de Medida *</label>
-                            <input id="unidad_medida" name="unidad_medida" class="form-control" Disabled>
+                            <input id="unidad_medida" name="unidad_medida" class="form-control" Disabled >
                             </select>
                         </div>
                     </div>
@@ -68,12 +87,12 @@
                 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="valor_unitario_entrada_a">Valor Unitario *</label>
+                            <label for="valor_unitario_entrada_a">Valor Unitario ($) *</label>
                             
                             {% if entradas_id %}
-                            <input type="number" class="form-control" placeholder="Ingrese valor unitario" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a">
+                            <input type="text" class="form-control" placeholder="0.00" oninput="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
                             {% else %}
-                            <input type="number" class="form-control" placeholder="Ingrese valor unitario" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a">
+                            <input type="text" class="form-control" placeholder="0.00" oninput="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
                             {% endif %}
                             <script>
                                 var vlrunitario = parseInt("{{ entradas.valor_unitario_entrada_a }}");
@@ -84,11 +103,11 @@
                 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="total">Valor Total *</label>
+                            <label for="total">Valor Total ($)*</label>
                             {% if entradas_id %}
-                            <input type="text" class="form-control" placeholder="Ingrese valor total" required id="total" name="total" value="{{ entradas.total }}" disabled>
+                            <input type="text" class="form-control" oninput="formatCurrency(this)" placeholder="Ingrese valor total" required id="total" name="total" value="{{ entradas.total }}" disabled>
                             {% else %}
-                            <input type="text" class="form-control" placeholder="Ingrese valor total" required id="total" name="total" disabled>
+                            <input type="text" class="form-control" oninput="formatCurrency(this)" placeholder="Ingrese valor total" required id="total" name="total" disabled>
                             {% endif %}
                         </div>
                     </div>
@@ -97,7 +116,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="selectFinca">Finca *</label>
-                            <select id="selectFinca" class="form-control">
+                            <select id="selectFinca" class="form-control" required>
                                 <option>Seleccione una Finca</option>
                                 {% for finca in estructura %}
                                 <option value="{{ finca.id }}" {% if forloop.counter0 == finca_preseleccionada %}selected{% endif %}>{{ finca.nombre_finca }}</option>
@@ -109,9 +128,9 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="selectLote">Lote *</label>
-                            <select id="selectLote" class="form-control">
-                                <option >Seleccione un Lote</option>
+                            <label for="selectLote">Bodega *</label>
+                            <select id="selectLote" class="form-control" required>
+                                <option >Seleccione una Bodega</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
                         </div>
@@ -119,9 +138,9 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="selectBodega">Bodega *</label>
-                            <select id="selectBodega" class="form-control">
-                                <option >Seleccione una Bodega</option>
+                            <label for="selectBodega">Lote *</label>
+                            <select id="selectBodega" class="form-control" required>
+                                <option >Seleccione una Lote</option>
                                 <!-- Las opciones serán generadas por JavaScript -->
                             </select>
                         </div>
@@ -141,7 +160,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="proveedor">Proveedor *</label>
-                            <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0">
+                            <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0" required>
                                 {%for proveedor in proveedores%}
                                 <option value="{{proveedor.id}}" selected >{{proveedor.razon_social}}</option>
                                 
@@ -154,11 +173,33 @@
                         <div class="form-group">
                             <label for="proveedor">Cargar Archivo *</label>
                             <div class="custom-file">
+                                {% if entradas_id %}
                                 <input type="file" class="custom-file-input" name="factura" id="archivo" >
+                                {% else %}
+                                <input type="file" class="custom-file-input" name="factura" id="archivo" required>
+                                {% endif %}
                                 <label class="custom-file-label" for="inputGroupFile01">Escoge el Archivo</label>
                             </div>
                         </div>
-                    </div>                
+                    </div>
+                    {% if entradas_id %}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% if entradas_id %}
+                                <!-- Mostrar enlace al archivo existente -->
+                                <u><a style="color: #000" href="/entradas/comprobante/{{entradas.pk}}" target="_blank">Ver Archivo Existente</a></u>
+
+                                <!-- Casilla de verificación para mantener el archivo existente -->
+                                <input type="checkbox" checked name="mantener_archivo" id="mantener_archivo">
+                                <label for="mantener_archivo">Mantener Archivo Existente</label>
+
+                            {% endif %}
+
+                            <!-- Campo de archivo para subir uno nuevo -->
+                            
+                        </div>
+                    </div>
+    {% endif %}                
                 </div>
                 
                 
@@ -193,8 +234,29 @@
             </div>
         </div>
     </div>
+
+    
 </div>
 
+
+<div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div id="loader" class="loader"></div>
+                <p>Espere por favor...</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script>
     document.getElementById('insumo').addEventListener('change', function() {
@@ -253,12 +315,32 @@
     var estructura = {{ estructura | safe }};
 
     // Cálculo del valor total en función de la cantidad y el valor unitario.
+
     function recalculateTotal() {
-        var valunit = parseFloat(document.getElementById('valor_unitario_entrada_a').value) || 0;
+        var valunit = parseFloat(document.getElementById('valor_unitario_entrada_a').getAttribute('data-rawvalue')) || 0;
         var cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
         var total = valunit * cantidad;
-        document.getElementById('total').value = total;
+
+        // Actualizar el campo total con el valor calculado
+        document.getElementById('total').value = total.toFixed(2);
+
+        // Formatear el campo total después de la actualización
+        formatCurrency(document.getElementById('total'));
     }
+
+     // Función para formatear el campo total
+     function formatTotal() {
+        let totalInput = document.getElementById('total');
+        let numericValue = parseFloat(totalInput.getAttribute('data-rawvalue')) || 0;
+        let formattedValue = numericValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+        totalInput.value = formattedValue;
+    }
+
+    // Llamada inicial a formatTotal para asegurar que el campo total esté formateado al cargar la página
+    window.onload = function () {
+        formatTotal();
+    };
+    
 
     function llenarLotesYBodegas() {
         var fincaSeleccionada = estructura.find(f => f.id == document.getElementById('selectFinca').value);
@@ -277,7 +359,7 @@
         console.log(document.getElementById('selectLote').value)
         var loteSeleccionado = fincaSeleccionada.lotes.find(l => l.id == document.getElementById('selectLote').value);
         var selectBodega = document.getElementById('selectBodega');
-        selectBodega.innerHTML = '<option value="" disabled selected>Seleccione una Bodega</option>';
+        selectBodega.innerHTML = '<option value="" disabled selected>Seleccione un lote</option>';
         loteSeleccionado.bodegas.forEach(bodega => {selectBodega.innerHTML += `<option value="${bodega.id}">${bodega.nombre_bodega}</option>`;});
         selectBodega.disabled = false;
     }
@@ -369,6 +451,8 @@
         var proveedor = parseInt(document.getElementById('proveedor').value);
         var fileInput = document.getElementById('archivo');
         var file = fileInput.files[0]; // Obtiene el archivo seleccionado
+        
+        var mantener = document.getElementById('mantener_archivo').value;
     
         // Verifica que cantidad y valor_unitario_entrada_a tengan valores válidos
         if (isNaN(cantidad)) {
@@ -384,11 +468,13 @@
         var payload = new FormData();
         payload.append('fecha_vencimiento', fecha_vencimiento);
         payload.append('cantidad', cantidad);
-        payload.append('valor_unitario_entrada_a', valor_unitario_entrada_a);
+        payload.append('valor_unitario_entrada_a', valor_unitario_entrada_a*1000);
         payload.append('numero_factura', numero_factura);
         payload.append('bodega', bodega);
         payload.append('insumo', insumo);
         payload.append('proveedor', proveedor);
+        payload.append('mantener',mantener_archivo)
+        
         var fileInput = document.getElementById('archivo');
         var file = fileInput.files[0]; // Obtiene el archivo seleccionado
 
@@ -396,6 +482,11 @@
             payload.append('factura', file, file.name); // Asegúrate de que aquí se pasa file.name
         }
 
+        {% if entradas_id %}
+        var entradas_id = "{{entradas_id}}"
+        {% else %}
+        var entradas_id = ""
+        {% endif %}
     
         // Resto del código...
         var isEditMode = {{ entradas_id|yesno:"true,false" }};
@@ -405,6 +496,7 @@
         var message = isEditMode ? 'Entrada editada exitosamente' : 'Entrada creada exitosamente';
     
         // ...
+        activarLoader()
         fetch(url, {
             method: httpMethod,
             headers: {
@@ -416,20 +508,42 @@
             body: payload
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-                showAlertInModal('Network response was not ok'); // Asegúrate de que esta función esté definida o usa alert()
+            if (response.status === 201) {
+                desactivarLoader()
+                showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
+            } else if (response.status === 400) {
+                desactivarLoader()
+                showAlertInModal('Error enviando la información de la entrada!'); // Asegúrate de que esta función esté definida o usa alert()
+            } else {
+                // Acciones para otros códigos de estado
+                desactivarLoader();
+                showAlertInModal(`Error ${response.status}: ${response.statusText}`);
             }
-            showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
         })
         .catch(error => {
-            console.error('Error:', error);
+            desactivarLoader()
             showAlertInModal('Error al enviar el formulario'); // Asegúrate de que esta función esté definida o usa alert()
         });
     }
     
     </script>
-    
+    <script>
+                // Función para activar el modal con loader
+        function activarLoader() {
+            $("#myModal").modal('show');
+            
+        }
+        
+        // Función para desactivar el modal con loader
+        function desactivarLoader() {
+            $("#myModal").modal('hide');
+            setTimeout(function() {
+                console.log("");
+              }, 1000);
+        }
+        
+                
+    </script>
     
 
 

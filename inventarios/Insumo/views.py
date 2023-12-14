@@ -270,3 +270,26 @@ def enviar_correo_prueba(request):
     except Exception as e:
         print(f'Error al enviar el correo de prueba: {str(e)}')
 
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
+from .models import Insumo
+
+@method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
+class InsumoListView(View):
+    def get(self, request, *args, **kwargs):
+        insumos = Insumo.objects.all()
+        insumo_list = []
+
+        for insumo in insumos:
+            insumo_data = {
+                'nombre': insumo.nombre,
+                'codigo_contable': insumo.codigo_contable,
+                'unidad_medida': insumo.unidad_medida.nombre if insumo.unidad_medida else None,
+                # Agrega más campos según tus necesidades
+            }
+            insumo_list.append(insumo_data)
+
+        return JsonResponse({'insumos': insumo_list}, safe=False)

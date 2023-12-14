@@ -27,6 +27,54 @@
 
 
 <body class="  ">
+
+    <script>
+        function showAlertInModal(message, callback) {
+            // Establecer el mensaje en el cuerpo del modal
+            const modalBody = document.querySelector(".modal-body-aviso");
+            modalBody.textContent = message;
+    
+            // Modificar el botón del modal para ejecutar la función callback al hacer clic
+            const modalFooter = document.querySelector(".modal-footer");
+            const confirmButton = document.createElement('button');
+            confirmButton.classList.add('btn', 'btn-primary');
+            confirmButton.textContent = 'Confirmar';
+    
+            // Cerrar el modal al hacer clic en el botón Confirmar
+            confirmButton.addEventListener('click', () => {
+                $("#avisomodal").modal('hide');
+                callback();
+            });
+    
+            // Agregar el botón al pie del modal
+            modalFooter.innerHTML = '';
+            modalFooter.appendChild(confirmButton);
+    
+            // Mostrar el modal
+            $("#avisomodal").modal('show');
+        }
+    </script> 
+
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body-aviso" style="text-align: center;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
     <!-- loader Start -->
     <div id="loading">
         <div id="loading-center">
@@ -630,7 +678,9 @@
             input.value = formattedValue;
         }
     </script>
-    
+       
+
 </body>
+
 
 </html>

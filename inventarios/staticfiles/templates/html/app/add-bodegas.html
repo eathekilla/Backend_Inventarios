@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div class="header-title">
-                <h4 class="card-title">Añadir Bodegas</h4>
+                <h4 class="card-title">Añadir Lotes</h4>
             </div>
         </div>
         <div class="card-body">
@@ -14,11 +14,11 @@
                 <div class="row"> 
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="nombre_finca">Nombre de Bodega *</label>
+                            <label for="nombre_finca">Nombre de Lote *</label>
                             {% if bodegas_id %}
-                            <input type="text" class="form-control" placeholder="Ingrese Número de la Bodega" required id="nombre_bodega" name="nombre_bodega" value="{{bodega_edit.nombre_bodega}}">
+                            <input type="text" class="form-control" placeholder="Ingrese Número de la Lote" required id="nombre_bodega" name="nombre_bodega" value="{{bodega_edit.nombre_bodega}}">
                             {% else %}
-                            <input type="text" class="form-control" placeholder="Ingrese Nombre de la Bodega" required id="nombre_bodega" name="nombre_bodega">
+                            <input type="text" class="form-control" placeholder="Ingrese Nombre de la Lote" required id="nombre_bodega" name="nombre_bodega">
                             {% endif %}
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                     </div>                   
                     
                 </div>                            
-                <button type="submit" class="btn btn-primary mr-2">Crear Bodega</button>
+                <button type="submit" class="btn btn-primary mr-2">Crear Lote</button>
                 <button type="reset" class="btn btn-danger">Limpiar</button>
             </form>
         </div>
@@ -231,10 +231,10 @@
         body: JSON.stringify(payload)
     })
     .then(response => {if (!response.ok) {
-        showAlertInModal('Error al guardar la Bodega.');
+        showAlertInModal('Error al guardar la Lote.');
     }
     const actionMsg = bodegas_id ? 'editada' : 'creada';
-    showAlertInModal(`Bodega ${actionMsg} exitosamente!`);
+    showAlertInModal(`Lote ${actionMsg} exitosamente!`);
     document.getElementById("formularioBodega").reset()
 })
     .then(data => {

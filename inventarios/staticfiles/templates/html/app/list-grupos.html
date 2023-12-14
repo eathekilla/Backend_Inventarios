@@ -9,7 +9,9 @@
             <h4 class="mb-3">Listado de Grupos de Insumos</h4>
             <p class="mb-0">  </p>
         </div>
+        {% if "creacion" in grupos_usuario%}
         <a href="{% url 'add_grupo' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Grupo de Insumos</a>
+        {% endif %}
     </div>
 </div>
 <div class="col-lg-12">
@@ -30,8 +32,8 @@
                 <td>
                     <div class="d-flex align-items-center list-action">
                         <a class="badge badge-info mr-2 view-button" data-toggle="modal" data-placement="top" title="Información del Grupo" href="#" data-content="" data-target="#exampleModalCenteredScrollable{{grupo.id}}" data-id="{{grupo.id}}"><i class="ri-eye-line mr-0"></i></a>
-                        <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="{{grupo.id}}"><i class="ri-pencil-line mr-0"></i></a>
-                        <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="{{grupo.id}}"><i class="ri-delete-bin-line mr-0"></i></a>
+                        {% if "edicion" in grupos_usuario%}<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" data-placement="top" title="Edit" href="#" data-id="{{grupo.id}}"><i class="ri-pencil-line mr-0"></i></a>{%endif%}
+                        {% if "administracion" in grupos_usuario%}<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" data-placement="top" title="Delete" href="#" data-id="{{grupo.id}}"><i class="ri-delete-bin-line mr-0"></i></a>{%endif%}
                     </div>
                 </td>
             </tr>
@@ -67,24 +69,7 @@
 
 
 
-<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
-        style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body-aviso" style="text-align: center;">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 
 
@@ -196,7 +181,9 @@
         const accessToken = ""
         {% endif %}
     function deleteUser(userId, row) {
-        fetch(`/insumos/grupos/retrieve/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${accessToken}`}})
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este grupo?', () => {
+            fetch(`/insumos/grupos/retrieve/${userId}`, {method: 'DELETE',headers: {'Authorization': `Bearer ${accessToken}`}})
             .then(data => {
                 if (data.status==204) {
                     row.remove();
@@ -207,7 +194,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-            });
+            });});
     }
 
 

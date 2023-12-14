@@ -19,75 +19,88 @@
                     <div class="col-md-6">                      
                         <div class="form-group">
                             <label>Razón Social *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Razón Social" required id="razonsocial" name="razonsocial">
+                            <input type="text" class="form-control" placeholder="Ingrese Razón Social" required id="razon_social" name="razon_social">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-6">                      
                         <div class="form-group">
-                            <label>Representante Legal *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Representante Legal" required id="representante_legal" name="representante_legal">
+                            <label>Nombre de Contacto </label>
+                            <input type="text" class="form-control" placeholder="Ingrese Nombre de Contacto"  id="representante_legal" name="representante_legal">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-6">                      
                         <div class="form-group">
-                            <label>NIT *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Documento" required id="nit" name="nit">
+                            <label>Tipo de Identificación *</label>
+                            <select class="custom-select form-control required" required id="tipo_id" name="tipo_id">
+                                <option value = 'Nit'>Nit</option>
+                                <option value = 'Cedula de Ciudadania'>Cédula de Ciudadanía</option>
+                                <option value = 'Cedula de Extrangeria'>Cédula de Extrangería</option>
+                            </select>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Número de Identificación *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese Documento" required id="nit_cedula" name="nit_cedula">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Email *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Email" required id="email" name="email">
+                            <label>Email </label>
+                            <input type="text" class="form-control" placeholder="Ingrese Email"  id="email" name="email">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Numero de Teléfono *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Numero de Teléfono" required id="telefono" name="telefono">
+                            <label>Numero de Teléfono </label>
+                            <input type="text" class="form-control" placeholder="Ingrese Numero de Teléfono"  id="telefono" name="telefono">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Departamento *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Departamento" required id="departamento" name="departamento">
+                            <label>Departamento </label>
+                            <input type="text" class="form-control" placeholder="Ingrese Departamento"  id="departamento" name="departamento">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Municipio *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Municipio" id="municipio" name="municipio"required>
+                            <label>Municipio </label>
+                            <input type="text" class="form-control" placeholder="Ingrese Municipio" id="municipio" name="municipio">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Vereda* </label>
+                            <label>Vereda </label>
                             <input type="text" class="form-control" placeholder="Ingrese Vereda" id="vereda" name="vereda">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Barrio *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Barrio" required name="barrio" id="barrio">
+                            <label>Barrio </label>
+                            <input type="text" class="form-control" placeholder="Ingrese Barrio"  name="barrio" id="barrio">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Direccion *</label>
-                            <input type="text" class="form-control" placeholder="Ingrese Direccion" required name="direccion" id="direccion">
+                            <label>Direccion </label>
+                            <input type="text" class="form-control" placeholder="Ingrese Direccion"  name="direccion" id="direccion">
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>                   
-                </div>                            
+                </div>
+                <div>
+                <small><b>* Campo Requerido </b><small>                            </div>
                 <button type="submit" class="btn btn-primary mr-2">Añadir Proveedor</button>
                 <button type="reset" class="btn btn-danger">Limpiar</button>
             </form>
@@ -152,10 +165,10 @@
         .then(data => {
             console.log(data);
             // Aquí llenas el formulario con los datos del proveedor
-            document.querySelector("input[placeholder='Ingrese Razón Social']").value = data.razon_social;
-            document.getElementById('razonsocial').value = data.razon_social;
+            document.getElementById('razon_social').value = data.razon_social;
             document.getElementById('representante_legal').value = data.representante_legal;
-            document.getElementById('nit').value = data.nit_cedula;
+            document.getElementById('nit_cedula').value = data.nit_cedula;
+            document.getElementById('tipo_id').value = data.tipo_id;
             document.getElementById('email').value = data.email;
             document.getElementById('telefono').value = data.telefono;
             document.getElementById('departamento').value = data.departamento;
@@ -163,6 +176,7 @@
             document.getElementById('barrio').value = data.barrio;
             document.getElementById('vereda').value = data.vereda;
             document.getElementById('direccion').value = data.direccion;
+            
             
             // ... Continua llenando los demás campos ...
         })
@@ -180,22 +194,20 @@
 
         
     
-        const formData = {
-            razon_social: document.querySelector("input[placeholder='Ingrese Razón Social']").value,
-            representante_legal: document.querySelector("input[placeholder='Ingrese Representante Legal']").value,
+        const formData = {};
 
-            "nit_cedula": document.getElementById('nit').value,
-            "razon_social": document.querySelector("input[placeholder='Ingrese Razón Social']").value,
-            "representante_legal": document.getElementById('representante_legal').value,
-            "direccion": document.getElementById('direccion').value,
-            "telefono": document.getElementById('telefono').value,
-            "email": document.getElementById('email').value,
-            "vereda": document.getElementById('vereda').value,
-            "departamento": document.getElementById('departamento').value,
-            "municipio": document.getElementById('municipio').value,
-            "barrio": document.getElementById('barrio').value
-            // ... Captura todos los otros campos ...
-        };
+                // Obtén todos los elementos del formulario
+        const formElements = document.getElementById('proveedor_form').elements;
+
+        // Itera sobre los elementos del formulario
+        for (let i = 0; i < formElements.length; i++) {
+            const element = formElements[i];
+            
+            // Verifica si el campo no está vacío antes de agregarlo a formData
+            if (element.value.trim() !== "") {
+                formData[element.name] = element.value;
+            }
+        }
     
         {% if providerId %}
         const providerId = parseInt("{{providerId}}");
