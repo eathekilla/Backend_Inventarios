@@ -67,6 +67,30 @@ class Salida(models.Model):
         # Añadir las entradas a la salida después de que se haya guardado la salida
         for entrada in entradas:
             self.entradas.add(entrada)
+        
+    def save_with_selected_entrada(self, selected_entrada, *args, **kwargs):
+        # Verificar que la entrada seleccionada pertenezca al mismo insumo
+        if selected_entrada.insumo != self.insumo:
+            raise ValidationError("La entrada seleccionada no corresponde al mismo insumo.")
+
+        # Verificar que la cantidad de la entrada seleccionada sea suficiente
+        if selected_entrada.cantidad < self.cantidad:
+            raise ValidationError("La cantidad de la entrada seleccionada no es suficiente.")
+
+        # Realizar el descuento directamente de la entrada seleccionada
+        valor_total = self.cantidad * selected_entrada.valor_unitario_entrada_a
+        valor_unitario_entrada_a_str = str(selected_entrada.valor_unitario_entrada_a)
+        cantidad_str = str(self.cantidad)
+        str_entrada = f"- Cant {cantidad_str} * Vrl/u {formatear_como_divisa(valor_unitario_entrada_a_str)} = {formatear_como_divisa(valor_total)} ({selected_entrada.pk})\n"
+
+        # Actualizar la entrada seleccionada y la salida
+        selected_entrada.cantidad -= self.cantidad
+        selected_entrada.save()
+
+        self.valor_total_salida = valor_total 
+        self.movimientos = str_entrada
+
+        super(Salida, self).save(*args, **kwargs)
 
 
 

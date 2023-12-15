@@ -451,8 +451,14 @@
         var proveedor = parseInt(document.getElementById('proveedor').value);
         var fileInput = document.getElementById('archivo');
         var file = fileInput.files[0]; // Obtiene el archivo seleccionado
-        
+
+        {% if entradas_id %}
         var mantener = document.getElementById('mantener_archivo').value;
+        {% else %}
+        var mantener = false;
+        {% endif %}
+        
+        
     
         // Verifica que cantidad y valor_unitario_entrada_a tengan valores válidos
         if (isNaN(cantidad)) {
@@ -473,7 +479,9 @@
         payload.append('bodega', bodega);
         payload.append('insumo', insumo);
         payload.append('proveedor', proveedor);
-        payload.append('mantener',mantener_archivo)
+        {% if entradas_id %}
+        payload.append('mantener',mantener)
+        {% endif %}
         
         var fileInput = document.getElementById('archivo');
         var file = fileInput.files[0]; // Obtiene el archivo seleccionado

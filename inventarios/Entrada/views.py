@@ -212,3 +212,70 @@ def comprobante(request,pk):
         # Manejar cualquier error de generación de URL firmada
 
         return redirect('/')
+    
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
+from .models import Entrada
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.db.models import Sum
+from .models import Entrada
+
+@method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
+class EntradasListView(View):
+    def get(self, request, *args, **kwargs):
+        # Agrupa y suma las entradas por insumo y bodega
+        entradas_agrupadas = Entrada.objects.values(
+            'insumo__codigo_contable',
+            'bodega__id'
+        ).annotate(
+            cantidad_total=Sum('cantidad')
+        )
+
+        entradas_list = []
+
+        for entrada_agrupada in entradas_agrupadas:
+            insumo_codigo = entrada_agrupada['insumo__codigo_contable']
+            bodega_codigo = entrada_agrupada['bodega__id']
+            cantidad_total = entrada_agrupada['cantidad_total']
+
+            entrada_data = {
+                'codigo_insumo': insumo_codigo,
+                'codigo_bodega': bodega_codigo,
+                'cantidad_total': cantidad_total,
+            }
+
+            entradas_list.append(entrada_data)
+
+        return JsonResponse({'entradas_agrupadas': entradas_list}, safe=False)
+
+
+@method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
+class EntradasPorInsumoView(View):
+    def get(self, request, codigo_insumo, *args, **kwargs):
+        # Filtra las entradas por el código de insumo
+        entradas = Entrada.objects.filter(insumo__codigo_contable=codigo_insumo)
+
+        entradas_list = []
+
+        for entrada in entradas:
+            bodega_codigo = entrada.bodega.id if entrada.bodega else None
+            cantidad = entrada.cantidad
+            precio_entrada = entrada.valor_unitario_entrada_a
+
+            entrada_data = {
+                'codigo_bodega': bodega_codigo,
+                'cantidad': cantidad,
+                'precio_entrada': precio_entrada,
+            }
+
+            entradas_list.append(entrada_data)
+
+        return JsonResponse({'entradas_por_insumo': entradas_list}, safe=False)

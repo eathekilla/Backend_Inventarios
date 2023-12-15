@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import EntradaListCreateView, EntradaRetrieveUpdateDeleteView, InventarioHistoricoView, InventarioEstadoActualView, EntradaHistoricoView,EntradaPrimerHistoricoView,entradas_proximas_a_vencer
-from .views import comprobante
+from .views import comprobante, EntradasListView, EntradasPorInsumoView
 urlpatterns = [
     path('list-create/', EntradaListCreateView.as_view(), name='entrada-list-create'),
     path('retrieve/<str:pk>/', EntradaRetrieveUpdateDeleteView.as_view(), name='entrada-retrieve-update-delete'),
@@ -11,6 +11,8 @@ urlpatterns = [
     path('inventario/inicialentrada/', EntradaPrimerHistoricoView.as_view(), name='entrada-historico'),
     path('entradas-proximas-a-vencer/', entradas_proximas_a_vencer, name='entradas_proximas_a_vencer'),
     path('comprobante/<str:pk>/',comprobante),
+    path('maestro-stock/',EntradasListView.as_view(),name='stock_master'),
+    path('master-precio-insumo/<str:codigo_insumo>/',EntradasPorInsumoView.as_view(),name='master_precio_insumo'), 
     
     
 ]

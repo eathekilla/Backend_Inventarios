@@ -66,3 +66,34 @@ class SalidaListAPIView(generics.ListAPIView):
     queryset = Salida.objects.all()
     serializer_class = SalidaSerializer
 
+
+class SalidaEntradaAPIView(generics.CreateAPIView):
+    queryset = Salida.objects.all()
+    serializer_class = SalidaSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        try:
+            # Obtener los datos del request
+            data = request.data
+
+            # Verificar si se proporciona una entrada manualmente
+            entrada_id = data.get('entrada_id')
+            if entrada_id:
+                selected_entrada = Entrada.objects.get(pk=entrada_id)
+                # Crear la salida con la entrada seleccionada
+                salida_serializer = self.get_serializer(data=data)
+                salida_serializer.is_valid(raise_exception=True)
+                self.perform_create_with_selected_entrada(salida_serializer, selected_entrada)
+                headers = self.get_success_headers(salida_serializer.data)
+                return Response(salida_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                # Crear la salida de manera normal
+                return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)
+        except ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create_with_selected_entrada(self, serializer, selected_entrada):
+        serializer.save()
+        # Llamar al nuevo método en el modelo para manejar la entrada seleccionada
+        serializer.instance.save_with_selected_entrada(selected_entrada)

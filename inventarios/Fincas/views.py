@@ -195,3 +195,25 @@ def get_all_info_users(request):
         return Response(info_users_data, content_type='application/json', status=status.HTTP_200_OK)
 
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
+from .models import Bodegas
+
+@method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
+class BodegasListView(View):
+    def get(self, request, *args, **kwargs):
+        bodegas = Bodegas.objects.all()
+        bodegas_list = []
+
+        for bodega in bodegas:
+            finca_codigo = bodega.lote.finca.pk if bodega.lote and bodega.lote.finca else None
+            bodega_data = {
+                'codigo_bodega': bodega.pk,  # Puedes cambiar esto según el campo que represente el código de la bodega
+                'nombre_bodega': bodega.nombre_bodega,
+                'codigo_finca': finca_codigo,
+            }
+            bodegas_list.append(bodega_data)
+
+        return JsonResponse({'bodegas': bodegas_list}, safe=False)

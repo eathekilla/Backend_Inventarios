@@ -27,5 +27,6 @@ urlpatterns = [
     path('info/edit/<int:pk>/', views.edit_info_user, name='edit-info-user'),
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),
     path('info/all/', views.get_all_info_users, name='userinfo'),
+    path('master-almacenes/',views.BodegasListView.as_view(),name='master_bodegas')
     
 ]
