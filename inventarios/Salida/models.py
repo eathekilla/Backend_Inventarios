@@ -87,10 +87,27 @@ class Salida(models.Model):
         selected_entrada.cantidad -= self.cantidad
         selected_entrada.save()
 
-        self.valor_total_salida = valor_total 
+        self.valor_total_salida = valor_total
         self.movimientos = str_entrada
 
+        # Limpiar las otras entradas relacionadas
+        self.entradas.clear()
+
+        # Añadir la entrada seleccionada a la salida
+        self.entradas.add(selected_entrada)
+
         super(Salida, self).save(*args, **kwargs)
+
+    
+    def reverse(self):
+        # Asumiendo que tienes un campo en el modelo Salida que almacena las entradas relacionadas
+        for entrada in self.entradas.all():
+            # Devuelve la cantidad de la salida a la entrada correspondiente
+            entrada.cantidad += self.cantidad
+            entrada.save()
+
+        # Elimina la salida
+        self.delete()
 
 
 

@@ -97,3 +97,19 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
         serializer.save()
         # Llamar al nuevo método en el modelo para manejar la entrada seleccionada
         serializer.instance.save_with_selected_entrada(selected_entrada)
+
+
+class SalidaReverseAPIView(generics.DestroyAPIView):
+    queryset = Salida.objects.all()
+    serializer_class = SalidaSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            instance.reverse()
+            
+            return Response({'detail': 'Reversa exitosa'}, status=status.HTTP_200_OK)
+        except ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+

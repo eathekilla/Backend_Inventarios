@@ -21,4 +21,4 @@ class Entrada(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return f"{self.fecha_creacion} - {self.insumo}"
+        return f"{self.identificador} - {self.fecha_creacion} - {self.insumo}"
