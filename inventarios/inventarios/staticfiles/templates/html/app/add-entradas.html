@@ -37,17 +37,7 @@
                 {% csrf_token %}
                 <div class="row"> 
 
-                    <div class="col-md-6">                      
-                        <div class="form-group">
-                            <label for="fecha_vencimiento">Fecha de Vencimiento *</label>
-                            {% if entradas_id %}
-                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento" value="{{ entradas.fecha_vencimiento|date:'Y-m-d' }}">
-                            {% else %}
-                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento">
-                            {% endif %}
-                            <div class="help-block with-errors"></div>
-                        </div>
-                    </div>
+                   
                 
                     <div class="col-md-6">                      
                         <div class="form-group">
@@ -112,6 +102,20 @@
                         </div>
                     </div>
 
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label for="fecha_vencimiento">Fecha de Vencimiento *</label>
+                            {% if entradas_id %}
+                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento" value="{{ entradas.fecha_vencimiento|date:'Y-m-d' }}">
+                            {% else %}
+                            <input type="date" class="form-control" placeholder="Ingrese la fecha de vencimiento" required id="fecha_vencimiento" name="fecha_vencimiento">
+                            {% endif %}
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+
+
+
                 
                     <div class="col-md-6">
                         <div class="form-group">
@@ -157,17 +161,7 @@
                         </div>
                     </div>
                 
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="proveedor">Proveedor *</label>
-                            <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0" required>
-                                {%for proveedor in proveedores%}
-                                <option value="{{proveedor.id}}" selected >{{proveedor.razon_social}}</option>
-                                
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+                    
 
                     <div class="col-md-6">
                         <div class="form-group">
@@ -180,6 +174,18 @@
                                 {% endif %}
                                 <label class="custom-file-label" for="inputGroupFile01">Escoge el Archivo</label>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="proveedor">Proveedor *</label>
+                            <select id="proveedor" name="proveedor" class="selectpicker form-control" data-style="py-0" required>
+                                {%for proveedor in proveedores%}
+                                <option value="{{proveedor.id}}" selected >{{proveedor.razon_social}}</option>
+                                
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                     {% if entradas_id %}

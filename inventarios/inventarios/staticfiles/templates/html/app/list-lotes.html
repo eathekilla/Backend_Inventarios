@@ -100,7 +100,7 @@
     document.addEventListener("click", function (event) {
         if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
             const bodegas_id = event.target.closest(".edit-button").getAttribute("data-id");
-            window.location.href = `/add-lotes/edit/${bodegas_id}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
+            window.location.href = `/add-bodegas/edit/${bodegas_id}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
         }
     });
 </script>

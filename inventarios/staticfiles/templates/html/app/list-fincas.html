@@ -110,6 +110,39 @@
 </script>
 
 <script>
+
+    
+        // ... (Otras funciones y eventos)
+    
+        function showAlertInModal(message, callback) {
+            // Establecer el mensaje en el cuerpo del modal
+            const modalBody = document.querySelector(".modal-body-aviso");
+            modalBody.textContent = message;
+    
+            // Modificar el botón del modal para ejecutar la función callback al hacer clic
+            const modalFooter = document.querySelector(".modal-footer");
+            const confirmButton = document.createElement('button');
+            confirmButton.classList.add('btn', 'btn-primary');
+            confirmButton.textContent = 'Confirmar';
+    
+            // Cerrar el modal al hacer clic en el botón Confirmar
+            confirmButton.addEventListener('click', () => {
+                $("#avisomodal").modal('hide');
+                callback();
+            });
+    
+            // Agregar el botón al pie del modal
+            modalFooter.innerHTML = '';
+            modalFooter.appendChild(confirmButton);
+    
+            // Mostrar el modal
+            $("#avisomodal").modal('show');
+        }
+    
+
+</script> 
+
+<script>
     function deleteUser(bodegas_id, row) {
         {% if user.is_authenticated %}
         const accessToken = "{{token}}"
@@ -117,7 +150,7 @@
         const accessToken = ""
         {% endif %}
 
-        showAlertInModal('¿Estás seguro de que deseas eliminar este usuario?', () => {
+        showAlertInModal('¿Estás seguro de que deseas eliminar esta finca?', () => {
             fetch(`/user/finca/retrieve/${bodegas_id}`, {
             method: 'DELETE',
             headers: {

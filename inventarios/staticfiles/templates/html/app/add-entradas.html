@@ -479,7 +479,9 @@
         payload.append('bodega', bodega);
         payload.append('insumo', insumo);
         payload.append('proveedor', proveedor);
-        payload.append('mantener',mantener_archivo)
+        {% if entradas_id %}
+        payload.append('mantener',mantener)
+        {% endif %}
         
         var fileInput = document.getElementById('archivo');
         var file = fileInput.files[0]; // Obtiene el archivo seleccionado

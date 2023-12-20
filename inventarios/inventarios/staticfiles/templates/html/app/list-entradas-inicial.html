@@ -18,6 +18,35 @@
         {% endif %}
     </div>
 </div>
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-body">
+            <div class="row"> 
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="column2_search">Insumo: </label>
+                        <input class="form-control" type="text" id="column2_search" placeholder="Buscar por Insumo">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="column8_search">Lote: </label>
+                        <input class="form-control" type="text" id="column8_search" placeholder="Filtrar por Lote">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="numero_factura">Proveedor: </label>
+                        <input class="form-control" type="text" id="column10_search" placeholder="Buscar por Proveedor">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="col-lg-12">
     <div class="table-responsive rounded mb-3">
         <table class="data-table table mb-0 tbl-server-info" id="suppliersTable">
@@ -194,6 +223,98 @@
 
 
 </script>
+<script>
+    
+    $(document).ready(function() {
+        // Selecciona tu tabla por su ID y activa DataTables
+        var table = $('#suppliersTable').DataTable({
+            language: {
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                "lengthMenu":     "Mostrando _MENU_ Entradas",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "search": "Buscar Dato:",
+                "zeroRecords": "Sin resultados encontrados",
+            }
+        });
+    
+        // Aplica un filtro de búsqueda específico para la columna 3 (cambiar según sea necesario)
+   
+    $('#column1_search').on('keyup', function () {
+        table
+            .columns(0)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column2_search').on('keyup', function () {
+        table
+            .columns(1)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column3_search').on('keyup', function () {
+        table
+            .columns(2)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column4_search').on('keyup', function () {
+        table
+            .columns(3)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column5_search').on('keyup', function () {
+        table
+            .columns(4)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column6_search').on('keyup', function () {
+        table
+            .columns(5)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column7_search').on('keyup', function () {
+        table
+            .columns(6)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column8_search').on('keyup', function () {
+        table
+            .columns(7)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column9_search').on('keyup', function () {
+        table
+            .columns(8)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column10_search').on('keyup', function () {
+        table
+            .columns(9)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    $('#column11_search').on('keyup', function () {
+        table
+            .columns(10)  // Cambia el número de columna según la posición en tu tabla (empezando desde 0)
+            .search(this.value)
+            .draw();
+    });
+    
+
+
+    });
+    </script>
 
 
 {% endblock %}
