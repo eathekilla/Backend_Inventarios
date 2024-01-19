@@ -54,7 +54,7 @@ def add_user(request,user_id=None):
         return render(request,"html/app/add-usuario.html",{'userId': user_instance.pk,'token':token,'grupos_usuario': grupos_usuario})
         
     else:
-        return render(request,"html/app/add-usuario.html",{'token':token})
+        return render(request,"html/app/add-usuario.html",{'token':token,'grupos_usuario': grupos_usuario})
 
 @login_required    
 def list_users(request):
@@ -299,7 +299,7 @@ def add_entradas(request,entradas_id=None):
             }
         return render(request,"html/app/add-entradas.html",context)
     else:
-        return render(request,"html/app/add-entradas.html",{"insumos":insumos,"unidades_medida":unidades,'estructura': estructura,'proveedores':proveedores,'token':token})
+        return render(request,"html/app/add-entradas.html",{"insumos":insumos,'grupos_usuario': grupos_usuario,"unidades_medida":unidades,'estructura': estructura,'proveedores':proveedores,'token':token})
 
 @login_required    
 def list_entradas(request):
