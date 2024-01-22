@@ -74,8 +74,11 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
+
             # Obtener los datos del request
             data = request.data
+            if request.user.username != 'simpleagriuser@a.com' and not request.user.is_superuser:
+                return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
 
             # Verificar si se proporciona una entrada manualmente
             entrada_id = data.get('entrada_id')
@@ -106,6 +109,8 @@ class SalidaReverseAPIView(generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         try:
+            if request.user.username != 'simpleagriuser@a.com' and not request.user.is_superuser:
+                return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
             instance = self.get_object()
             instance.reverse()
             

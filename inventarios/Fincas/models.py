@@ -71,3 +71,7 @@ def arbol():
         # Añadir la estructura de la finca a la lista principal
         estructura.append(finca_dict)
     return estructura
+
+# Define la función de prueba para verificar si el usuario es específico o superusuario
+
+

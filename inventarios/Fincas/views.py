@@ -15,6 +15,10 @@ from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework.permissions import IsAuthenticated
 
 
 UserModel = get_user_model()
@@ -195,25 +199,29 @@ def get_all_info_users(request):
         return Response(info_users_data, content_type='application/json', status=status.HTTP_200_OK)
 
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.views import View
-from .models import Bodegas
 
-@method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
-class BodegasListView(View):
+
+
+# Aplica el decorador a tu vista
+@method_decorator(csrf_exempt, name='dispatch')
+class BodegasListView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
+        # Verifica si el usuario es específico o superusuario
+        if request.user.username != 'simpleagriuser@a.com' and not request.user.is_superuser:
+            return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
+
         bodegas = Bodegas.objects.all()
         bodegas_list = []
 
         for bodega in bodegas:
             finca_codigo = bodega.lote.finca.pk if bodega.lote and bodega.lote.finca else None
             bodega_data = {
-                'codigo_bodega': bodega.pk,  # Puedes cambiar esto según el campo que represente el código de la bodega
+                'codigo_bodega': bodega.pk,
                 'nombre_bodega': bodega.nombre_bodega,
                 'codigo_finca': finca_codigo,
             }
             bodegas_list.append(bodega_data)
 
-        return JsonResponse({'bodegas': bodegas_list}, safe=False)
+        return Response({'bodegas': bodegas_list})

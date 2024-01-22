@@ -225,12 +225,16 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
+from rest_framework.views import APIView
 from django.db.models import Sum
 from .models import Entrada
-
+from rest_framework.permissions import IsAuthenticated
 @method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
-class EntradasListView(View):
+class EntradasListView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
+        if request.user.username != 'simpleagriuser@a.com' and not request.user.is_superuser:
+            return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
         # Agrupa y suma las entradas por insumo y bodega
         entradas_agrupadas = Entrada.objects.values(
             'insumo__codigo_contable',
@@ -258,9 +262,12 @@ class EntradasListView(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
-class EntradasPorInsumoView(View):
+class EntradasPorInsumoView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, codigo_insumo, *args, **kwargs):
         # Filtra las entradas por el código de insumo
+        if request.user.username != 'simpleagriuser@a.com' and not request.user.is_superuser:
+            return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
         entradas = Entrada.objects.filter(insumo__codigo_contable=codigo_insumo)
 
         entradas_list = []

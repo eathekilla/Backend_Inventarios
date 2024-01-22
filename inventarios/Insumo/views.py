@@ -274,12 +274,18 @@ def enviar_correo_prueba(request):
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.views import View
 from .models import Insumo
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 @method_decorator(csrf_exempt, name='dispatch')  # Añade este decorador si necesitas desactivar la protección CSRF
-class InsumoListView(View):
+class InsumoListView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
+
+        if request.user.username != 'simpleagriuser@a.com' and not request.user.is_superuser:
+            return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
+        
         insumos = Insumo.objects.all()
         insumo_list = []
 
