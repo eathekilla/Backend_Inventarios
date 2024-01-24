@@ -37,11 +37,11 @@ CORS_ALLOW_ALL_ORIGINS = [
     'http://34.232.246.79',
     'https://inventario.grovity.co',
     'https://inventarios.ottsa.online',
-    'https://inventario.grovity.co'
+    'https://inventarioscrecento.ottsa.online'
 
 ]
 
-CSRF_TRUSTED_ORIGINS = ['https://inventario.grovity.co','https://inventarios.ottsa.online','https://inventario.grovity.co''https://backendappinventarios-production.up.railway.app','http://127.0.0.1','http://34.232.246.79']
+CSRF_TRUSTED_ORIGINS = ['https://inventarioscrecento.ottsa.online','https://inventarios.ottsa.online','https://inventario.grovity.co''https://backendappinventarios-production.up.railway.app','http://127.0.0.1','http://34.232.246.79']
 
 # Application definition
 
