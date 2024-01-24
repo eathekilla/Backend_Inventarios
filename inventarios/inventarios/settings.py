@@ -27,7 +27,7 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['backendappinventarios-production.up.railway.app','127.0.0.1','localhost','34.232.246.79']
+ALLOWED_HOSTS = ['inventarios.ottsa.online','inventario.grovity.co','inventarioscrecento.ottsa.online','127.0.0.1','localhost','34.232.246.79']
 LOGIN_URL = '/login/'
 
 CORS_ALLOW_ALL_ORIGINS = [
