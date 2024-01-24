@@ -41,7 +41,7 @@ CORS_ALLOW_ALL_ORIGINS = [
 
 ]
 
-CSRF_TRUSTED_ORIGINS = ['https://backendappinventarios-production.up.railway.app','http://127.0.0.1','http://34.232.246.79']
+CSRF_TRUSTED_ORIGINS = ['https://inventario.grovity.co','https://inventarios.ottsa.online','https://inventario.grovity.co''https://backendappinventarios-production.up.railway.app','http://127.0.0.1','http://34.232.246.79']
 
 # Application definition
 
