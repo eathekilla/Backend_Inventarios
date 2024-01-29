@@ -90,9 +90,9 @@
                             <label for="valor_unitario_entrada_a">Valor Unitario ($) *</label>
                             
                             {% if entradas_id %}
-                            <input type="text" class="form-control" placeholder="0.00" oninput="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
+                            <input type="text" class="form-control" placeholder="0.00" onblur="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
                             {% else %}
-                            <input type="text" class="form-control" placeholder="0.00" oninput="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
+                            <input type="text" class="form-control" placeholder="0.00" onblur="formatCurrency(this)" required id="valor_unitario_entrada_a" name="valor_unitario_entrada_a" required>
                             {% endif %}
                             <script>
                                 var vlrunitario = parseInt("{{ entradas.valor_unitario_entrada_a }}");
