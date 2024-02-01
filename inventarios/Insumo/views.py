@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status,generics
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from django.db.models import Sum
+from django.db.models import Sum,Avg
 from Entrada.models import Entrada
 from Insumo.models import Insumo
 import json
@@ -290,11 +290,18 @@ class InsumoListView(APIView):
         insumo_list = []
 
         for insumo in insumos:
+            valor_unitario_prom = Entrada.objects.filter(insumo=insumo).aggregate(Avg('valor_unitario_entrada_a'))
+            grupo = Grupo.objects.filter(insumos=insumo).first()
+            if grupo:
+                grupo_nombre = grupo.nombre
+            else:
+                grupo_nombre = "Sin Grupo"
             insumo_data = {
                 'nombre': insumo.nombre,
                 'codigo_contable': insumo.codigo_contable,
                 'unidad_medida': insumo.unidad_medida.nombre if insumo.unidad_medida else None,
-                # Agrega más campos según tus necesidades
+                'valor_unitario_prom': round(valor_unitario_prom['valor_unitario_entrada_a__avg'],2),
+                'grupo':grupo_nombre
             }
             insumo_list.append(insumo_data)
 
