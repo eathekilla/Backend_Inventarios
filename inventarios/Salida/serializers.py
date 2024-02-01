@@ -10,3 +10,11 @@ class SalidaSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'entradas': {'required': False}
         }
+
+class SalidaAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Salida
+        fields = ('id','fecha_salida','insumo','cantidad','valor_total_salida')
+        extra_kwargs = {
+            'entradas': {'required': False}
+        }

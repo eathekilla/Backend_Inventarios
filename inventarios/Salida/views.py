@@ -1,6 +1,6 @@
 from rest_framework import generics
 from .models import Salida
-from .serializers import SalidaSerializer
+from .serializers import SalidaSerializer,SalidaAPISerializer
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import status,permissions
 from rest_framework.response import Response
@@ -81,7 +81,7 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
                 return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
 
             # Verificar si se proporciona una entrada manualmente
-            entrada_id = data.get('entrada_id')
+            """entrada_id = data.get('entrada_id')
             if entrada_id:
                 selected_entrada = Entrada.objects.get(pk=entrada_id)
                 # Crear la salida con la entrada seleccionada
@@ -92,7 +92,8 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
                 return Response(salida_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
             else:
                 # Crear la salida de manera normal
-                return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)
+                return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)"""
+            return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -101,6 +102,15 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
         # Llamar al nuevo método en el modelo para manejar la entrada seleccionada
         serializer.instance.save_with_selected_entrada(selected_entrada)
 
+class SalidaCreate_APIView(generics.CreateAPIView):
+    queryset = Salida.objects.all()
+    serializer_class = SalidaAPISerializer
+
+    def create(self, request, *args, **kwargs):
+        try:
+            return super(SalidaCreate_APIView, self).create(request, *args, **kwargs)
+        except ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class SalidaReverseAPIView(generics.DestroyAPIView):
     queryset = Salida.objects.all()
