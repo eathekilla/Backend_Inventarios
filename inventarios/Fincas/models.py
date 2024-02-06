@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Finca(models.Model):
+    codigo = models.CharField(max_length=150, null=True)
     nombre_finca = models.CharField(max_length=150)
     ubicacion = models.CharField(max_length=150, null=True)
     telefono = models.CharField(max_length=150, null=True)
@@ -19,6 +20,7 @@ class Lotes(models.Model):
         return f"{self.nombre_lote}"
 
 class Bodegas(models.Model):
+    codigo = models.CharField(max_length=5, null=True, default="")
     nombre_bodega = models.CharField(max_length=150)
     ubicacion = models.CharField(max_length=150, null=True, default="")
     lote = models.ForeignKey(Lotes, on_delete=models.CASCADE, related_name='bodegas',null=True)

@@ -216,11 +216,13 @@ class BodegasListView(APIView):
         bodegas_list = []
 
         for bodega in bodegas:
-            finca_codigo = bodega.lote.finca.pk if bodega.lote and bodega.lote.finca else None
+            finca_codigo = bodega.lote.finca.codigo if bodega.lote and bodega.lote.finca else None
+            finca_nombre = bodega.lote.finca.nombre_finca if bodega.lote and bodega.lote.finca else None
             bodega_data = {
-                'codigo_bodega': bodega.pk,
+                'codigo_bodega': bodega.codigo,
                 'nombre_bodega': bodega.nombre_bodega,
                 'codigo_finca': finca_codigo,
+                'nombre_finca': finca_nombre
             }
             bodegas_list.append(bodega_data)
 
