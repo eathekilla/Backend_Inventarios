@@ -18,3 +18,11 @@ class SalidaAPISerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'entradas': {'required': False}
         }
+
+
+class SalidaCreateSerializer(serializers.ModelSerializer):
+    codigo_contable = serializers.CharField(source='insumo__codigo_contable', required=False)  # Haciendo el campo opcional
+
+    class Meta:
+        model = Salida
+        fields = ('id','fecha_salida', 'codigo_contable', 'cantidad','valor_total_salida')

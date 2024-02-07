@@ -102,15 +102,43 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
         # Llamar al nuevo método en el modelo para manejar la entrada seleccionada
         serializer.instance.save_with_selected_entrada(selected_entrada)
 
+from rest_framework import generics, status
+from rest_framework.response import Response
+from django.core.exceptions import ValidationError
+from .models import Salida
+from .serializers import SalidaCreateSerializer
+
 class SalidaCreate_APIView(generics.CreateAPIView):
     queryset = Salida.objects.all()
-    serializer_class = SalidaAPISerializer
+    serializer_class = SalidaCreateSerializer
 
     def create(self, request, *args, **kwargs):
         try:
-            return super(SalidaCreate_APIView, self).create(request, *args, **kwargs)
+            # Obtener el código contable del cuerpo de la solicitud
+            codigo_contable = request.data.get('codigo_contable')
+
+            if codigo_contable is None:
+                return Response({'error': 'Falta el campo codigo_contable en la solicitud'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Buscar el insumo por el código contable
+            insumo = Insumo.objects.get(codigo_contable=codigo_contable)
+
+            # Crear una nueva instancia de Salida manualmente y asociarla con el insumo
+            nueva_salida = Salida.objects.create(
+                fecha_salida=request.data.get('fecha_salida'),
+                insumo=insumo,
+                cantidad=request.data.get('cantidad'),
+            )
+
+            # Serializar la nueva instancia de Salida
+            serializer = self.get_serializer(nueva_salida)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Insumo.DoesNotExist:
+            return Response({'error': 'El insumo con el código contable proporcionado no existe'}, status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SalidaReverseAPIView(generics.DestroyAPIView):
     queryset = Salida.objects.all()
