@@ -302,7 +302,8 @@ class InsumoListView(APIView):
                 valor_unitario_prom = 0
             else:
                 # Calcula el valor promedio de las unidades de entrada
-                valor_unitario_prom = Entrada.objects.filter(insumo=insumo).aggregate(Avg('valor_unitario_entrada_a'))
+                valor_unitario_prom_qery = Entrada.objects.filter(insumo=insumo).aggregate(Avg('valor_unitario_entrada_a'))
+                valor_unitario_prom = valor_unitario_prom_qery['valor_unitario_entrada_a__avg']
 
             # Ahora valor_unitario_prom contendrá el promedio de valor_unitario_entrada_a si hay entradas asociadas al insumo,
             # de lo contrario, contendrá cero.
@@ -315,7 +316,7 @@ class InsumoListView(APIView):
                 'nombre': insumo.nombre,
                 'codigo_contable': insumo.codigo_contable,
                 'unidad_medida': insumo.unidad_medida.nombre if insumo.unidad_medida else None,
-                'valor_unitario_prom': valor_unitario_prom['valor_unitario_entrada_a__avg'],
+                'valor_unitario_prom': round(valor_unitario_prom, 2),
                 'grupo':grupo_nombre
             }
             insumo_list.append(insumo_data)
