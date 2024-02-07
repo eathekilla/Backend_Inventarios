@@ -315,7 +315,7 @@ class InsumoListView(APIView):
                 'nombre': insumo.nombre,
                 'codigo_contable': insumo.codigo_contable,
                 'unidad_medida': insumo.unidad_medida.nombre if insumo.unidad_medida else None,
-                'valor_unitario_prom': round(valor_unitario_prom['valor_unitario_entrada_a__avg'],2),
+                'valor_unitario_prom': round(valor_unitario_prom,2),
                 'grupo':grupo_nombre
             }
             insumo_list.append(insumo_data)
