@@ -10,6 +10,7 @@ from django.db.models import Sum,Avg
 from Entrada.models import Entrada
 from Insumo.models import Insumo
 import json
+from django.db.models.functions import Coalesce
 
 class IngredienteActivoListCreateView(generics.ListCreateAPIView):
     queryset = IngredienteActivo.objects.all()
@@ -290,7 +291,21 @@ class InsumoListView(APIView):
         insumo_list = []
 
         for insumo in insumos:
-            valor_unitario_prom = Entrada.objects.filter(insumo=insumo).aggregate(Avg('valor_unitario_entrada_a'))
+            #valor_unitario_prom =  Entrada.objects.filter(insumo=insumo).aggregate(Avg('valor_unitario_entrada_a'))
+            # Suponiendo que insumo es el objeto de insumo que estás buscando
+
+            # Intenta obtener la entrada asociada al insumo
+            entrada = Entrada.objects.filter(insumo=insumo).first()
+
+            # Si no hay entrada asociada, establece el valor promedio en cero
+            if not entrada:
+                valor_unitario_prom = 0
+            else:
+                # Calcula el valor promedio de las unidades de entrada
+                valor_unitario_prom = Entrada.objects.filter(insumo=insumo).aggregate(Avg('valor_unitario_entrada_a'))
+
+            # Ahora valor_unitario_prom contendrá el promedio de valor_unitario_entrada_a si hay entradas asociadas al insumo,
+            # de lo contrario, contendrá cero.
             grupo = Grupo.objects.filter(insumos=insumo).first()
             if grupo:
                 grupo_nombre = grupo.nombre
