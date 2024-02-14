@@ -238,7 +238,7 @@ class EntradasListView(APIView):
         # Agrupa y suma las entradas por insumo y bodega
         entradas_agrupadas = Entrada.objects.values(
             'insumo__codigo_contable',
-            'bodega__id'
+            'bodega__codigo'
         ).annotate(
             cantidad_total=Sum('cantidad')
         )
@@ -247,7 +247,7 @@ class EntradasListView(APIView):
 
         for entrada_agrupada in entradas_agrupadas:
             insumo_codigo = entrada_agrupada['insumo__codigo_contable']
-            bodega_codigo = entrada_agrupada['bodega__id']
+            bodega_codigo = entrada_agrupada['bodega__codigo']
             cantidad_total = entrada_agrupada['cantidad_total']
 
             entrada_data = {
