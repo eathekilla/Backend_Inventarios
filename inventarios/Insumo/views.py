@@ -40,10 +40,27 @@ class InsumoListCreateView(generics.ListCreateAPIView):
     queryset = Insumo.objects.all()
     serializer_class = InsumoSerializer
 
+    def perform_create(self, serializer):
+        insumo = serializer.save()
+        grupo_id = self.request.data.get('grupo')
+        if grupo_id:
+            grupo = Grupo.objects.get(pk=grupo_id)
+            grupo.insumos.add(insumo)
+            grupo.save()
+
 class InsumoRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Insumo.objects.all()
     serializer_class = InsumoSerializer
 
+    def perform_update(self, serializer):
+        insumo = serializer.save()
+        grupo_id = self.request.data.get('grupo')
+        if grupo_id:
+            # Eliminar todos los grupos asociados al insumo
+            insumo.grupos.clear()
+            grupo = Grupo.objects.get(pk=grupo_id)
+            grupo.insumos.add(insumo)
+            grupo.save()
 class GrupoListCreateView(generics.ListCreateAPIView):
     queryset = Grupo.objects.all()
     serializer_class = GrupoSerializer
@@ -81,6 +98,7 @@ def edit_info_proveedor(request, pk):
     
     if request.method == 'GET':
         insumo =  get_object_or_404(Insumo,pk=pk)  # Obtén los grupos a los que pertenece el usuario
+        grupo = Grupo.objects.filter(insumos=insumo).first()
         proveedor_data = {
                     "id": insumo.pk,
                     "nombre": insumo.nombre,
@@ -89,6 +107,7 @@ def edit_info_proveedor(request, pk):
                     "certificacion": insumo.certificacion.pk,
                     "ingrediente": insumo.ingrediente.pk,
                     "carencia": insumo.carencia,
+                    "grupo": grupo.pk if grupo else None
                     }
     
         return Response(proveedor_data, status=status.HTTP_200_OK)
