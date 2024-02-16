@@ -101,7 +101,7 @@ def add_insumo(request,insumo_id=None):
     }
     if insumo_id:
         insumo_instance = get_object_or_404(Insumo,id=insumo_id)
-        grupo_select = Group.objects.filter(insumo=insumo_instance).first()
+        grupo_select = Group.objects.filter(insumos=insumo_instance).first()
         if insumo_instance.certificacion:
             context['certificacion'] = insumo_instance.certificacion.pk
         if insumo_instance.ingrediente:
