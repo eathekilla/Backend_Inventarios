@@ -58,7 +58,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Grupo de Insumos * </label>
-                            <select name="type" id=grupo name=grupo class="form-control" data-style="py-0">
+                            <select  id="grupo" name="grupo" class="form-control" data-style="py-0">
                                 {% for grupo in grupos %}
                                 <option value="{{grupo.id}}">{{grupo.nombre}}</option>
                                 {% endfor %}
@@ -417,7 +417,7 @@
             document.getElementById('unidad').value = data.unidad_medida;
             document.getElementById('certificacion').value = data.certificacion;
             document.getElementById('carencia').value = data.carencia;
-            document.getElementById('grupo').vale = data.grupo_seleccionado;
+            document.getElementById('grupo').value = data.grupo;
             
             
             // ... Continua llenando los demás campos ...
@@ -454,6 +454,7 @@
             certificacion: parseInt(certificacion),
             carencia: document.getElementById('carencia').value,
             ingrediente: document.getElementById('ingrediente').value,
+            grupo: parseInt(document.getElementById('grupo').value)
         };
         
     
@@ -507,7 +508,15 @@
             })
             .then(data => {
                 showAlertInModal(mensaje);
-                document.getElementById("insumoform").reset();
+                if (insumoId) {
+                    setTimeout(function() {}, 2000);
+                    
+                    location.reload();
+                }
+                else{
+                    document.getElementById("insumoform").reset();
+                }
+                
                 // Si necesitas hacer algo con la respuesta exitosa, lo haces aquí con la variable 'data'
             })
             .catch(error => {
