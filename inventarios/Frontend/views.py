@@ -102,6 +102,8 @@ def add_insumo(request,insumo_id=None):
     if insumo_id:
         insumo_instance = get_object_or_404(Insumo,id=insumo_id)
         grupo_select = Grupo.objects.filter(insumos=insumo_instance).first()
+        if insumo_instance.nombre:
+            context['nombre'] = insumo_instance.nombre
         if insumo_instance.certificacion:
             context['certificacion'] = insumo_instance.certificacion.pk
         if insumo_instance.ingrediente:
@@ -110,6 +112,7 @@ def add_insumo(request,insumo_id=None):
             context['unidad_medida'] = insumo_instance.unidad_medida.pk
         if grupo_select:
             context['grupo_seleccionado'] = grupo_select.pk
+        context['insumoId'] = insumo_id
         return render(request,"html/app/add-insumo.html",context)
     else:
         return render(request,"html/app/add-insumo.html",context)
