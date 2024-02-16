@@ -108,7 +108,7 @@ def add_insumo(request,insumo_id=None):
         if insumo_instance.unidad_medida:
             context['unidad_medida'] = insumo_instance.unidad_medida.pk
         if insumo_instance.grupos:
-            context['grupos'] = list(insumo_instance.grupos.values_list('pk',flat=True))
+            context['grupo_seleccionado'] = list(insumo_instance.grupos.values_list('pk',flat=True))[0]
         context["insumoId"] = insumo_instance.pk
         return render(request,"html/app/add-insumo.html",context)
     else:
