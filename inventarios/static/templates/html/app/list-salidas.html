@@ -1,0 +1,194 @@
+{% extends "./todo.html" %}
+{% load static %}
+{% block body %}
+{% load humanize %}
+
+
+<div class="col-lg-12">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-3">Listado de Salidas</h4>
+            <p class="mb-0"> Listado de Entradas registrados en plataforma </p>
+        </div>
+        <button data-table-id="exitsTable" class="btn btn-success btnExportar">
+            <i class="fas fa-file-excel"></i> Exportar datos a Excel
+        </button>
+        {% if "creacion" in grupos_usuario%}<a href="{% url 'add_salidas' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir</a>{%endif%}
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="table-responsive rounded mb-3">
+        <table class="data-table table mb-0 tbl-server-info" id="exitsTable">
+            <thead class="bg-white text-uppercase">
+                <tr class="ligth ligth-data">
+                    <th>Fecha de Salida</th>
+                    <th>Insumo</th>
+                    <th>Cantidad</th>
+                    <th>Valor Total de Salida</th>
+                    <th>Acciones</th>
+
+                </tr>
+            </thead>
+            <tbody class="ligth-body">
+                {% for salida in salidas %}
+                <tr>
+                    <td>{{salida.fecha_salida|date:"j \d\e F \d\e Y" }}</td>
+                    <td>{{salida.insumo}}</td>
+                    <td>{{salida.cantidad}}</td>
+                    <td>$ {{salida.valor_total_salida |floatformat:2|intcomma}}</td>                
+                    <td>
+                        <div class="d-flex align-items-center list-action">
+                            <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información de la Bodega" data-content="Nombre: {{ bodega.nombre_bodega }}" data-html="true" title="Información de Bodega" href="#" data-target="#exampleModalCenteredScrollable{{salida.pk}}"><i class="ri-eye-line mr-0"></i></a>
+                            {% if "edicion" in grupos_usuario%}<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#"
+                                data-id="{{salida.pk}}"><i class="ri-pencil-line mr-0"></i></a>{%endif%}
+                                {% if "administracion" in grupos_usuario%}<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#"
+                                data-id="{{salida.pk}}"><i class="ri-delete-bin-line mr-0"></i></a>{%endif%}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+    </table>
+    </div>
+</div>
+{% for salida in salidas %}
+    <div id="exampleModalCenteredScrollable{{ salida.id }}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style = "max-width: 800px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Salida</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <b>Fecha de Salida: </b><td>{{salida.fecha_salida|date:"j \d\e F \d\e Y" }}</td><br>
+                    <b>Insumo: </b><td>{{salida.insumo}}</td><br>
+                    <b>Cantidad: </b><td>{{salida.cantidad}}</td><br>
+                    <b>Valor Total de Salida: </b><td>${{salida.valor_total_salida|floatformat:2|intcomma}}</td> <br>
+                    <b>Movimientos: </b><td><pre>{{salida.movimientos}}</pre></td> <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer" id = "modal_footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message, callback) {
+        // Establecer el mensaje en el cuerpo del modal
+        const modalBody = document.querySelector(".modal-body-aviso");
+        modalBody.textContent = message;
+
+        // Modificar el botón del modal para ejecutar la función callback al hacer clic
+        const modalFooter = document.querySelector(".modal-footer");
+        const confirmButton = document.createElement('button');
+        confirmButton.classList.add('btn', 'btn-primary');
+        confirmButton.textContent = 'Confirmar';
+
+        // Cerrar el modal al hacer clic en el botón Confirmar
+        confirmButton.addEventListener('click', () => {
+            $("#avisomodal").modal('hide');
+            callback();
+        });
+
+        // Agregar el botón al pie del modal
+        modalFooter.innerHTML = '';
+        modalFooter.appendChild(confirmButton);
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
+
+<!--Script de Edición-->
+<script>
+    document.addEventListener("click", function (event) {
+        
+        if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
+            const userId = event.target.closest(".edit-button").getAttribute("data-id");
+            console.log(userId)
+            window.location.href = `/add-salidas/edit/${userId}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
+        }
+    });
+</script>
+
+<!--Funciones para eliminar la información -->
+<script>
+    document.body.addEventListener('click', function(event) {
+    if (event.target.closest('.delete-button')) {
+        event.preventDefault();
+
+        // Identifica la fila que contiene el botón
+        const row = event.target.closest('tr');
+
+        // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
+        const buttonElement = event.target.closest('.delete-button');
+        const userId = buttonElement.getAttribute('data-id');
+        
+        console.log("Botón activo")
+        deleteUser(userId, row);
+    }
+});
+
+</script>
+
+<script>
+    function deleteUser(userId, row) {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+        showAlertInModal('¿Estás seguro de que deseas eliminar esta salida?', () => 
+        {fetch(`/salidas/retrieve/${userId}`, {
+            method: 'DELETE',
+            headers: {'X-CSRFToken': getCookie('csrftoken'),
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(data => {
+                if (data.status==204) {
+                    // Elimina la fila de la tabla
+                    row.remove();
+                    showAlertInModal('Salida han sido eliminada exitosamente.');
+                } else {
+                    showAlertInModal('Hubo un error al eliminar la salida.');
+                }
+            })
+            .catch(error => {
+                showAlertInModal('Error: '+ error);
+                console.error('Error:', error);
+            });
+    });
+
+}
+
+
+</script>
+
+
+{% endblock %}

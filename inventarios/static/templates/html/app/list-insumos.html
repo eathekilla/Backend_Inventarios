@@ -1,0 +1,260 @@
+{% extends "./todo.html" %}
+{% load static %}
+{% block body %}
+
+
+<div class="col-lg-12">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-3">Listado de Insumos</h4>
+            <p class="mb-0"></p>
+        </div>
+        {% if "creacion" in grupos_usuario%}
+        <a href="{% url 'add_insumo' %}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Añadir Insumo</a>
+        {%endif%}
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="table-responsive rounded mb-3">
+        <table class="data-table table mb-0 tbl-server-info" id="insumosTable" name="insumosTable">
+            <thead class="bg-white text-uppercase">
+                <tr class="light light-data">
+                    <th>Nombre de Insumo</th>
+                    <th>Unidad de Medida</th>
+                    <th>Codigo Contable</th>
+                    <th>Certificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="light-body">
+                {% for insumo in insumos %}
+                <tr>
+                    <td>{{ insumo.nombre }}</td>
+                    <td>{{ insumo.unidad_medida.nombre }}</td>
+                    <td>{{ insumo.codigo_contable }}</td>
+                    <td>{{ insumo.certificacion.registro_ica }}</td>
+                    <td>
+                        <div class="d-flex align-items-center list-action">
+                            <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Insumo" data-target="#exampleModalCenteredScrollable{{ insumo.id }}" data-html="true" title="Información del Insumo" href="#"><i class="ri-eye-line mr-0"></i>Información del Insumo</a>
+                            {% if "edicion" in grupos_usuario %}<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="{{ insumo.id }}"><i class="ri-pencil-line mr-0"></i></a> {%endif%}
+                            {% if "administracion" in grupos_usuario %}<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="{{ insumo.id }}"><i class="ri-delete-bin-line mr-0"></i></a> {%endif%}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+       
+        
+</div>
+
+
+<!-- Modal -->
+{% for insumo in insumos %}
+<div id="exampleModalCenteredScrollable{{ insumo.id }}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Insumo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <b>Nombre de Insumo:</b> {{ insumo.nombre }}<br>
+                <b>Unidad de Medida:</b> {{ insumo.unidad_medida.nombre }}<br>
+                <b>Codigo Contable:</b> {{ insumo.codigo_contable }}<br>
+                <b>Certificación:</b> {{ insumo.certificacion.registro_ica }}<br>
+                <!--<b>Grupo:</b>  Agrega aquí el campo del grupo si está disponible en la respuesta de la API -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <!-- <button type="button" class="btn btn-primary">Guardar cambios</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
+
+
+
+
+
+
+
+<!--Script de Edición-->
+<script>
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
+            const userId = event.target.closest(".edit-button").getAttribute("data-id");
+            window.location.href = `/insumo/edit/${userId}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
+        }
+    });
+</script>
+
+
+<script>
+    document.body.addEventListener('click', function(event) {
+    if (event.target.closest('.delete-button')) {
+        event.preventDefault();
+
+        // Identifica la fila que contiene el botón
+        const row = event.target.closest('tr');
+
+        // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
+        const buttonElement = event.target.closest('.delete-button');
+        const userId = buttonElement.getAttribute('data-id');
+        
+        console.log("Botón activo")
+        deleteUser(userId, row);
+    }
+});
+
+</script>
+
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
+
+<script>
+    function deleteUser(userId, row) {
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este insumo?', () => {fetch(`/insumos/retrieve/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(data => {
+                if (data.status==204) {
+                    // Elimina la fila de la tabla
+                    row.remove();
+                    showAlertInModal('Insumo eliminado exitosamente.');
+                } else {
+                    showAlertInModal('Hubo un error al eliminar el Insumo.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });});
+    }
+
+
+</script>
+
+<script>
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+        // URL de tu API
+        fetch('/insumos/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error en la respuesta del servidor");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tbody = document.getElementById('insumosTable').querySelector('tbody');
+
+            // Limpiar el tbody por si tiene datos previos
+            tbody.innerHTML = '';
+
+            data.forEach(insumo => {
+                const tr = document.createElement('tr');
+                fetch(`/insumos/editar/certificacion/${insumo.certificacion}/`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error en la respuesta del servidor");
+                        }
+                        return response.json();
+                    })
+                    .then(certificacion => {
+                        fetch(`/insumos/editar/unidad/${insumo.unidad_medida}/`, {
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`
+                            }
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error en la respuesta del servidor");
+                                }
+                                return response.json();
+                            })
+                            .then(unidad => {
+                                // Crear y agregar cada columna (td) al row
+                var esAdministrador = {% if 'administracion' in grupos_usuario%}true{% else %}false{% endif %};
+                if (esAdministrador) {
+                    var btn_eliminar = `<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${insumo.id}"><i class="ri-delete-bin-line mr-0"></i></a>`
+                }
+                else{
+                    var btn_eliminar = ''
+                }
+
+                var esEditar = {% if 'edicion' in grupos_usuario %}true{% else %}false{% endif %};
+                if (esEditar) {
+                    var btn_editar = `<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${insumo.id}"><i class="ri-pencil-line mr-0"></i></a>`
+                }
+                else{
+                    var btn_editar = ''
+                }
+
+                tr.innerHTML = `
+                    <td>${insumo.nombre}</td>
+                    <td>${unidad.nombre}</td>
+                    <td>${insumo.codigo_contable}</td>
+                    <td>${certificacion.registro_ica}</td>
+                    <td>
+                        <div class="d-flex align-items-center list-action">
+                            <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-html="true" title="Información de Usuario" data-target="#exampleModalCenteredScrollable${insumo.id}" href="#"><i class="ri-eye-line mr-0"></i></a>
+                            ${btn_editar}
+                            ${btn_eliminar}
+                            
+                        </div>
+                    </td>`;
+
+                tbody.appendChild(tr);
+            });});});
+
+            $('[data-toggle="popover"]').popover();
+
+            $('[data-toggle="popover"]').on('show.bs.popover', function() {
+                $('[data-toggle="popover"]').not(this).popover('hide');
+            });
+
+        })
+        .catch(error => {
+            console.error("Hubo un error  al cargar los datos:", error);
+        });
+    });
+</script>
+
+{% endblock %}

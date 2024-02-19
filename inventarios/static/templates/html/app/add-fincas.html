@@ -1,0 +1,154 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                <h4 class="card-title">Añadir Finca</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="formularioFincas" data-toggle="validator">
+                <div class="row"> 
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="nombre_finca">Nombre de Finca *</label>
+                            {% if fincas_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Nombre de Finca" required id="nombre_finca" name="nombre_finca" value="{{finca.nombre_finca}}" >
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Nombre de Finca" required id="nombre_finca" name="nombre_finca">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ubicacion">Ubicación *</label>
+                            {% if fincas_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Ubicación" required id="ubicacion" name="ubicacion" value="{{finca.ubicacion}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Ubicación" required id="ubicacion" name="ubicacion">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ubicacion">Teléfono *</label>
+                            {% if fincas_id %}
+                            <input type="text" class="form-control" placeholder="Ingrese Teléfono" required id="telefono" name="telefono" value="{{finca.telefono}}">
+                            {% else %}
+                            <input type="text" class="form-control" placeholder="Ingrese Teléfono" required id="telefono" name="telefono">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">Crear Finca</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
+
+<script>
+    
+    document.getElementById('formularioFincas').addEventListener('submit', function (e) {
+        e.preventDefault();
+        enviarDatos();
+    });
+
+
+    function enviarDatos() {
+        var nombre_finca = document.getElementById('nombre_finca').value;
+        var ubicacion = document.getElementById('ubicacion').value;
+        var telefono = document.getElementById('telefono').value;
+
+        var payload = {
+            nombre_finca: nombre_finca,
+            ubicacion: ubicacion,
+            telefono: telefono
+        };
+
+        // Determinar si estamos en modo edición o creación
+        var isEditMode = {{ fincas_id|yesno:"true,false" }};
+        {%if fincas_id %}
+        var fincas_id = {{ fincas_id }};
+        {% else %}
+        var fincas_id = null;
+        {% endif %}
+        var url = isEditMode ? `/user/finca/retrieve/${fincas_id}/` : '/user/finca/list-create/';
+        var httpMethod = isEditMode ? 'PUT' : 'POST';
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        fetch(url, {
+            method: httpMethod,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => {if (!response.ok) {
+                showAlertInModal('Error al guardar la finca.');
+            }
+            const actionMsg = fincas_id ? 'editada' : 'creada';
+            showAlertInModal(`Finca ${actionMsg} exitosamente!`);})
+            .then(data => {
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlertInModal('Error al guardar la finca');
+            });
+    }
+
+    window.onload = function() {
+            document.getElementById('formularioFincas').removeAttribute('novalidate');
+        }
+
+
+
+
+
+</script>
+
+
+
+
+
+{% endblock %}

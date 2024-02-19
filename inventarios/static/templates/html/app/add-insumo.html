@@ -1,0 +1,542 @@
+{% extends "./todo.html" %}
+{%load static%}
+{% block body %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+                {% if insumoId %}
+                <h4 class="card-title">Editar Insumo</h4>
+                {% else %}
+                <h4 class="card-title">Añadir Insumos</h4>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <form data-toggle="validator" id="insumoform" name="insumoform">
+                <div class="row">
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Codigo Insumo *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese Codigo Insumo" required id="codigo" name="codigo">
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">                      
+                        <div class="form-group">
+                            <label>Nombre *</label>
+                            <input type="text" class="form-control" placeholder="Ingrese el Nombre del Insumo" required id="nombre" name="nombre">
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            
+                            <label>Unidad de Medida* </label>
+                            <select name="type" class="form-control" data-style="py-0" id="unidad" name="unidad">
+                                {% for unidad in unidades_medida %}
+                                <option value="{{ unidad.id }}" >{{ unidad.nombre }}</option>
+                                {% endfor%}
+                                <!--Acá va un script con base de datos de unidades de medida, standard-->
+                            </select>
+                            <button class="btn btn-secondary" style="line-height: 0.5;font-size: 0.7rem;" type="reset" data-dismiss="modal2" onclick="abrirModalUnidad()">Añadir</button>
+                        </div>
+                    </div> 
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Certificación * </label>
+                            <select name="type" class="form-control" data-style="py-0" id="certificacion" name="certificacion">
+                                {%for certificacion in certificaciones%}
+                                <option value="{{ certificacion.id }}" >{{ certificacion.registro_ica }}</option>
+                                {% endfor%}
+                            </select>
+                            <button class="btn btn-secondary" style="line-height: 0.5;font-size: 0.7rem;" type="reset" data-dismiss="modal2" onclick="abrirModalCer()">Añadir</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Grupo de Insumos * </label>
+                            <select  id="grupo" name="grupo" class="form-control" data-style="py-0">
+                                {% for grupo in grupos %}
+                                <option value="{{grupo.id}}">{{grupo.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-secondary" style="line-height: 0.5;font-size: 0.7rem;" type="reset" data-dismiss="modal" onclick="abrirModalGrupo()">Añadir</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Ingrediente activo * </label>
+                            <select id="ingrediente" name="ingrediente" class="form-control" data-style="py-0">
+                                {% for ingrediente in ingredientes %}
+                                <option value="{{ingrediente.id}}">{{ingrediente.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-secondary" style="line-height: 0.5;font-size: 0.7rem;" type="reset" data-dismiss="modal" onclick="abrirModalIng()">Añadir</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tiempo de Carencia (Dias)*  </label>
+                            <input type="number" step="0.01" class="form-control" placeholder="Ingrese el Nombre del Insumo" required id="carencia" name="carencia">
+                        </div>
+                    </div>                 
+                </div>                            
+                <button type="submit" class="btn btn-primary mr-2">{% if insumoId %}
+                    Editar Insumo
+                    {% else %}
+                    Añadir Insumo
+                    {% endif %}</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#modalFormularioSecundario">
+                    Crear Ingrediente Activo
+                </a>
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Modal Ingrediente Activo-->
+<div id="modalIng" class="modal" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document" style="max-width:700px;max-height:400px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><h4 class="card-title">Añadir Ingrediente Activo</h4></h5>
+                <button onclick="cerrarModalIng()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <iframe src="{% url 'add_ingrediente_insumo' %}" width="100%" height="250px" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+<!-- Script para controlar el modal -->
+<script>
+    function abrirModalIng() {
+        var modal = document.getElementById('modalIng');
+        modal.style.display = 'block';
+    }
+
+    function cerrarModalIng() {
+        var modal = document.getElementById('modalIng');
+        modal.style.display = 'none';
+        actualizarIng();
+    }
+    function actualizarIng(){
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        fetch('/insumos/ingredientes-activos/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('ingrediente')
+                select.innerHTML = ''; 
+                data.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item.id; // Asegúrate de cambiar 'id' por el campo correcto de tu data
+                    option.text = item.nombre; // Asegúrate de cambiar 'name' por el campo correcto de tu data
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
+
+
+
+<!-- Modal Certificacion-->
+<div id="modalCer" class="modal" tabindex="-1"  style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document" style="max-width:700px;max-height:400px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><h4 class="card-title">Añadir Certificación</h4></h5>
+                <button onclick="cerrarModalCer()" type="button" class="close" data-dismiss="modal2" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <iframe src="{% url 'add_certificacion_insumo' %}" width="100%" height="400px" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function abrirModalCer() {
+        var modal = document.getElementById('modalCer');
+        modal.style.display = 'block';
+    }
+
+    function cerrarModalCer() {
+        var modal = document.getElementById('modalCer');
+        modal.style.display = 'none';
+        actualizarCert();
+    }
+
+    function actualizarCert(){
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        fetch('/insumos/certificaciones/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('certificacion')
+                select.innerHTML = ''; 
+                data.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item.id; // Asegúrate de cambiar 'id' por el campo correcto de tu data
+                    option.text = item.registro_ica; // Asegúrate de cambiar 'name' por el campo correcto de tu data
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
+
+<!-- Modal Unidad de Medida-->
+<div id="modalUnidad" class="modal" tabindex="-1"  style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document" style="max-width:700px;max-height:400px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><h4 class="card-title">Añadir Unidad de Medida</h4></h5>
+                <button onclick="cerrarModalUnidad()" type="button" class="close" data-dismiss="modal2" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <iframe src="{% url 'add_unidad_insumo' %}" width="100%" height="350px" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Script para controlar el modal -->
+<script>
+    function abrirModalUnidad() {
+        var modal = document.getElementById('modalUnidad');
+        modal.style.display = 'block';
+    }
+
+    function cerrarModalUnidad() {
+        var modal = document.getElementById('modalUnidad');
+        modal.style.display = 'none';
+        actualizarUnidad();
+    }
+
+    function actualizarUnidad(){
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        fetch('/insumos/unidades-medida/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('unidad')
+                select.innerHTML = ''; 
+                data.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item.id; // Asegúrate de cambiar 'id' por el campo correcto de tu data
+                    option.text = item.nombre; // Asegúrate de cambiar 'name' por el campo correcto de tu data
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
+
+
+<!-- Modal Grupos de Insumos-->
+<div id="modalGrupo" class="modal" tabindex="-1"  style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document" style="max-width:700px;max-height:400px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><h4 class="card-title">Añadir Grupos de Insumos</h4></h5>
+                <button onclick="cerrarModalGrupo()" type="button" class="close" data-dismiss="modal2" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <iframe src="{% url 'add_grupo_insumo' %}" width="100%" height="350px" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Script para controlar el modal -->
+<script>
+    function abrirModalGrupo() {
+        var modal = document.getElementById('modalGrupo');
+        modal.style.display = 'block';
+    }
+
+    function cerrarModalGrupo() {
+        var modal = document.getElementById('modalGrupo');
+        modal.style.display = 'none';
+        actualizarGrupo();
+    }
+
+    function actualizarGrupo(){
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        fetch('/insumos/grupos/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('grupo')
+                select.innerHTML = ''; 
+                data.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item.id; // Asegúrate de cambiar 'id' por el campo correcto de tu data
+                    option.text = item.nombre; // Asegúrate de cambiar 'name' por el campo correcto de tu data
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+        fetch('/insumos/certificaciones/list-create/', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById('certificacion')
+                select.innerHTML = ''; 
+                data.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item.id; // Asegúrate de cambiar 'id' por el campo correcto de tu data
+                    option.text = item.registro_ica; // Asegúrate de cambiar 'name' por el campo correcto de tu data
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+</script>
+<script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    {% if insumoId %}
+    const insumoId = parseInt("{{insumoId}}");
+
+    {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+    if (insumoId) {
+        // Si existe un providerId, estamos en modo de edición
+        fetch(`/insumos/editar/${insumoId}/`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Aquí llenas el formulario con los datos del proveedor
+            
+            document.getElementById('nombre').value = data.nombre;
+            document.getElementById('codigo').value = data.codigo_contable;
+            document.getElementById('ingrediente').value = data.ingrediente;
+
+            document.getElementById('unidad').value = data.unidad_medida;
+            document.getElementById('certificacion').value = data.certificacion;
+            document.getElementById('carencia').value = data.carencia;
+            document.getElementById('grupo').value = data.grupo;
+            
+            
+            // ... Continua llenando los demás campos ...
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    {% else %}
+    const insumoId = null;
+    {% endif %}
+
+
+    
+});
+
+</script>
+
+<script>
+    document.getElementById('insumoform').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var unidad_medida_select = document.getElementById('unidad');
+        var unidad_medida= unidad_medida_select.options[unidad_medida_select.selectedIndex].value;
+
+        var certificacion_select = document.getElementById('certificacion');
+        var certificacion= certificacion_select.options[certificacion_select.selectedIndex].value;
+
+
+
+        const formData = {
+            nombre: document.getElementById('nombre').value,
+            codigo_contable: document.getElementById('codigo').value,
+            unidad_medida:parseInt(unidad_medida),
+            certificacion: parseInt(certificacion),
+            carencia: document.getElementById('carencia').value,
+            ingrediente: document.getElementById('ingrediente').value,
+            grupo: parseInt(document.getElementById('grupo').value)
+        };
+        
+    
+        {% if insumoId %}
+        const insumoId = parseInt("{{insumoId}}");
+        {% else %}
+        const insumoId = null;
+        {% endif %}
+    
+        let method, url;
+        if (insumoId) {
+            // Edición
+            method = 'PUT';
+            url = `/insumos/retrieve/${insumoId}/`;
+            mensaje = 'Insumo editado exitosamente';
+        } else {
+            // Creación
+            method = 'POST';
+            url = `/insumos/list-create/`;
+            mensaje = 'Insumo creado exitosamente';
+        }
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+    
+        fetch(url, {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Si la respuesta no es exitosa, obtenemos el cuerpo de la respuesta como texto
+                    return response.json().then(errorData => {
+                        // Formateamos la información de error como una lista de mensajes
+                        const formattedErrors = Object.entries(errorData).map(([key, value]) => {
+                            // Reemplazamos "codigo_contable" por "codigo de insumo" en los mensajes
+                            const newKey = key === 'codigo_contable' ? 'codigo de insumo' : key;
+                            return `${newKey} (${value.join(', ')})`;
+                        });
+                        throw new Error('Error en la petición:\n' + formattedErrors.join('\n'));
+                    });
+                }
+                return response.json();  // Si necesitas procesar la respuesta, aquí la conviertes a JSON
+            })
+            .then(data => {
+                showAlertInModal(mensaje);
+                if (insumoId) {
+                    setTimeout(function() {}, 2000);
+                    
+                    location.reload();
+                }
+                else{
+                    document.getElementById("insumoform").reset();
+                }
+                
+                // Si necesitas hacer algo con la respuesta exitosa, lo haces aquí con la variable 'data'
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+                showAlertInModal(error.message);
+            });
+        
+        
+        
+        
+        
+        
+    });
+    
+</script>
+
+
+
+
+
+
+
+{% endblock %}

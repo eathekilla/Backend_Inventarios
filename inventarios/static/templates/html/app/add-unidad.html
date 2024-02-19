@@ -1,0 +1,164 @@
+{% extends "./todo.html" %}
+{%load static%}
+
+{% block body %}
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div class="header-title">
+
+                <h4 class="card-title">Añadir Unidad de Medida</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="page-list-users.html" data-toggle="validator" id ="ingredienteform" name="ingredienteform">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nombre de la unidad de medida*</label>
+                            <input type="text" id="nombreUnidad" name="nombreUnidad" class="form-control"
+                                placeholder="Ingrese el Nombre de la unidad de medida" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Unidad de medida*</label>
+                            <input type="text" id="Unidad" name="Unidad" class="form-control"
+                                placeholder="Ingrese el Nombre de la unidad de medida" maxlength="4" required>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">
+                    {% if ingrediente_id %}
+                    Actualizar
+                    {% else %}
+                    Crear
+                    {% endif %} Unidad de Medida</button>
+                <button type="reset" class="btn btn-danger">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal de Avisos-->
+<div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body-aviso" style="text-align: center;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlertInModal(message) {
+        // Establecer el mensaje en el cuerpo del modal
+        document.querySelector(".modal-body-aviso").textContent = message;
+
+        // Mostrar el modal
+        $("#avisomodal").modal('show');
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        let unidad_id;
+        {% if unidad_id %}
+        unidad_id = parseInt("{{unidad_id}}");
+        {% else %}
+        unidad_id = null;
+        {%endif%}
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        if (unidad_id) {
+            // Si existe un user_id en la URL, estamos en modo de edición
+            fetch(`/insumos/editar/unidad/${unidad_id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    // Suponiendo que la respuesta contenga la información del ingrediente
+                    document.getElementById('nombreUnidad').value = data.nombre;
+                    // Puedes continuar con otros campos si existen...
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    });
+</script>
+
+<script>
+    document.getElementById('ingredienteform').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            nombre: document.getElementById('nombreUnidad').value,
+            unidad: document.getElementById('Unidad').value,
+            // ... otros campos si los tienes
+        };
+
+        let unidad_id;
+        {% if unidad_id %}
+            unidad_id = parseInt("{{unidad_id}}");
+        {% else %}
+            unidad_id = null;
+        {% endif %}
+
+        const method = unidad_id ? 'PUT' : 'POST';
+        const url = unidad_id ? `/insumos/unidades-medida/retrieve/${unidad_id}/` : `/insumos/unidades-medida/list-create/`;
+
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                showAlertInModal('Error al guardar el Grupo.');
+            }
+            const actionMsg = unidad_id ? 'editado' : 'creado';
+            showAlertInModal(`Unidad de medida ${actionMsg} exitosamente!`);
+        })
+        .then(data => {
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlertInModal('Ha ocurrido un error. Por favor intente de nuevo.');
+        });
+    });
+</script>
+
+
+{% endblock %}

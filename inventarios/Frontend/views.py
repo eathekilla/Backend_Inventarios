@@ -42,7 +42,7 @@ def logout_view(request):
 
 @login_required
 def test_view(request):
-    return render(request, "html/app/todo.html")
+    return redirect(reverse('list_entradas'))
 
 @login_required
 def add_user(request,user_id=None):

@@ -1,0 +1,194 @@
+{% extends "./todo.html" %}
+{% load static %}
+{% block body %}
+<head>
+<style>
+    .modal-backdrop {
+
+        width: auto;
+
+    }
+</style>
+</head>
+
+
+<body>
+
+    <!-- Contenido HTML principal -->
+    <<div class="col-lg-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="mb-3">Listado de Proveedores</h4>
+                <p class="mb-0">Listado de Proveedores registrados en la plataforma</p>
+            </div>
+            {% if "creacion" in grupos_usuario%}
+            <a href="{% url 'add_proveedor' %}" class="btn btn-primary add-list">
+                <i class="las la-plus mr-3"></i>Añadir
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="table-responsive rounded mb-3">
+            <table class="data-table table mb-0 tbl-server-info" id="suppliersTable">
+                <thead class="bg-white text-uppercase">
+                    <tr class="ligth ligth-data">
+                        <th>NIT</th>
+                        <th>Razón Social</th>
+                        <th>Representante Legal</th>
+                        <th>Dirección</th>
+                        <th>Departamento</th>
+                        <th>Municipio</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="ligth-body">
+                    {% for proveedor in proveedores %}
+                    <tr>
+                        <td>{{proveedor.nit_cedula}}</td>
+                        <td>{{proveedor.razon_social}}</td>
+                        <td>{{proveedor.representante_legal}}</td>
+                        <td>{{proveedor.direccion}}</td>
+                        <td>{{proveedor.departamento}}</td>
+                        <td>{{proveedor.municipio}}</td>
+                        <td>
+                        <div class="d-flex align-items-center list-action">
+                            <a class="badge badge-info mr-2" data-toggle="modal" data-title="Información del Usuario" data-target="#exampleModalCenteredScrollable{{proveedor.id}}" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
+                            {% if "edicion" in grupos_usuario%}<a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="{{proveedor.id}}"><i class="ri-pencil-line mr-0"></i></a> {%endif%}
+                            {% if "administracion" in grupos_usuario%}<a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="{{proveedor.id}}"><i class="ri-delete-bin-line mr-0"></i></a> {%endif%}
+                        </div>
+                        </td>
+                        <div id="exampleModalCenteredScrollable{{proveedor.id}}" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Entrada</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <b>Razón Social:</b> {{proveedor.razon_social}}<br>
+                                    <b>NIT:</b> {{proveedor.nit_cedula}}<br>
+                                    <b>Representante Legal:</b> {{proveedor.representante_legal}}<br>
+                                    <b>Departamento: </b> {{proveedor.departamento}}<br>
+                                    <b>Municipio: </b>{{proveedor.municipio}}<br>
+                                    <b>Dirección: </b> {{proveedor.direccion}}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="avisomodal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body-aviso" style="text-align: center;">
+                </div>
+                <div class="modal-footer" id = "modal_footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts y otros elementos pueden ir aquí -->
+
+
+
+
+<!--Script de Edición-->
+<script>
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
+            const userId = event.target.closest(".edit-button").getAttribute("data-id");
+            window.location.href = `/proveedor/edit/${userId}/`;  // Cambia 'ruta_de_edicion' por la ruta real que uses para editar usuarios
+        }
+    });
+</script>
+
+{% comment %} <script>
+    function showAlertInModal(message) {
+    // Establecer el mensaje en el cuerpo del modal
+    document.querySelector(".modal-body-aviso").textContent = message;
+    
+    // Mostrar el modal
+    $("#avisomodal").modal('show');
+}
+
+</script> {% endcomment %}
+
+<!--Funciones para eliminar la información -->
+<script>
+    document.body.addEventListener('click', function(event) {
+    if (event.target.closest('.delete-button')) {
+        event.preventDefault();
+
+        // Identifica la fila que contiene el botón
+        const row = event.target.closest('tr');
+
+        // Suponiendo que el botón tiene un atributo 'data-id' que contiene el ID del usuario
+        const buttonElement = event.target.closest('.delete-button');
+        const userId = buttonElement.getAttribute('data-id');
+        deleteUser(userId, row);
+    }
+});
+
+</script>
+
+<script>
+    function deleteUser(userId, row) {
+        {% if user.is_authenticated %}
+        const accessToken = "{{token}}"
+        {%else%}
+        const accessToken = ""
+        {% endif %}
+
+        showAlertInModal('¿Estás seguro de que deseas eliminar este proveedor?', () => {fetch(`/proveedores/retrieve/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+            .then(data => {
+                if (data.status==204) {
+                    // Elimina la fila de la tabla
+                    row.remove();
+                    showAlertInModal('Usuario y su información asociada eliminados exitosamente.');
+                    
+                } else {
+                    showAlertInModal('Hubo un error al eliminar el usuario.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    }
+
+
+</script>
+</body>
+
+
+{% endblock %}
