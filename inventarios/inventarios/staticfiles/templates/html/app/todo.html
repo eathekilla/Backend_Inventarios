@@ -87,7 +87,7 @@
         <div class="iq-sidebar  sidebar-default ">
             <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
                 <a href="#" class="header-logo">
-                    <img src="{% static 'assets/images/logo_ottsa.svg' %}" class="img-fluid rounded-normal light-logo"
+                    <img src="{% static 'assets/images/LogoCrecentoAgricola.png' %}" class="img-fluid rounded-normal light-logo" style="height: 50px"
                         alt="logo">
                     <h5 class="logo-title light-logo ml-3">Inventarios Crecento</h5>
                 </a>
@@ -339,7 +339,7 @@
                     <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                         <i class="ri-menu-line wrapper-menu"></i>
                         <a href="#" class="header-logo">
-                            <img src="{% static '/assets/images/logo_ottsa.svg' %}" class="img-fluid rounded-normal"
+                            <img src="{% static '/assets/images/LogoCrecentoAgricola.png' %}" class="img-fluid rounded-normal" style="height: 36px"
                                 alt="logo">
                             <h5 class="logo-title ml-3">Inventarios Crecento</h5>
 
@@ -348,11 +348,11 @@
                     <div class="iq-search-bar device-search">
                     </div>
                     <div class="d-flex align-items-center">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        {% comment %} <button class="navbar-toggler" type="button" data-toggle="collapse"
                             data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-label="Toggle navigation">
                             <i class="ri-menu-3-line"></i>
-                        </button>
+                        </button> {% endcomment %}
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list align-items-center">
                                 <li>
@@ -539,7 +539,7 @@
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
+    <!-- Wrapper 
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -562,7 +562,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </footer>End-->
     <!-- Backend Bundle JavaScript -->
     <script src="{% static '/assets/js/backend-bundle.min.js' %}"></script>
 
