@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from .models import Salida
 from .serializers import SalidaSerializer,SalidaAPISerializer
@@ -81,8 +82,8 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
                 return Response({'detail': 'No tienes permiso para acceder a esta vista.'}, status=403)
 
             # Verificar si se proporciona una entrada manualmente
-            """entrada_id = data.get('entrada_id')
-            if entrada_id:
+            entrada_id = data.get('entrada_id')
+            '''if entrada_id:
                 selected_entrada = Entrada.objects.get(pk=entrada_id)
                 # Crear la salida con la entrada seleccionada
                 salida_serializer = self.get_serializer(data=data)
@@ -92,7 +93,7 @@ class SalidaEntradaAPIView(generics.CreateAPIView):
                 return Response(salida_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
             else:
                 # Crear la salida de manera normal
-                return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)"""
+                return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)'''
             return super(SalidaCreateAPIView, self).create(request, *args, **kwargs)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -107,6 +108,7 @@ from rest_framework.response import Response
 from django.core.exceptions import ValidationError
 from .models import Salida
 from .serializers import SalidaCreateSerializer
+from django.db.models import Q
 
 class SalidaCreate_APIView(generics.CreateAPIView):
     queryset = Salida.objects.all()
@@ -123,21 +125,43 @@ class SalidaCreate_APIView(generics.CreateAPIView):
             # Buscar el insumo por el código contable
             insumo = Insumo.objects.get(codigo_contable=codigo_contable)
 
-            # Crear una nueva instancia de Salida manualmente y asociarla con el insumo
-            nueva_salida = Salida.objects.create(
-                fecha_salida=request.data.get('fecha_salida'),
-                insumo=insumo,
-                cantidad=request.data.get('cantidad'),
-            )
+            bodega_id = request.data.get('bodega_id')
+            if bodega_id:
+                filtros_entradas = Q(bodega__codigo=bodega_id) & Q(cantidad__gte = 0)
+                selected_entrada = Entrada.objects.filter(filtros_entradas).order_by('-fecha_creacion').first()
 
-            # Serializar la nueva instancia de Salida
-            serializer = self.get_serializer(nueva_salida)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                salida_data = request.data.copy()  # Copiar los datos de la solicitud
+                salida_data['insumo'] = insumo.pk  # Agregar el insumo como clave primaria, no el código contable
+                salida_data['entradas'] = [selected_entrada.pk]
+
+                salida_serializer = self.get_serializer(data=salida_data)
+                salida_serializer.is_valid(raise_exception=True)
+                nueva_salida = salida_serializer.save()  # Guardar el serializer
+
+                # Llamar a save_with_selected_entrada en la instancia de salida
+                nueva_salida.save_with_selected_entrada(selected_entrada)
+
+                headers = self.get_success_headers(salida_serializer.data)
+
+                # Serializar la nueva instancia de Salida
+                serializer = self.get_serializer(nueva_salida)
+
+                bodega = selected_entrada.bodega
+                salida_data = serializer.data
+                entradas = salida_data['entradas']
+                salida_data['entradas'] = entradas[0]
+                salida_data['bodega'] = bodega.codigo
+                return Response(salida_data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'error': 'No se encontró el '}, status=status.HTTP_400_BAD_REQUEST)
 
         except Insumo.DoesNotExist:
             return Response({'error': 'El insumo con el código contable proporcionado no existe'}, status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 class SalidaReverseAPIView(generics.DestroyAPIView):

@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Salida
-from Insumo.serializers import InsumoSerializer
-from Entrada.models import Entrada
+from Insumo.serializers import Insumo
 
 class SalidaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,8 +20,10 @@ class SalidaAPISerializer(serializers.ModelSerializer):
 
 
 class SalidaCreateSerializer(serializers.ModelSerializer):
-    codigo_contable = serializers.CharField(source='insumo__codigo_contable', required=False)  # Haciendo el campo opcional
+    # Asegúrate de que 'insumo' esté configurado correctamente en tu serializer
+    insumo = serializers.PrimaryKeyRelatedField(queryset=Insumo.objects.all())
 
     class Meta:
         model = Salida
-        fields = ('id','fecha_salida', 'codigo_contable', 'cantidad','valor_total_salida')
+        fields = ['fecha_salida', 'insumo', 'cantidad', 'valor_total_salida', 'entradas']
+
