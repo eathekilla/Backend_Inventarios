@@ -127,7 +127,7 @@ class SalidaCreate_APIView(generics.CreateAPIView):
 
             bodega_id = request.data.get('bodega_id')
             if bodega_id:
-                filtros_entradas = Q(bodega__codigo=bodega_id) & Q(cantidad__gte = 0)
+                filtros_entradas = Q(bodega__codigo=bodega_id) & Q(cantidad__gte = 0) & Q(insumo=insumo)
                 selected_entrada = Entrada.objects.filter(filtros_entradas).order_by('-fecha_creacion').first()
 
                 salida_data = request.data.copy()  # Copiar los datos de la solicitud
