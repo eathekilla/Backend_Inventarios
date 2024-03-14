@@ -19,6 +19,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import AccessToken
+from django.db.models import Q
 
 def login_view(request):
     if request.method == "POST":
@@ -264,7 +265,7 @@ def add_entradas(request,entradas_id=None):
     user = get_object_or_404(User,email=request.user.email)
     token = str(AccessToken.for_user(user))
     unidades = UnidadMedida.objects.all()
-    estructura = arbol()
+    estructura = arbol(user)
     proveedores = Proveedor.objects.all()
     insumos = Insumo.objects.all()
     grupos_usuario = list(request.user.groups.values_list('name', flat=True))
@@ -308,7 +309,8 @@ def add_entradas(request,entradas_id=None):
 def list_entradas(request):
     user = get_object_or_404(User,email=request.user.email)
     token = str(AccessToken.for_user(user))
-    entradas_instance = Entrada.objects.filter(cantidad__gt=0).order_by('fecha_creacion')
+    filters = Q(cantidad__gt=0) & Q(bodega__usuario=user)
+    entradas_instance = Entrada.objects.filter(filters).order_by('fecha_creacion')
     grupos_usuario = list(request.user.groups.values_list('name', flat=True))
     for entrada in entradas_instance:
         entrada.total = entrada.valor_unitario_entrada_a * entrada.cantidad
@@ -371,7 +373,7 @@ def add_lotes(request,lotes_id=None):
     user = get_object_or_404(User,email=request.user.email)
     token = str(AccessToken.for_user(user))
     fincas = Finca.objects.all()
-    estructura = arbol()
+    estructura = arbol(user)
     grupos_usuario = list(request.user.groups.values_list('name', flat=True))
     context = {'fincas':fincas,'estructura':estructura,'token':token,'grupos_usuario': grupos_usuario}
 
@@ -397,7 +399,7 @@ def add_bodegas(request,bodegas_id=None):
     token = str(AccessToken.for_user(user))
     bodegas = Bodegas.objects.all()
     usuarios = User.objects.all()
-    estructura = arbol()
+    estructura = arbol(user)
     grupos_usuario = list(request.user.groups.values_list('name', flat=True))
     context = {'bodegas':bodegas,'estructura': estructura,'usuarios':usuarios,'token':token,'grupos_usuario': grupos_usuario}
 

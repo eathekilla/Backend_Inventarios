@@ -40,9 +40,11 @@ class InfoUser(models.Model):
         return f"{self.usuario}"
 
 
-def arbol():
+def arbol(user):
     # Obtener todas las fincas
-    fincas = Finca.objects.all().prefetch_related('lotes', 'lotes__bodegas')
+    lotes = Lotes.objects.filter(bodegas__usuario=user)
+    fincas = Finca.objects.filter(lotes__in=lotes).prefetch_related('lotes', 'lotes__bodegas') 
+
 
     # Crear una lista para almacenar la estructura anidada
     estructura = []
