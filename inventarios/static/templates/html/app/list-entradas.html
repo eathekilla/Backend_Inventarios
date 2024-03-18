@@ -127,7 +127,44 @@
     
     </div>
 </div>
-
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+    $(document).ready(function () {
+        var tabla = $('#suppliersTable').DataTable({
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de _MAX_ entradas totales)",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "No hay datos disponibles en la tabla",
+                "paginate": {
+                    "first": "Primero",
+                    "previous": "Anterior",
+                    "next": "Siguiente",
+                    "last": "Último"
+                }
+            },
+            "initComplete": function () {
+                var encabezado = $('#suppliersTable thead tr').eq(0); // Obtener la primera fila del encabezado
+                this.api().columns().every(function () {
+                    var columna = this;
+                    var input = $('<input type="text" placeholder="Buscar..."/>')
+                        //.appendTo($('<th>').appendTo(encabezado).empty()) // Agregar el campo de búsqueda en una nueva celda de encabezado vacía
+                        .on('keyup change clear', function () {
+                            if (columna.search() !== this.value) {
+                                columna
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                });
+            },
+            "ordering": false // Esta opción deshabilita la funcionalidad de ordenamiento
+        });
+    });
+</script>
 
 
 <!--<script>
