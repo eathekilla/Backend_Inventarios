@@ -15,11 +15,13 @@
     
 </style>
 
+
+
 <div class="col-lg-12">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
         <div>
             <h4 class="mb-3">Listado de Entradas</h4>
-            <p class="mb-0"> Listado de Entradas registrados en plataforma </p>
+            <p class="mb-0"> Listado de Entradas registrados en plataforma</p>
         </div>
         <button data-table-id="suppliersTable" class="btn btn-success btnExportar">
             <i class="fas fa-file-excel"></i> Exportar datos a Excel
@@ -96,7 +98,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-<!--                                 <button type="button" class="btn btn-primary">Save changes</button> -->
+                                <!--                                 <button type="button" class="btn btn-primary">Save changes</button> -->
                             </div>
                         </div>
                         </div>
@@ -128,70 +130,89 @@
     </div>
 </div>
 
-
-
-<!--<script>
-    {% if user.is_authenticated %}
-    //const accessToken = accessToken;
-    const accessToken ="{{token}}"
-    {% endif %}
- 
-    fetch('/entradas/list-create/', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('suppliersTable').querySelector('tbody');
-
-            // Limpiar el tbody por si hay datos previos
-            tableBody.innerHTML = '';
-            console.log(data)
-
-            data.entradas.forEach(entrada => {
-                const row = document.createElement('tr');
-
-
-               // Crear y agregar cada columna (td) al row
-                row.innerHTML = `
-                <td>${entrada.fecha_creacion}</td>
-                <td>${entrada.insumo}</td>
-                <td>Unidad de medida</td>
-                <td>${entrada.cantidad}</td>
-                <td>${entrada.valor_unitario_entrada_a}</td>
-                <td>Valor Total</td>
-                <td>${entrada.fecha_vencimiento}</td>
-                <td>${entrada.bodega}</td>
-                <td>${entrada.numero_factura}</td>  
-                <td>${entrada.proveedor}</td>
-
-                
-                <td>
-                    <div class="d-flex align-items-center list-action">
-                <a class="badge badge-info mr-2" data-toggle="popover" data-title="Información del Usuario" data-content="Representante Legal: ${entrada.representante_legal}<br>Razón Social: ${entrada.razon_social} <br>NIT: ${entrada.nit_cedula}<br>Departamento: ${entrada.departamento}<br>Municipio: ${entrada.municipio}" data-html="true" title="Información de Usuario" href="#"><i class="ri-eye-line mr-0"></i></a>
-                <a class="badge bg-success mr-2 edit-button" data-toggle="tooltip" title="Edit" href="#" data-id="${entrada.id}"><i class="ri-pencil-line mr-0"></i></a>
-                <a class="badge bg-warning mr-2 delete-button" data-toggle="tooltip" title="Delete" href="#" data-id="${entrada.id}"><i class="ri-delete-bin-line mr-0"></i></a>
-            </div>
-                </td>`;
-
-                // Agregar el row al tbody
-                tableBody.appendChild(row);
-            });
-            $('[data-toggle="popover"]').popover();
-
-            $('[data-toggle="popover"]').on('show.bs.popover', function () {
-                $('[data-toggle="popover"]').not(this).popover('hide');
-            });
-
-        })
-        .catch(error => {
-            console.error('Error:', error);
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+    $(document).ready(function () {
+        var tabla = $('#suppliersTable').DataTable({
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de _MAX_ entradas totales)",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "No hay datos disponibles en la tabla",
+                "paginate": {
+                    "first": "Primero",
+                    "previous": "Anterior",
+                    "next": "Siguiente",
+                    "last": "Último"
+                }
+            },
+            "initComplete": function () {
+                var encabezado = $('#suppliersTable thead tr').eq(0); // Obtener la primera fila del encabezado
+                this.api().columns().every(function () {
+                    var columna = this;
+                    var input = $('<input type="text" placeholder="Buscar..."/>')
+                        //.appendTo($('<th>').appendTo(encabezado).empty()) // Agregar el campo de búsqueda en una nueva celda de encabezado vacía
+                        .on('keyup change clear', function () {
+                            if (columna.search() !== this.value) {
+                                columna
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                });
+            },
+            "ordering": false // Esta opción deshabilita la funcionalidad de ordenamiento
         });
-</script>-->
+    });
+</script>
+
+
+
+<script>
+    $(document).ready(function () {
+        var tabla = $('#suppliersTable').DataTable({
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de _MAX_ entradas totales)",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "No hay datos disponibles en la tabla",
+                "paginate": {
+                    "first": "Primero",
+                    "previous": "Anterior",
+                    "next": "Siguiente",
+                    "last": "Último"
+                }
+            },
+            "initComplete": function () {
+                var encabezado = $('#suppliersTable thead tr').eq(0); // Obtener la primera fila del encabezado
+                this.api().columns().every(function () {
+                    var columna = this;
+                    var input = $('<input type="text" placeholder="Buscar..."/>')
+                        //.appendTo($('<th>').appendTo(encabezado).empty()) // Agregar el campo de búsqueda en una nueva celda de encabezado vacía
+                        .on('keyup change clear', function () {
+                            if (columna.search() !== this.value) {
+                                columna
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                });
+            },
+            "ordering": false // Esta opción deshabilita la funcionalidad de ordenamiento
+        });
+    });
+</script>
 
 
 <!--Script de Edición-->
+
+
 <script>
     document.addEventListener("click", function (event) {
         if (event.target.closest(".edit-button")) {  // Verifica si el elemento presionado (o sus ancestros) tiene la clase 'edit-button'
