@@ -39,6 +39,7 @@ from django.core.files.base import ContentFile
 import os
 
 class EntradaRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EntradaSerializer
     def get_queryset(self):
         return Entrada.objects.all()  # Sobrescribe el método get_queryset
 
