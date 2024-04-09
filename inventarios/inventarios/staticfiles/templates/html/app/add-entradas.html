@@ -535,6 +535,7 @@
                 desactivarLoader();
                 showAlertInModal(`Error ${response.status}: ${response.statusText}`);
             }
+            desactivarLoader();
         })
         .catch(error => {
             desactivarLoader()
