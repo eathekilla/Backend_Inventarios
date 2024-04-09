@@ -526,6 +526,7 @@
                 desactivarLoader();
                 desactivarLoader();
                 showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
+                desactivarLoader();
             } else if (response.status === 400) {
                 desactivarLoader()
                 showAlertInModal('Error enviando la información de la entrada!'); // Asegúrate de que esta función esté definida o usa alert()
