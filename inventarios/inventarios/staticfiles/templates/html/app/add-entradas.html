@@ -523,8 +523,10 @@
         })
         .then(response => {
             if (response.status === 201 || response.status === 200) {
-                desactivarLoader();
-                desactivarLoader();
+                $("#myModal").modal('hide');
+                setTimeout(function() {
+                    console.log("");
+                  }, 1000);
                 showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
                 desactivarLoader();
             } else if (response.status === 400) {
