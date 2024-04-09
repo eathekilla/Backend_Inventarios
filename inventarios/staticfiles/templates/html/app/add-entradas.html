@@ -417,6 +417,24 @@
     {% endif %}
 </script>
 
+<script>
+    // Función para activar el modal con loader
+function activarLoader() {
+$("#myModal").modal('show');
+
+}
+
+// Función para desactivar el modal con loader
+function desactivarLoader() {
+$("#myModal").modal('hide');
+setTimeout(function() {
+    console.log("");
+  }, 1000);
+}
+
+    
+</script>
+
 
 <script>
     document.getElementById('insumoform').addEventListener('submit', function (e) {
@@ -523,7 +541,7 @@
         })
         .then(response => {
             if (response.status === 201 || response.status === 200) {
-                $("#myModal").modal('hide');
+                desactivarLoader();
                 setTimeout(function() {
                     console.log("");
                   }, 1000);
@@ -546,23 +564,7 @@
     }
     
     </script>
-    <script>
-                // Función para activar el modal con loader
-        function activarLoader() {
-            $("#myModal").modal('show');
-            
-        }
-        
-        // Función para desactivar el modal con loader
-        function desactivarLoader() {
-            $("#myModal").modal('hide');
-            setTimeout(function() {
-                console.log("");
-              }, 1000);
-        }
-        
-                
-    </script>
+    
     
 
 
