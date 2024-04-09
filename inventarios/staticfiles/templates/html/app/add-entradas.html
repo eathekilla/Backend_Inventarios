@@ -523,7 +523,8 @@
         })
         .then(response => {
             if (response.status === 201 || response.status === 200) {
-                desactivarLoader()
+                desactivarLoader();
+                desactivarLoader();
                 showAlertInModal(message); // Asegúrate de que esta función esté definida o usa alert()
             } else if (response.status === 400) {
                 desactivarLoader()
