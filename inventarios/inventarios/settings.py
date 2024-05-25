@@ -27,10 +27,19 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['inventarios.ottsa.online','inventario.grovity.co','inventarioscrecento.ottsa.online','127.0.0.1','localhost','34.232.246.79','backendappinventarios-production.up.railway.app']
+ALLOWED_HOSTS = [
+    'inventarios.ottsa.online',
+    'inventario.grovity.co',
+    'inventarioscrecento.ottsa.online',
+    '127.0.0.1',
+    'localhost',
+    '34.232.246.79',
+    'backendappinventarios-production.up.railway.app'
+]
+
 LOGIN_URL = '/login/'
 
-CORS_ALLOW_ALL_ORIGINS = [
+CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://34.232.246.79',
@@ -38,10 +47,16 @@ CORS_ALLOW_ALL_ORIGINS = [
     'https://inventarios.ottsa.online',
     'https://inventarioscrecento.ottsa.online',
     'https://backendappinventarios-production.up.railway.app'
-
 ]
 
-CSRF_TRUSTED_ORIGINS = ['https://inventarioscrecento.ottsa.online','https://inventarios.ottsa.online','https://inventario.grovity.co''https://backendappinventarios-production.up.railway.app','http://127.0.0.1','http://34.232.246.79']
+CSRF_TRUSTED_ORIGINS = [
+    'https://inventarioscrecento.ottsa.online',
+    'https://inventarios.ottsa.online',
+    'https://inventario.grovity.co',
+    'https://backendappinventarios-production.up.railway.app',
+    'http://127.0.0.1',
+    'http://34.232.246.79'
+]
 
 # Application definition
 
