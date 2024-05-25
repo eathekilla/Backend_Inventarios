@@ -135,16 +135,16 @@ DATABASES = {
     }}
 
 """
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inventarios',
         'USER': 'postgres',
-        'PASSWORD': 'estepin97',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }} """
+        'PASSWORD': 'lPeHLqrtVsjnIJlFkDogcwsanRMxvfQJ',
+        'HOST': 'roundhouse.proxy.rlwy.net',
+        'PORT': '13107',
+    }} 
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
