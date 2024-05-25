@@ -27,7 +27,7 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['inventarios.ottsa.online','inventario.grovity.co','inventarioscrecento.ottsa.online','127.0.0.1','localhost','34.232.246.79']
+ALLOWED_HOSTS = ['inventarios.ottsa.online','inventario.grovity.co','inventarioscrecento.ottsa.online','127.0.0.1','localhost','34.232.246.79','backendappinventarios-production.up.railway.app']
 LOGIN_URL = '/login/'
 
 CORS_ALLOW_ALL_ORIGINS = [
@@ -37,7 +37,8 @@ CORS_ALLOW_ALL_ORIGINS = [
     'http://34.232.246.79',
     'https://inventario.grovity.co',
     'https://inventarios.ottsa.online',
-    'https://inventarioscrecento.ottsa.online'
+    'https://inventarioscrecento.ottsa.online',
+    'https://backendappinventarios-production.up.railway.app'
 
 ]
 
@@ -108,7 +109,7 @@ DATABASES = {
     }
 }
 
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -129,7 +130,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
     }} 
-"""
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
