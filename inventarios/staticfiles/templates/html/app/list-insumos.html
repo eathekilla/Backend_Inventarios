@@ -116,7 +116,7 @@
 
 </script>
 
-<script>
+{% comment %} <script>
     function showAlertInModal(message) {
     // Establecer el mensaje en el cuerpo del modal
     document.querySelector(".modal-body-aviso").textContent = message;
@@ -125,7 +125,7 @@
     $("#avisomodal").modal('show');
 }
 
-</script>
+</script> {% endcomment %}
 
 <script>
     function deleteUser(userId, row) {
