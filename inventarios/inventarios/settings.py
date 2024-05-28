@@ -123,7 +123,7 @@ DATABASES = {
     }
 }
 
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -144,7 +144,7 @@ DATABASES = {
         'PASSWORD': 'lPeHLqrtVsjnIJlFkDogcwsanRMxvfQJ',
         'HOST': 'roundhouse.proxy.rlwy.net',
         'PORT': '13107',
-    }} 
+    }} """
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
